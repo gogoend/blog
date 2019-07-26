@@ -1,0 +1,69 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <!-- <link rel="stylesheet" href="/_public/normalize.css" /> -->
+</head>
+
+<body>
+    <div id="app">
+        <canvas id="canvas" width="256" height="256"></canvas>
+    </div>
+    <script>
+        var rand = function (min, max, ifInt) {
+            if (ifInt == true) {
+                return Math.floor(Math.random() * (max - min) + min);
+            } else {
+                return Math.random() * (max - min) + min;
+            }
+        };
+    </script>
+    <script>
+
+        var canvasDOM = document.getElementById('canvas');
+        var context = canvas.getContext('2d');
+        var c = context;
+
+        var imgdata = c.getImageData(0, 0, 256, 256);
+        console.log(imgdata);
+        setTimeout(function () {
+            for (var index = 0; index < imgdata.data.length; index += 4) {
+                var r = rand(128, 255);
+                var g = 0;
+                var b = rand(0, 128);
+                var a = rand(0, 255);
+
+                imgdata.data[index] = r;
+                imgdata.data[index + 1] = g;
+                imgdata.data[index + 2] = b;
+                imgdata.data[index + 3] = a;
+            }
+            c.putImageData(imgdata, 0, 0)
+        }, 1000)
+
+    </script>
+    <!-- <script>
+            var canvasDOM=document.getElementById('canvas');
+            var context=canvas.getContext('2d');
+            var c=context;
+            c.beginPath()
+            c.moveTo(20,20);
+            c.lineTo(36,400);
+            c.strokeStyle='#ff0064';
+            c.lineCap='round';
+            c.lineWidth=10;
+            c.stroke();
+            c.save();
+            c.beginPath();
+            c.strokeStyle='#ff0064';
+            c.lineWidth=20;
+            c.moveTo(90,80);
+            c.lineTo(200,300);
+            c.stroke();
+            c.restore();
+            c.lineTo(500,500);
+            c.stroke();
+        </script> -->
+</body>
+
+</html>
