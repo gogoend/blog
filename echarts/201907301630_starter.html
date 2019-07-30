@@ -2,13 +2,20 @@
 
 <head>
     <meta charset="utf-8" />
-    <script src="https://unpkg.com/echarts@4.2.1/index.js"></script>
+	
+    <script src="https://unpkg.com/echarts@4.2.1/dist/echarts.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+	<style>
+		.echart-conatiner{
+			width: 100%;
+			height: 100%;
+		}
+	</style>
 </head>
 
 <body>
     <div id="app">
-        
+        <div class="echart-conatiner"></div>
     </div>
     <script>
         var rand = function (min, max, ifInt) {
@@ -19,7 +26,34 @@
             }
         };
     </script>
-
+	<script>
+		var myChart=echarts.init(document.querySelector('.echart-conatiner'));
+		var option={
+			title:{text:'测试'},
+			tooltip:{},
+			legend:{
+				data:['销量']
+			},
+			xAxis:{
+				data:['zero','one','two','three','four','five','six','seven','eight','nine']
+			},
+			yAxis:{},
+			series:[
+				{
+					name:'销量',
+					type:'bar',
+					data:[]
+				}
+			]
+		};
+		var i=0;
+		while(i<10){
+			option.series[0].data.push(rand(rand(0,600),rand(700,2000),true));
+			i++
+		}
+		console.log(option)
+		myChart.setOption(option);		
+	</script>
 </body>
 
 </html>
