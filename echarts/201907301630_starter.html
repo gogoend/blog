@@ -1,23 +1,21 @@
 <html>
-
 <head>
-    <meta charset="utf-8" />
-	
-    <script src="https://unpkg.com/echarts@4.2.1/dist/echarts.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
-	<style>
-		.echart-conatiner{
-			width: 100%;
-			height: 100%;
-		}
-	</style>
+<meta charset="utf-8" />
+<script src="https://unpkg.com/echarts@4.2.1/dist/echarts.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+<style>
+.echart-conatiner {
+	width: 100%;
+	height: 100%;
+}
+</style>
 </head>
 
 <body>
-    <div id="app">
-        <div class="echart-conatiner"></div>
-    </div>
-    <script>
+<div id="app">
+  <div class="echart-conatiner"></div>
+</div>
+<script>
         var rand = function (min, max, ifInt) {
             if (ifInt == true) {
                 return Math.floor(Math.random() * (max - min) + min);
@@ -25,8 +23,8 @@
                 return Math.random() * (max - min) + min;
             }
         };
-    </script>
-	<script>
+    </script> 
+<script>
 		var myChart=echarts.init(document.querySelector('.echart-conatiner'));
 		var option={
 			title:{text:'测试'},
@@ -43,17 +41,28 @@
 					name:'销量',
 					type:'bar',
 					data:[]
+				},
+				{
+					name:'啊哈',
+					type:'line',
+					data:[]
 				}
 			]
 		};
-		var i=0;
-		while(i<10){
-			option.series[0].data.push(rand(rand(0,600),rand(700,2000),true));
+		setInterval(function(){
+			var i=0;
+			
+			option.series.forEach(function(onedata){onedata.data=[]})
+
+			while(i<10){
+				option.series.forEach(function(onedata){
+					onedata.data.push(rand(rand(0,100),rand(300,600),true));
+				})
 			i++
-		}
-		console.log(option)
-		myChart.setOption(option);		
+			}
+			myChart.setOption(option);
+		},200)
+	
 	</script>
 </body>
-
 </html>
