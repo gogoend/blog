@@ -30,7 +30,7 @@
 			title:{text:'测试'},
 			tooltip:{},
 			legend:{
-				data:['销量']
+				//data:['销量','啊哈','呕吼']
 			},
 			xAxis:{
 				data:['zero','one','two','three','four','five','six','seven','eight','nine']
@@ -44,7 +44,27 @@
 				},
 				{
 					name:'啊哈',
-					type:'line',
+					type:'bar',
+					data:[]
+				},
+				{
+					name:'呕吼',
+					type:'bar',
+					data:[]
+				},
+								{
+					name:'什么鬼',
+					type:'bar',
+					data:[]
+				},
+				{
+					name:'呵呵呵',
+					type:'bar',
+					data:[]
+				},
+				{
+					name:'哈哈哈',
+					type:'bar',
 					data:[]
 				}
 			]
@@ -61,7 +81,7 @@
 			i++
 			}
 			myChart.setOption(option);
-		},200)
+		},100)
 	
 	</script>
 </body>
