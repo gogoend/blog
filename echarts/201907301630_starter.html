@@ -1,88 +1,90 @@
 <html>
+
 <head>
-<meta charset="utf-8" />
-<script src="https://unpkg.com/echarts@4.2.1/dist/echarts.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
-<style>
-.echart-conatiner {
-	width: 100%;
-	height: 100%;
-}
-</style>
+  <meta charset="utf-8" />
+  <script src="https://unpkg.com/echarts@4.2.1/dist/echarts.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+  <style>
+    .echart-conatiner {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
 </head>
 
 <body>
-<div id="app">
-  <div class="echart-conatiner"></div>
-</div>
-<script>
-        var rand = function (min, max, ifInt) {
-            if (ifInt == true) {
-                return Math.floor(Math.random() * (max - min) + min);
-            } else {
-                return Math.random() * (max - min) + min;
-            }
-        };
-    </script> 
-<script>
-		var myChart=echarts.init(document.querySelector('.echart-conatiner'));
-		var option={
-			title:{text:'测试'},
-			tooltip:{},
-			legend:{
-				//data:['销量','啊哈','呕吼']
-			},
-			xAxis:{
-				data:['zero','one','two','three','four','five','six','seven','eight','nine']
-			},
-			yAxis:{},
-			series:[
-				{
-					name:'销量',
-					type:'bar',
-					data:[]
-				},
-				{
-					name:'啊哈',
-					type:'bar',
-					data:[]
-				},
-				{
-					name:'呕吼',
-					type:'bar',
-					data:[]
-				},
-								{
-					name:'什么鬼',
-					type:'bar',
-					data:[]
-				},
-				{
-					name:'呵呵呵',
-					type:'bar',
-					data:[]
-				},
-				{
-					name:'哈哈哈',
-					type:'bar',
-					data:[]
-				}
-			]
-		};
-		setInterval(function(){
-			var i=0;
-			
-			option.series.forEach(function(onedata){onedata.data=[]})
+  <div id="app">
+    <div class="echart-conatiner"></div>
+  </div>
+  <script>
+    var rand = function (min, max, ifInt) {
+      if (ifInt == true) {
+        return Math.floor(Math.random() * (max - min) + min);
+      } else {
+        return Math.random() * (max - min) + min;
+      }
+    };
+  </script>
+  <script>
+    var myChart = echarts.init(document.querySelector('.echart-conatiner'));
+    var option = {
+      title: { text: '测试' },
+      tooltip: {},
+      legend: {
+        //data:['销量','啊哈','呕吼']
+      },
+      xAxis: {
+        data: ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+      },
+      yAxis: {},
+      series: [
+        {
+          name: '销量',
+          type: 'bar',
+          data: []
+        },
+        {
+          name: '啊哈',
+          type: 'bar',
+          data: []
+        },
+        {
+          name: '呕吼',
+          type: 'bar',
+          data: []
+        },
+        {
+          name: '什么鬼',
+          type: 'bar',
+          data: []
+        },
+        {
+          name: '呵呵呵',
+          type: 'bar',
+          data: []
+        },
+        {
+          name: '哈哈哈',
+          type: 'bar',
+          data: []
+        }
+      ]
+    };
+    setInterval(function () {
+      var i = 0;
 
-			while(i<10){
-				option.series.forEach(function(onedata){
-					onedata.data.push(rand(rand(0,100),rand(300,600),true));
-				})
-			i++
-			}
-			myChart.setOption(option);
-		},100)
-	
-	</script>
+      option.series.forEach(function (onedata) { onedata.data = [] })
+
+      while (i < 10) {
+        option.series.forEach(function (onedata) {
+          onedata.data.push(rand(rand(0, 100), rand(200, 600), true));
+        })
+        i++
+      }
+      myChart.setOption(option);
+    }, 800)
+
+  </script>
 </body>
+
 </html>
