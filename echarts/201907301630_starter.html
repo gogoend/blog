@@ -75,7 +75,7 @@
 
       option.series.forEach(function (onedata) { onedata.data = [] })
 
-      while (i < 10) {
+      while (i < option.xAxis.data.length) {
         option.series.forEach(function (onedata) {
           onedata.data.push(rand(rand(0, 100), rand(200, 600), true));
         })
