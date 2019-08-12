@@ -1,0 +1,106 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <style>
+        .gradient-container{
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="gradient-container" style="background-image: linear-gradient(to right, #0bd 10%,#080,#f00 30%,#0ff 70%);"></div>
+    </div>
+    <script>
+        var rand = function (min, max, ifInt) {
+            if (ifInt == true) {
+                return Math.floor(Math.random() * (max - min) + min);
+            } else {
+                return Math.random() * (max - min) + min;
+            }
+        };
+        var generateNum=function(count,min,max,ifInt){
+            var numArr=[];
+            for(let i=0;i<count;i++){
+                numArr.push(rand(min,max,ifInt))
+            }
+            return numArr
+        }
+    </script>
+    <script>
+        //HSL颜色模型
+        class HSL{
+            constructor(h,s,l,a){
+                this.h=h?h:0;
+                this.s=s?s:0;
+                this.l=l?l:0;
+                this.a=a?a:1;
+            }
+            toCSSColor(){
+                return `hsla(${this.h},${this.s}%,${this.l}%,${this.a})`
+            }
+        }
+
+        //css渐变元素类
+        //参数包括颜色、百分比。百分比传入小数
+        class CSSLinearGradientElement{
+            constructor(color,percent){
+                this.color=color?color:new HSL;
+                this.percent=percent?percent:null;
+            }
+            toCSSString(){
+                var percentString=this.percent?`${this.percent*100}%`:'';
+                if(this.color instanceof HSL){
+                    return `${this.color.toCSSColor()} ${percentString}`
+                }else{
+                    return `${this.color} ${percentString}`
+                }
+            }
+        }
+
+        //css渐变对象
+        class CSSLinearSentence{
+            constructor(gradientElements,direction){
+                this.gradientElements=(gradientElements instanceof Array)? gradientElements:[];
+                this.direction=direction?direction:'to right'
+            }
+            push(...elements){
+                elements.forEach((element)=>{
+                    if(element instanceof CSSLinearGradientElement){
+                    this.gradientElements.push(element)
+                }
+                })
+            }
+            toCSSString(){
+                if(this.gradientElements.length<2){
+                    console.warn('Hint: The number of gradientElements is less than 2, the gradient may not take effect.')
+                }
+
+                var tempElementObjs=[];
+
+                this.gradientElements.forEach(element=>{
+                    tempElementObjs.push(element.toCSSString())
+                })
+
+                var gridientString=tempElementObjs.join(',');
+
+                return `linear-gradient(${this.direction},${gridientString})`
+            }
+        }
+
+    </script>
+    <script>
+        var a=new CSSLinearGradientElement(null,0.2),
+            b=new CSSLinearGradientElement('#ded',0.9),
+            group=new CSSLinearSentence();
+        group.push(a,b)
+        console.log(group);
+        
+
+    </script>
+</body>
+
+</html>
