@@ -8,6 +8,7 @@
     .echart-conatiner {
       width: 100%;
       height: 100%;
+      resize: both;
     }
   </style>
 </head>
@@ -17,6 +18,9 @@
     <div class="echart-conatiner"></div>
   </div>
   <script>
+    var getStyle = function (node) {
+      return window.getComputedStyle(node, false);
+    }
     var rand = function (min, max, ifInt) {
       if (ifInt == true) {
         return Math.floor(Math.random() * (max - min) + min);
@@ -26,7 +30,11 @@
     };
   </script>
   <script>
-    var myChart = echarts.init(document.querySelector('.echart-conatiner'));
+    var myChartContainer = document.querySelector('.echart-conatiner');
+    var myChart = echarts.init(myChartContainer);
+
+    var originSize = [parseInt(getStyle(myChartContainer).width), parseInt(getStyle(myChartContainer).height)];
+
     var option = {
       title: { text: '测试' },
       tooltip: {},
@@ -85,9 +93,21 @@
     }, 800)
     console.log(myChart)
 
-    window.addEventListener('resize',function(){
+    document.querySelector('.echart-conatiner').addEventListener('resize', function () {
       myChart.resize();
     })
+
+      + (function watchContainerResize() {
+        var newSize = [parseInt(getStyle(myChartContainer).width), parseInt(getStyle(myChartContainer).height)];
+
+        if (originSize[0] !== newSize[0] || originSize[1] !== newSize[1]) {
+          myChart.resize();
+          originSize=newSize.concat();
+        }
+
+        requestAnimationFrame(watchContainerResize)
+      })()
+
   </script>
 </body>
 
