@@ -4,15 +4,34 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
     <style>
+        #app{
+            height:100%;
+            width: 100%;
+        }
+    </style>
+    <style>
+        .svg-wrap{
+            height: 1024px;
+            width: 1024px
+        }
+        .svg-wrap>foreignObject{
+            height: 1024px;
+            width: 1024px
+        }
         .gradient-container{
             height: 100%;
+            width: 100%
         }
     </style>
 </head>
 
 <body>
     <div id="app">
-        <div class="gradient-container" id="gradient-container"></div>
+        <svg class="svg-wrap" id="svg-wrap" xmlns="http://www.w3.org/2000/svg">
+            <foreignObject>
+                <div xmlns="http://www.w3.org/1999/xhtml" class="gradient-container" id="gradient-container"></div>
+            </foreignObject>
+        </svg>
     </div>
     <script>
         var rand = function (min, max, ifInt) {
@@ -98,11 +117,11 @@
         var tempElGroup=[];
 
         //随机位置
-        var posArr=generateNumArr(1000,0,100).sort((a,b)=>{
+        var posArr=generateNumArr(50,0,100).sort((a,b)=>{
             return a-b
         });
         for(let i=0;i<posArr.length;i++){
-            tempElGroup.push(new CSSLinearGradientElement(new HSL(rand(0,10),rand(70,72),rand(60,70)),posArr[i]/100))
+            tempElGroup.push(new CSSLinearGradientElement(new HSL(rand(0,10),rand(60,72),rand(60,80)),posArr[i]/100))
         }
 
         group.push.apply(group,tempElGroup);
@@ -111,6 +130,11 @@
         // console.log(group.toCSSString())
         
         document.getElementById("gradient-container").style.backgroundImage=group.toCSSString();
+
+        var toPicture=function(){
+            var svgWrap=document.getElementById('svg-wrap');
+            console.log(`data:image/svg+xml;charset=utf-8,${0}`)
+        }
 
     </script>
 </body>
