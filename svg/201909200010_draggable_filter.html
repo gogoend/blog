@@ -1,0 +1,91 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <script src="movableBlock.js"></script>
+    <style>
+        #app {
+            height: 100%;
+            width: 100%;
+        }
+
+        svg.svg-defs {
+            display: none
+        }
+
+        .main {
+            background-size: cover;
+            background-image: url(../_res/bbb-splash.png);
+            background-position: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .filter-block {
+            position: fixed;
+            resize: both;
+            width: 200px;
+            height: 200px;
+            outline-width: 2px;
+            outline-offset: 4px;
+            outline-style: solid;
+            outline-color: orange;
+        }
+
+        .colorMeMatrix{
+            backdrop-filter: url(#colorMeMatrix);
+        }
+
+        .blurMe{
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+
+<body>
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+
+            <filter id="colorMeMatrix">
+                <feColorMatrix type="matrix" values="1 0 0 0 0 0 .5 0 0 0 0 0 0 .5 0 0 0 0 1 0 "/>
+            </filter>
+            
+        </defs>
+    </svg>
+    <div id="app">
+        <div class="main "></div>
+        <div class="filter-block colorMeMatrix" style="bottom:0%;right:0%"></div>
+        <div class="filter-block blurMe" style="bottom:0%;right:0%"></div>
+    </div>
+    <script>
+        var rand = function (min, max, ifInt) {
+            if (ifInt == true) {
+                return Math.floor(Math.random() * (max - min) + min);
+            } else {
+                return Math.random() * (max - min) + min;
+            }
+        };
+        var generateNumArr = function (count, min, max, ifInt) {
+            var numArr = [];
+            for (let i = 0; i < count; i++) {
+                numArr.push(rand(min, max, ifInt))
+            }
+            return numArr
+        }
+    </script>
+    <script>
+        var allBlocks=document.querySelectorAll('.filter-block')
+        console.log(allBlocks)
+        if(allBlocks.length){
+            allBlocks.forEach(el=>{
+                new MovableBlock(el)
+            })
+        }
+        // var a=new MovableBlock(f1)
+        // var b=new MovableBlock(f2)
+    </script>
+
+</body>
+
+</html>
