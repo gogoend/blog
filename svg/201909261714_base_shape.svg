@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="图层_1" x="0px" y="0px" viewBox="0 0 857.3 751.6" style="enable-background:new 0 0 857.3 751.6;" xml:space="preserve">
+    <style type="text/css">
+        .st0 {
+            fill: none;
+            stroke: #0038DE;
+            stroke-miterlimit: 10;
+        }
+    </style>
+    <!-- 矩形 -->
+    <rect x="325.5" y="-0.5" class="st0" width="231" height="231"/>
+    <!-- 圆 -->
+    <circle class="st0" cx="727" cy="115" r="115.5"/>
+    <!-- 椭圆 -->
+    <ellipse class="st0" cx="441" cy="382.4" rx="115.5" ry="61.5"/>
+    <!-- 线段 -->
+    <line class="st0" x1="253.5" y1="497.9" x2="22.5" y2="266.9"/>
+    
+    <!-- 折线，不闭合。 -->
+    <polyline class="st0" points="22.5,232.5 138.5,-2.5 253.5,232.5 "/>
+    <!-- 多边形，闭合；此为三角形 -->
+    <polygon class="st0" points="827.7,382.4 626,266 626,498.8 "/>
+    <!-- 
+        points: x1,y1 x2,y2 x3,y3 ...
+     -->
+
+    <!-- 路径，d包含绘图指令 -->
+    <path class="st0" d="M0.5,672.5l104-124v182h33c0,0,50-218,50-123c0,123,40,123,40,123h26.1c59.6,0,107.9-48.3,107.9-107.9v-74.1"/>
+    <path class="st0" d="M651.1,735.5c-133.6-177,306.4-164,183.8,0"/>
+    <!-- 
+        直线指令：
+            m: x,y
+            l: x,y
+            v: x
+            h: y
+            z
+        曲线指令：
+            c: x1,y1,x2,y2,x,y
+                三次贝塞尔曲线
+                x1,y1表示起点手柄坐标
+                x2,y2表示终点手柄坐标
+            q: x1,y1,x,y
+                二次贝塞尔曲线
+                x1,y1表示手柄的坐标
+            a: rx,ry,x-axis-rotation,large-arc-flag,sweep-flag,x,y
+                椭圆弧线
+                rx,ry表示椭圆横轴与纵轴半径
+                x-axis-rotation表示逆时针旋转角度
+                large-arc-flag ...
+                sweep-flag表示圆弧扫描方向，顺时针为1，逆时针为0
+        x,y均表示终点坐标
+     -->
+
+    <!-- 二次曲线：illustrator会把二次曲线转为三次曲线 -->
+    <!-- <path class="st0" d="M455.5,533.5q-200,200,300,400a20,60,0,0,0,50,20"/> -->
+    <path class="st0" d="M272.5,240.5q-200,200,300,400a20,60,0,0,0,50,20L20,20v500z"/>
+
+    <!-- 三次曲线 -->
+    <path class="st0" d="M455.4,600c-133.3,133.3-33.3,266.7,300,400"/>
+</svg>
