@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>canva随机泡泡</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="can"></canvas>
+    <script>
+        var canvas = document.getElementById("can");
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+        var d = 100;//与鼠标距离
+        canvas.width = w;
+        canvas.height = h;
+        cnt = 100;
+        window.onresize = function () {//改变窗口的大小时，画布的宽高也随之变化
+            w = window.innerWidth;
+            h = window.innerHeight;
+            canvas.width = w;
+            canvas.height = h;
+        }
+        var cancon = canvas.getContext("2d");
+        cancon.strokeStyle = "red";
+        var txtArry = ["生日快乐", "福如东海", "天天开心", "寿比南山", "万事如意"];
+        function Color() {
+            var r = Math.floor(random(0, 255));
+            var g = Math.floor(random(0, 255));
+            var b = Math.floor(random(0, 255));
+            var a = Math.random();
+            return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+        }
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+        function Bubble() { };//创建泡泡的母体对象
+        Bubble.prototype = {
+            init: function () {
+                this.x = random(0, w);
+                this.y = random(0, h);
+                this.r = random(1, 5);
+                this.color = Color();
+                this.dx = random(-1, 1);
+                this.dy = random(-1, 1);
+                this.text = txtArry[Math.floor(random(0, txtArry.length))];
+            },
+            draw: function () {
+                cancon.beginPath();//重新拿笔画
+                cancon.strokeStyle = this.color;
+                cancon.fillStyle = this.color;
+                cancon.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                cancon.stroke();
+                cancon.fill();
+                cancon.font = "bold 15px sans-serif";
+                cancon.textAlign = 'center';
+                if (this.r > 20)
+                    cancon.fillText(this.text, this.x, this.y, this.r * 2);	//绘制文字
+            },
+            update: function () {
+                this.x += this.dx;
+                this.y += this.dy;
+
+                //泡泡反弹
+
+                if ((this.x + this.r) > w || (this.x - this.r) < 0)
+                    this.dx = -this.dx;
+                if ((this.y + this.r) > h || (this.y - this.r) < 0)
+                    this.dy = -this.dy;
+
+
+                this.xD = (positionX - this.x) < 0 ? -1 * (positionX - this.x) : (positionX - this.x);
+                this.yD = (positionY - this.y) < 0 ? -1 * (positionY - this.y) : (positionY - this.y);
+
+
+                if (this.xD < d && this.yD < d) {
+                    if (this.r < 30)
+                        this.r += 1;
+                }
+
+
+
+                else if (this.r > 10 && this.xD > d && this.yD > d) {
+                    this.r -= 1;
+                }
+                this.draw();
+
+            }
+        }
+        var bArry = [];//定义数组存储小泡泡
+        function create() {
+            var bubble = new Bubble();
+            bubble.init();
+            bubble.draw();
+            bArry.push(bubble);	//存储bubble到数组中
+        }
+        for (var i = 0; i < cnt; i++) {
+            create();
+        }
+        function ani() {
+            requestAnimationFrame(ani);
+            cancon.clearRect(0, 0, w, h);
+            for (var b = 0; b < bArry.length; b++) {
+                bArry[b].update();
+            }
+        }
+        var positionX, positionY;//定义鼠标的当前位置
+        canvas.onmousemove = function (e) {//鼠标移动时获取鼠标的位置 positionX,Y
+            //var ev=ev||window.event;
+            //debugger;
+            positionX = e.clientX;
+            positionY = e.clientY;
+        }
+
+        ani();
+
+        // setInterval(ani, 20);
+
+    </script>
+</body>
+
+</html>
