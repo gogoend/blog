@@ -40,6 +40,9 @@
         .blurMe{
             backdrop-filter: blur(4px);
         }
+        .displacementFilter{
+            backdrop-filter: blur(4px) url(#displacementFilter) 
+        }
     </style>
 </head>
 
@@ -50,6 +53,13 @@
             <filter id="colorMeMatrix">
                 <feColorMatrix type="matrix" values="1 0 0 0 0 0 .5 0 0 0 0 0 0 .5 0 0 0 0 1 0 "/>
             </filter>
+
+            <filter id="displacementFilter">
+                <feTurbulence type="turbulence" baseFrequency="0.01"
+                    numOctaves="2" result="turbulence"/>
+                <feDisplacementMap in="SourceGraphic" in2="turbulence"
+                    scale="40" xChannelSelector="B" yChannelSelector="G"/>
+            </filter>
             
         </defs>
     </svg>
@@ -57,6 +67,8 @@
         <div class="main "></div>
         <div class="filter-block colorMeMatrix" style="bottom:0%;right:0%"></div>
         <div class="filter-block blurMe" style="bottom:0%;right:0%"></div>
+        <div class="filter-block displacementFilter" style="bottom:0%;right:0%"></div>
+
     </div>
     <script>
         var rand = function (min, max, ifInt) {
