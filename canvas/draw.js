@@ -7,6 +7,7 @@ function Draw(el){
     _this.el=el;
     _this.ctx=el.getContext('2d');
 
+    var hue=0,lineWidth=10;
 
     _this.pos={
         xCur:NaN,
@@ -38,16 +39,20 @@ function Draw(el){
     Draw.prototype.drawing=function(e){
         var ctx=_this.ctx;
         ctx.lineTo(e.clientX,e.clientY);
-        ctx.strokeStyle="linear-gradient(#fff,#000)"
+        ctx.lineCap="round";
+        ctx.lineJoin="round";
+        ctx.lineWidth=lineWidth+=0.1;
+        hue++;
+
+        ctx.strokeStyle = `hsla(${hue}, 100%, 50%,0.05)`;
         ctx.stroke()
 
         console.log(e);
-        
-        e.clientX
-        e.clientY
+
     }
     Draw.prototype.endDraw=function(e){
         var ctx=_this.ctx;
+        lineWidth=10;
 
         document.body.removeEventListener('mousemove',_this.drawingBind,false);
         document.body.removeEventListener('mouseup',_this.endDrawBind,false);
