@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1024 1024" style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#SVGID_1_);}
+	.st1{fill:#00C3FF;}
+	.st2{fill:url(#SVGID_2_);}
+</style>
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0" y1="777" x2="494" y2="777">
+	<stop  offset="0" style="stop-color:#FFFFFF"/>
+	<stop  offset="1" style="stop-color:#000000"/>
+</linearGradient>
+<circle class="st0" cx="247" cy="777" r="247"/>
+<circle class="st1" cx="777" cy="247" r="247"/>
+<radialGradient id="SVGID_2_" cx="247" cy="247" r="247" gradientUnits="userSpaceOnUse">
+	<stop  offset="0" style="stop-color:#ED1C24;stop-opacity:0"/>
+	<stop  offset="1" style="stop-color:#ED1C24"/>
+</radialGradient>
+<circle class="st2" cx="247" cy="247" r="247"/>
+<path class="st1" d="M777,530c-136.4,0-247,110.6-247,247s110.6,247,247,247s247-110.6,247-247S913.4,530,777,530z M648.8,851
+	L777,629l128.2,222H648.8z"/>
+</svg>
