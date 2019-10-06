@@ -1,4 +1,4 @@
-function Draw(el){
+function Draw(el,afterDraw){
     var _this=this;
     if(!el){
         console.error('元素无效');
@@ -15,6 +15,8 @@ function Draw(el){
         xNew:NaN,
         yNew:NaN
     }
+    console.log(this.el)
+    _this.dataUrl=_this.el.toDataURL()
     Draw.prototype.init=function(){
         var w = window.innerWidth;
         var h = window.innerHeight;
@@ -47,13 +49,14 @@ function Draw(el){
         ctx.strokeStyle = `hsla(${hue}, 100%, 50%,0.05)`;
         ctx.stroke()
 
-        console.log(e);
-
     }
     Draw.prototype.endDraw=function(e){
         var ctx=_this.ctx;
         lineWidth=10;
-
+        _this.dataUrl=_this.el.toDataURL();
+        if(afterDraw instanceof Function){
+            afterDraw()
+        }
         document.body.removeEventListener('mousemove',_this.drawingBind,false);
         document.body.removeEventListener('mouseup',_this.endDrawBind,false);
     }
