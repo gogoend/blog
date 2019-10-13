@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>新的场景</title>
     <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
     <script src="https://unpkg.com/three@0.109.0/build/three.js"></script>
     <script src="https://unpkg.com/stats.js@0.17.0/build/stats.min.js"></script>
@@ -15,6 +15,7 @@
     <div id="Stats-output"></div>
     <div id="WebGL-output"></div>
     <script>
+        //初始化指示器
         function initStats() {
             var stats = new Stats();
             stats.setMode(0);
@@ -24,18 +25,21 @@
             document.getElementById("Stats-output").appendChild(stats.domElement);
             return stats;
         }
+        //初始化场景
         function init() {
             var stats = initStats();
+            //场景、摄像机、渲染器
             var scene = new THREE.Scene();
             var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
             var renderer = new THREE.WebGLRenderer();
             renderer.setClearColor(0xeeeeee);
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMapEnabled = true;
-
+            //轴向指示
             var axes = new THREE.AxisHelper(5);
             scene.add(axes);
 
+            //场景中的平面
             var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
             var planeMaterial = new THREE.MeshLambertMaterial({
                 color: 0xcccccc
@@ -45,8 +49,7 @@
             plane.rotation.set(-0.5 * Math.PI, 0, 0);
             plane.receiveShadow = true;
             scene.add(plane);
-
-
+            //点光源
             var spotLight = new THREE.SpotLight(0xffffff);
             spotLight.position.set(-40, 60, -10);
             spotLight.castShadow = true;
@@ -55,17 +58,17 @@
             camera.position.set(-30, 40, 30);
             camera.lookAt(scene.position);
             document.getElementById("WebGL-output").appendChild(renderer.domElement);
-            var step = 0;
+
             function renderScene() {
                 stats.update();
                 requestAnimationFrame(renderScene);
-
-
                 renderer.render(scene, camera);
             }
 
+            //场景雾
             scene.fog=new THREE.FogExp2(0xffffff,0.01);
 
+            //监听窗口尺寸
             function onResize() {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -73,6 +76,7 @@
             }
             window.addEventListener('resize', onResize, false);
 
+            //配置控件
             var controls = new function () {
                 this.addCube = function () {
                     var cubeSize = Math.ceil((Math.random() * 3));
@@ -83,18 +87,14 @@
                     var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
                     cube.castShadow = true;
                     cube.name = "cube-" + scene.children.length;
-                    // cube.position.set(-30+Math.round(Math.random()*planeGeometry.width),Math.round(Math.random()*5),-20+Math.round(Math.random()*planeGeometry.height));
 
                     cube.position.x = -30 + Math.round((Math.random() * planeGeometry.parameters.width));
                     cube.position.y = Math.round((Math.random() * 5));
                     cube.position.z = -20 + Math.round((Math.random() * planeGeometry.parameters.height));
 
-
                     scene.add(cube);
-                    console.log(2333)
-
-                    this.numberOfObjects = scene.children.length;
                 }
+                this.numberOfObjects = scene.children.length;
                 this.removeCube = function () {
                     var allChildren = scene.children;
                     var lastObject = allChildren[allChildren.length - 1];
@@ -108,9 +108,10 @@
             var gui = new dat.GUI();
             gui.add(controls, 'addCube');
             gui.add(controls, 'removeCube');
-            // gui.add(controls,'numberOfObjects').listen();
+            gui.add(controls,'numberOfObjects').listen();
 
-            // scene.overrideMaterial=new THREE.MeshLambertMaterial({color:0xffffff});
+            //材质覆盖
+            // scene.overrideMaterial=new THREE.MeshLambertMaterial({color:0x555666});
 
             renderScene();
         }
