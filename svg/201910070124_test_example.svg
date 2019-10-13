@@ -1,0 +1,29 @@
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <style type="text/css">
+            .filtered {
+                filter: url(#myfilter);
+            }
+        </style>
+        <filter id="myfilter">
+            <feMorphology operator="dilate" radius="4" in="SourceAlpha" result="BEVEL_10" />
+            <feConvolveMatrix order="3,3" kernelMatrix="1 0 0 0 1 0 0 0 1" in="BEVEL_10" result="BEVEL_20" />
+            <feOffset dx="4" dy="4" in="BEVEL_20" result="BEVEL_30" />
+            <feComposite operator="out" in="BEVEL_20" in2="BEVEL_10" result="BEVEL_30" />
+            <feFlood flood-color="#582D1B" result="COLOR-red" />
+            <feComposite in="COLOR-red" in2="BEVEL_30" operator="in" result="BEVEL_40" />
+            <feMerge result="BEVEL_50">
+                <feMergeNode in="BEVEL_40" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+            <feTurbulence baseFrequency=".05,.004" width="200%" height="200%" top="-50%" type="fractalNoise"
+                numOctaves="4" seed="0" result="FRACTAL-TEXTURE_10" />
+            <feColorMatrix type="matrix" values="0 0 0 0 0, 0 0 0 0 0, 0 0 0 0 0, 0 0 0 -1.2 1.1"
+                in="FRACTAL-TEXTURE_10" result="FRACTAL-TEXTURE_20" />
+            <feComposite in="BEVEL_50" in2="FRACTAL-TEXTURE_20" operator="in" />
+        </filter>
+    </defs>
+    <g class="filtered">
+        <text x="0" y="200" transform="rotate(-12)">Petrol</text>
+    </g>
+</svg>
