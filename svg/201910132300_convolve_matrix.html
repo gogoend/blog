@@ -1,0 +1,89 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <script src="movableBlock.js"></script>
+    <style>
+        #app {
+            height: 100%;
+            width: 100%;
+        }
+
+        svg.svg-defs {
+            display: none
+        }
+
+        .test-img{
+            width: 100%;
+            filter: url(#convolveMatrix)
+        }
+        .matrix-element>input{
+            width: 20%;
+            margin:0;
+            display: block;
+            float: left;
+        }
+
+    </style>
+</head>
+
+<body>
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <filter id="convolveMatrix">
+            <feConvolveMatrix order="5 5" preserveAlpha="true" kernelMatrix=""/> 
+        </filter>
+    </svg>
+    <div id="app">
+        <div class="main">
+            <div class="">
+                <img class="test-img" src="../_res/bbb-splash.png"/>
+            </div>
+            <div class="matrix-element">
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="0" />
+                <input type="number" step="1" value="1" />
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded",setMatrixToFilter);
+        document.querySelector('.matrix-element').addEventListener('input',setMatrixToFilter)
+        var matrixElements=document.querySelectorAll('.matrix-element>input');
+        function setMatrixToFilter(){
+            var matrixString='';
+            for(var i=0;i<matrixElements.length;i++){
+                if(isNaN(parseFloat(matrixElements[i].value)))
+                    matrixString+=0+' ';
+                else
+                    matrixString+=parseFloat(matrixElements[i].value)+' ';
+            }
+            document.getElementById('convolveMatrix').firstElementChild.setAttribute("kernelMatrix",matrixString)
+        }
+    </script>
+
+</body>
+
+</html>
