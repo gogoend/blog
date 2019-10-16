@@ -1,0 +1,64 @@
+<!-- Generator: Adobe Illustrator 22.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="图层_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	y="0px" viewBox="0 0 1024 1024" style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
+	<style type="text/css">
+		@keyframes aqua_go {
+			from {
+				transform: translate(0, 0);
+			}
+
+			to {
+				transform: translate(18px, 18px);
+			}
+		}
+
+		@keyframes pink_go {
+			from {
+				transform: translate(0, 0);
+			}
+
+			to {
+				transform: translate(-18px, -18px);
+			}
+		}
+
+		.st0 {
+			fill: #210C1D;
+		}
+
+		.st1 {
+			fill: #FF0055;
+			animation-name: pink_go;
+			animation-duration: 0.75s;
+			animation-timing-function: cubic-bezier(0, -1.5, 0, 1);
+			animation-delay:0s ;
+			animation-iteration-count: infinite;
+			animation-direction: alternate;
+			animation-play-state: running;
+		}
+
+		.st2 {
+			fill: #44FFFF;
+			animation-name: aqua_go;
+			animation-duration: 0.5s;
+			animation-timing-function: ease;
+			animation-delay:0s ;
+			animation-iteration-count: infinite;
+			animation-direction: alternate-reverse;
+			animation-play-state: running;
+			mix-blend-mode: screen;
+		}
+	</style>
+	<g>
+		<path class="st0" d="M861.2,1024H162.8C73.3,1024,0,950.7,0,861.2V162.8C0,73.3,73.3,0,162.8,0h698.3C950.7,0,1024,73.3,1024,162.8
+		v698.3C1024,950.7,950.7,1024,861.2,1024z" />
+		<path class="st1" d="M861.8,338.7c-101.2,0-183.6-82.4-183.6-183.6v-1.6H551.6v305.1v207.7h-0.1c0,1.1,0.1,2.1,0.1,3.2
+		c0,62-50.4,112.4-112.4,112.4s-112.4-50.4-112.4-112.4s50.4-112.4,112.4-112.4c14.5,0,28.4,2.8,41.1,7.8V434
+		c-13.4-2.3-27.1-3.6-41.1-3.6c-131.8,0-239,107.2-239,239s107.2,239,239,239c131.2,0,238.1-106.4,239-237.4h0V405
+		c51.4,37.9,114.9,60.3,183.6,60.3V338.7z" />
+		<path class="st2" d="M825.4,302.3c-101.2,0-183.6-82.4-183.6-183.6v-1.6H515.2v305.1v207.7h-0.1c0,1.1,0.1,2.1,0.1,3.2
+		c0,62-50.4,112.4-112.4,112.4S290.4,695,290.4,633.1s50.4-112.4,112.4-112.4c14.5,0,28.4,2.8,41.1,7.8V397.6
+		c-13.4-2.3-27.1-3.6-41.1-3.6c-131.8,0-239,107.2-239,239s107.2,239,239,239c131.2,0,238.1-106.4,239-237.4h0V368.6
+		c51.4,37.9,114.9,60.3,183.6,60.3V302.3z" />
+	</g>
+</svg>
