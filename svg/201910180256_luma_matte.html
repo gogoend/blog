@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <script src="movableBlock.js"></script>
+    <style>
+        #app {
+            height: 100%;
+            width: 100%;
+        }
+
+        svg.svg-defs {
+            display: none
+        }
+
+        .test-img{
+            width: 100%;
+            filter: url(#mask)
+        }
+
+    </style>
+</head>
+
+<body>
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <filter id="mask">
+			<feImage xlink:href="../_res/bbb-splash.png" result="maskImage" />
+			<feColorMatrix in="maskImage" type="luminanceToAlpha" result="matte"/>
+			<feComposite in="SourceGraphic"  in2="matte" operator="in" result="duang"/>
+        </filter>
+    </svg>
+    <div id="app">
+        <div class="main">
+            <div class="">
+                <img class="test-img" src="../_res/rodents.png"/>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
