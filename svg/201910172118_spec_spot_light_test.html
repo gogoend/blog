@@ -1,0 +1,96 @@
+<html>
+
+<head>
+	<style>
+		.st0 {
+			fill: none;
+			stroke: #00956A;
+			stroke-width: 80;
+			stroke-miterlimit: 10;
+		}
+
+		.st1 {
+			fill: none;
+			stroke: #00956A;
+			stroke-width: 80;
+			stroke-miterlimit: 10;
+		}
+
+		.st2 {
+			fill: #049669;
+		}
+
+		.svg-el {
+			max-width: 800px;
+			filter: url(#light-and-shadow)
+		}
+	</style>
+</head>
+
+<body>
+	<svg class="svg-el" version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg"
+		xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1024 1024"
+		style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
+		<filter id="light-and-shadow">
+			<!-- 高斯模糊源图像Alpha通道 -->
+			<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
+			<!-- 为模糊过的Alpha通道设置偏移 -->
+			<feOffset in="blur" dx="4" dy="4" result="offsetBlur" />
+			<!-- 打光线 -->
+			<feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.75" specularExponent="20"
+				lighting-color="#bbb" result="specOut">
+				<feSpotLight id="light" x="600" y="600" z="200" pointsAtX="0" pointsAtY="0" pointsAtZ="0"
+					limitingConeAngle="60" />
+			</feSpecularLighting>
+			<!-- 将光源和源图像Alpha通道进行合成，形成反光 -->
+			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut" />
+			<!-- 将反光和源图像本身进行合成 -->
+			<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"
+				result="litPaint" />
+			<!-- 加阴影，合成最终图像 -->
+			<!-- 分步合成 -->
+			<feMerge>
+				<feMergeNode in="offsetBlur" />
+				<feMergeNode in="litPaint" />
+			</feMerge>
+			<!-- 将三层直接进行合成 -->
+			<!-- <feMerge>
+				<feMergeNode in="offsetBlur"/>
+				<feMergeNode in="SourceGraphic"/>
+				<feMergeNode in="specOut"/>
+			</feMerge> -->
+
+		</filter>
+		<path class="st2" d="M0,0v1024h1024V0H0z" />
+	</svg>
+	<script>
+
+		var light = document.getElementById('light'),direction;
+		function animate() {
+			var limitingConeAngle = parseFloat(light.getAttribute('limitingConeAngle'));
+			if (limitingConeAngle >= 90) {
+				direction=false;
+			}
+			if (limitingConeAngle <= 20) {
+				direction=true;
+			}
+
+			direction?
+				light.setAttribute('limitingConeAngle', limitingConeAngle + 0.5)
+			:
+				light.setAttribute('limitingConeAngle', limitingConeAngle - 0.5)
+			
+			requestAnimationFrame(animate);
+		}
+		animate();
+
+		document.addEventListener('mousemove',function(e){
+			light.setAttribute('pointsAtX',e.offsetX);
+			light.setAttribute('pointsAtY',e.offsetY);
+		})
+
+
+	</script>
+</body>
+
+</html>

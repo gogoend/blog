@@ -36,7 +36,7 @@
 			<feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
 			<!-- 打光线 -->
 			<feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.75" specularExponent="20" lighting-color="#bbb" result="specOut">
-				<fePointLight x="-5000" y="-10000" z="20000" />
+				<fePointLight id="light" x="40" y="40" z="300"></fePointLight>
 			</feSpecularLighting>
 			<!-- 将光源和源图像Alpha通道进行合成，形成反光 -->
 			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut" />
@@ -65,6 +65,12 @@
 		</g>
 		<path class="st2" d="M0,0v1024h1024V0H0z M512,920c-225.3,0-408-182.7-408-408s182.7-408,408-408s408,182.7,408,408 S737.3,920,512,920z" />
 	</svg>
+	<script>
+		document.addEventListener('mousemove',function(e){
+			light.setAttribute('x',e.offsetX);
+			light.setAttribute('y',e.offsetY);
+		})
+	</script>
 </body>
 
 </html>

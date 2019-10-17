@@ -36,7 +36,7 @@
 			<feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
 			<!-- 打光线 -->
 			<feDiffuseLighting in="blur" surfaceScale="5" diffuseConstant="1" lighting-color="#bbb" result="specOut">
-				<feDistantLight id="distantLight" azimuth="0" />
+				<feDistantLight id="light" azimuth="0" />
 			</feDiffuseLighting>
 			<!-- 将光源和源图像Alpha通道进行合成，形成反光 -->
 			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut" />
@@ -66,13 +66,13 @@
 		<path class="st2" d="M0,0v1024h1024V0H0z M512,920c-225.3,0-408-182.7-408-408s182.7-408,408-408s408,182.7,408,408 S737.3,920,512,920z" />
 	</svg>
 	<script>
-		var distantLight=document.getElementById('distantLight');
+		var light=document.getElementById('light');
 		function animate(){
-			var azimuth=parseFloat(distantLight.getAttribute('azimuth'));
+			var azimuth=parseFloat(light.getAttribute('azimuth'));
 			if(azimuth>360){
 				azimuth=0
 			}			
-			distantLight.setAttribute('azimuth',azimuth+4);
+			light.setAttribute('azimuth',azimuth+4);
 			requestAnimationFrame(animate);
 		}
 		animate()
