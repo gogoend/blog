@@ -1,0 +1,70 @@
+<html>
+
+<head>
+	<style>
+		.st0 {
+			fill: none;
+			stroke: #00956A;
+			stroke-width: 80;
+			stroke-miterlimit: 10;
+		}
+
+		.st1 {
+			fill: none;
+			stroke: #00956A;
+			stroke-width: 80;
+			stroke-miterlimit: 10;
+		}
+
+		.st2 {
+			fill: #049669;
+		}
+
+		.svg-el {
+			max-width: 800px;
+			filter:url(#light-and-shadow)
+		}
+	</style>
+</head>
+
+<body>
+	<svg class="svg-el" version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1024 1024" style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
+		<filter id="light-and-shadow">
+			<!-- 高斯模糊源图像Alpha通道 -->
+			<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+			<!-- 为模糊过的Alpha通道设置偏移 -->
+			<feOffset in="blur" dx="4" dy="4" result="offsetBlur"/>
+			<!-- 打光线 -->
+			<feSpecularLighting in="blur" surfaceScale="5" specularConstant="0.75" specularExponent="20" lighting-color="#bbb" result="specOut">
+				<fePointLight x="-5000" y="-10000" z="20000" />
+			</feSpecularLighting>
+			<!-- 将光源和源图像Alpha通道进行合成，形成反光 -->
+			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut" />
+			<!-- 将反光和源图像本身进行合成 -->
+			<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+			<!-- 加阴影，合成最终图像 -->
+			<!-- 分步合成 -->
+			<feMerge>
+				<feMergeNode in="offsetBlur"/>
+				<feMergeNode in="litPaint"/>
+			</feMerge>
+			<!-- 将三层直接进行合成 -->
+			<!-- <feMerge>
+				<feMergeNode in="offsetBlur"/>
+				<feMergeNode in="SourceGraphic"/>
+				<feMergeNode in="specOut"/>
+			</feMerge> -->
+				
+		</filter>
+		<g>
+			<line class="st0" x1="544.9" y1="258" x2="363.8" y2="439" />
+			<line class="st0" x1="690.1" y1="403.2" x2="509" y2="584.2" />
+			<line class="st0" x1="690.4" y1="620.1" x2="509.4" y2="439" />
+			<line class="st0" x1="544.5" y1="766" x2="363.5" y2="585" />
+			<circle class="st1" cx="436.2" cy="511.8" r="102.7" />
+		</g>
+		<path class="st2" d="M0,0v1024h1024V0H0z M512,920c-225.3,0-408-182.7-408-408s182.7-408,408-408s408,182.7,408,408 S737.3,920,512,920z" />
+	</svg>
+</body>
+
+</html>
