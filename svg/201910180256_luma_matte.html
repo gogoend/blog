@@ -15,7 +15,7 @@
         }
 
         .test-img{
-            width: 100%;
+            width: 800px;
             filter: url(#mask)
         }
 
@@ -26,8 +26,13 @@
     <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1">
         <filter id="mask">
 			<feImage xlink:href="../_res/bbb-splash.png" result="maskImage" />
-			<feColorMatrix in="maskImage" type="luminanceToAlpha" result="matte"/>
-			<feComposite in="SourceGraphic"  in2="matte" operator="in" result="duang"/>
+            <feColorMatrix in="maskImage" type="luminanceToAlpha" result="matte"/>
+            <feComponentTransfer in="matte" result="matteInvert">
+                <feFuncR type="table" tableValues="1 0"/>
+                <feFuncG type="table" tableValues="1 0"/>
+                <feFuncB type="table" tableValues="1 0"/>
+            </feComponentTransfer>
+			<feComposite in="SourceGraphic" in2="matteInvert" operator="in" result="duang"/>
         </filter>
     </svg>
     <div id="app">

@@ -38,6 +38,16 @@
         <div class="main">
             <div class="">
                 <img class="test-img" src="../_res/bbb-splash.png"/>
+                <select class="preset-select">
+                    <option value="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0">原图</option>
+                    <option value="0 0 0 0 0 0 0 1 0 0 0 1 -4 1 0 0 0 1 0 0 0 0 0 0 0">查找边缘</option>
+                    <option value="0 0 0 0 0 0 0 1 0 0 0 1 1 1 0 0 0 1 0 0 0 0 0 0 0 ">方框模糊</option>
+                    <option value="0 0 0 0 0 0 0 1 0 0 0 1 -5 1 0 0 0 1 0 0 0 0 0 0 0">锐化</option>
+                    <option value="0 0 0 0 0 0 -6 -3 0 0 0 -3 1 3 0 0 0 3 6 0 0 0 0 0 0">浮雕</option>
+                    <option value="0 0 0 0 4 0 11 0 -13 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0">随便测试-类似浮雕</option>
+                    <option value="0 0 0 0 0 0 1 1 1 0 0 1 -7 1 0 0 1 1 1 0 0 0 0 0 0">随便测试-类似模糊</option>
+                    <option value="0 0 0 0 0 0 0 -10 0 0 0 -10 40 -10 0 0 0 -10 0 0 0 0 0 0 0">随便测试-类似查找边缘</option>
+                </select>
             </div>
             <div class="matrix-element">
                 <input type="number" step="1" value="0" />
@@ -70,7 +80,8 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded",setMatrixToFilter);
-        document.querySelector('.matrix-element').addEventListener('input',setMatrixToFilter)
+        document.querySelector('.matrix-element').addEventListener('input',setMatrixToFilter);
+        document.querySelector('.preset-select').addEventListener('change',setPreset)
         var matrixElements=document.querySelectorAll('.matrix-element>input');
         function setMatrixToFilter(){
             var matrixString='';
@@ -81,6 +92,14 @@
                     matrixString+=parseFloat(matrixElements[i].value)+' ';
             }
             document.getElementById('convolveMatrix').firstElementChild.setAttribute("kernelMatrix",matrixString)
+        }
+        function setPreset(e){
+            var selectedItem=e.target.value;
+            document.getElementById('convolveMatrix').firstElementChild.setAttribute("kernelMatrix",selectedItem)
+            var newArr=selectedItem.split(' ');
+            matrixElements.forEach((item,index)=>{
+                item.value=parseFloat(newArr[index]);
+            })
         }
     </script>
 
