@@ -14,34 +14,38 @@
             display: none
         }
 
-        .test-img{
+        .test-img {
             width: 800px;
-            filter: url(#mask)
         }
-
     </style>
 </head>
 
 <body>
     <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1">
         <filter id="mask">
-			<feImage xlink:href="../_res/bbb-splash.png" result="maskImage" />
-            <feColorMatrix in="maskImage" type="luminanceToAlpha" result="matte"/>
+            <feImage xlink:href="../_res/bbb-splash.png" result="maskImage" />
+            <feColorMatrix in="maskImage" type="luminanceToAlpha" result="matte" />
             <feComponentTransfer in="matte" result="matteInvert">
-                <feFuncR type="table" tableValues="1 0"/>
-                <feFuncG type="table" tableValues="1 0"/>
-                <feFuncB type="table" tableValues="1 0"/>
+                <feFuncR type="table" tableValues="1 0" />
+                <feFuncG type="table" tableValues="1 0" />
+                <feFuncB type="table" tableValues="1 0" />
             </feComponentTransfer>
-			<feComposite in="SourceGraphic" in2="matteInvert" operator="in" result="duang"/>
+            <feComposite in="SourceGraphic" in2="matteInvert" operator="in" result="duang" />
         </filter>
     </svg>
     <div id="app">
         <div class="main">
             <div class="">
-                <img class="test-img" src="../_res/rodents.png"/>
+                <img class="test-img" src="../_res/rodents.png" />
             </div>
         </div>
     </div>
+    <script>
+        document.querySelector('.test-img').addEventListener('load', function (e) {
+            var _this = this;
+            setTimeout(function () { _this.style.filter = 'url(#mask)' },200);
+        })
+    </script>
 </body>
 
 </html>
