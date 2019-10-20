@@ -1,0 +1,70 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <style>
+        #app {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <style>
+        .click-area {
+            width: 256px;
+            height: 256px;
+            background-color: orange;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="click-area"></div>
+    </div>
+    <script>
+        var clickArea = document.querySelector('.click-area');
+
+        bdlClickFix(clickArea, true, function () {
+            console.log(1)
+        }, function () {
+            console.log(2)
+        })
+
+        function bdlClickFix(el, bothExec, singleClick, doubleClick) {
+            if (!(el instanceof Element)) {
+                return;
+            }
+            el.addEventListener('click', clickTodo);
+
+            var clickTime = 0;
+            function clickTodo(e) {
+                clickTime++;
+                if (!e.target.dataset.clicked) {
+                    if (bothExec) { singleClick(); }
+                    e.target.setAttribute('data-clicked', 'true');
+                    setTimeout(function () {
+                        switch (clickTime) {
+                            case 1: {
+                                if (!bothExec) {
+                                    singleClick();
+                                }
+                                break;
+                            };
+                            case 2: {
+                                doubleClick();
+                                e.target.removeAttribute('data-clicked')
+                                break;
+                            };
+                            default: break;
+                        };
+                        clickTime = 0;
+                        e.target.removeAttribute('data-clicked')
+                    }, 500)
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
