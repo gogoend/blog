@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/echarts@4.2.1/dist/echarts.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <title>audioContext测试 - 来自echarts</title>
+</head>
+
+<body>
+    <p>代码来自<a target="_blank"
+            href="https://www.echartsjs.com/examples/zh/editor.html?c=bar3d-music-visualization&gl=1">Music
+            Visualization</a><br /></p>
+    <div id="echart-container" style="width: 800px;height: 600px;"></div>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            var myChart = echarts.init(document.getElementById('echart-container'));
+            var option = {
+                xAxis: [
+                    {
+                        type: 'category',
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value',
+                        max: 256
+                    }
+                ],
+                series: [{
+                    type: 'bar',
+                    data: [],
+                    barSize: 1,
+                    lineStyle: {
+                        width: 4
+                    },
+                    animation: false,
+                    // animationDurationUpdate: UPDATE_DURATION
+                }]
+            }
+            myChart.setOption(option)
+
+            var UPDATE_DURATION = 1;
+
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+            var audioContext = new AudioContext();
+
+            var oReq = new XMLHttpRequest();
+            oReq.open('GET', '../_res/redsun.mp3', true);
+            oReq.responseType = 'arraybuffer';
+
+            oReq.onload = function (e) {
+                audioContext.decodeAudioData(oReq.response, initVisualizer);
+            };
+            oReq.send();
+
+            function initVisualizer(audioBuffer) {
+                inited = true;
+
+                var source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+
+                // Must invoked right after click event
+                if (source.noteOn) {
+                    source.noteOn(0);
+                }
+                else {
+                    source.start(0);
+                }
+
+                var analyzer = audioContext.createAnalyser();
+                var gainNode = audioContext.createGain();
+                analyzer.fftSize = 2048;
+
+                gainNode.gain.value = 1;
+                source.connect(gainNode);
+                gainNode.connect(analyzer);
+                analyzer.connect(audioContext.destination);
+
+                var frequencyBinCount = analyzer.frequencyBinCount;
+                var dataArray = new Uint8Array(frequencyBinCount);
+
+
+                function update() {
+                    analyzer.getByteFrequencyData(dataArray);
+                    // console.log(dataArray)
+
+                    var theData=Array.from(dataArray)
+
+                    myChart.setOption({
+                        series: [{
+                            data: theData
+                        }]
+                    });
+
+                    setTimeout(update, UPDATE_DURATION);
+                };
+
+                update();
+            }
+
+        })
+    </script>
+</body>
+
+</html>
