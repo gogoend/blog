@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
     <title>audioContext测试 - 来自echarts</title>
     <style>
-        html,body{
+        html,
+        body {
             width: 100%;
             height: 100%;
         }
@@ -38,11 +39,25 @@
                     }
                 ],
                 series: [{
-                    type: 'bar',
+                    type: 'line',
                     data: [],
-                    barSize: 1,
-                    lineStyle: {
-                        width: 4
+                    // barSize: 1,
+                    // lineStyle: {
+                    //     width: 4
+                    // },
+                    areaStyle: {
+                        normal: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: '#c23531FF'
+                            },{
+                                offset: 0.5,
+                                color: '#c23531FF'
+                            }, {
+                                offset: 1,
+                                color: '#c2353100'
+                            }])
+                        }
                     },
                     animation: false,
                     // animationDurationUpdate: UPDATE_DURATION
@@ -94,8 +109,10 @@
 
                 function update() {
                     analyzer.getByteFrequencyData(dataArray);
-                    var theData=Array.from(dataArray)
-                    // console.log(theData)
+                    var theData = Array.from(dataArray)
+
+                    theData = theData.splice(0, theData.length / 2)
+                    console.log(theData)
                     // theData.length/=2
 
                     myChart.setOption({
