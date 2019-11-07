@@ -1,0 +1,168 @@
+{
+    "asset": {
+        "version": "2.0",
+        "generator": "Open Asset Import Library (assimp v3.1.151580502)"
+    },
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 702,
+            "type": "VEC3",
+            "max": [
+                1.0000001192092896,
+                0.9374338388442993,
+                0.9420967102050781
+            ],
+            "min": [
+                -1.0,
+                -0.9374338984489441,
+                -0.9420967102050781
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 702,
+            "type": "VEC3",
+            "max": [
+                1.0,
+                1.0,
+                0.994137704372406
+            ],
+            "min": [
+                -1.0,
+                -1.0,
+                -0.994137704372406
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 702,
+            "type": "VEC2",
+            "max": [
+                1.0,
+                1.0
+            ],
+            "min": [
+                0.000030517578125,
+                0.000030517578125
+            ]
+        },
+        {
+            "bufferView": 3,
+            "byteOffset": 0,
+            "componentType": 5123,
+            "count": 2808,
+            "type": "SCALAR",
+            "max": [
+                701.0
+            ],
+            "min": [
+                0.0
+            ]
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 28080,
+            "uri": "./cone_no_texture.bin"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 8424,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 8424,
+            "byteLength": 8424,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 16848,
+            "byteLength": 5616,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 22464,
+            "byteLength": 5616,
+            "target": 34963
+        }
+    ],
+    "materials": [
+        {
+            "name": "DefaultMaterial",
+            "pbrMetallicRoughness": {
+                "metallicFactor": 0.0
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "Cylinder001",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": 0,
+                    "indices": 3,
+                    "attributes": {
+                        "POSITION": 0,
+                        "NORMAL": 1,
+                        "TEXCOORD_0": 2
+                    }
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "matrix": [
+                17.809146881103517,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                17.809146881103517,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                17.809146881103517,
+                0.0,
+                0.11339378356933594,
+                14.241711616516114,
+                -0.1362895965576172,
+                1.0
+            ],
+            "children": [
+                1,
+                2
+            ]
+        },
+        {
+            "name": "Cylinder001",
+            "mesh": 0
+        },
+        {
+            "name": "Cinema_4D_编辑器"
+        }
+    ],
+    "scenes": [
+        {
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "scene": 0
+}
