@@ -1,0 +1,163 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>新的场景 - 场景贴图分离</title>
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <script src="https://unpkg.com/three@0.109.0/build/three.js"></script>
+    <script src="https://unpkg.com/stats.js@0.17.0/build/stats.min.js"></script>
+    <script src="https://unpkg.com/dat.gui@0.7.6/build/dat.gui.js"></script>
+    <script src="https://unpkg.com/three@0.109.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.109.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+    <div id="Stats-output"></div>
+    <div id="WebGL-output"></div>
+    <script>
+        //初始化指示器
+        function initStats() {
+            var stats = new Stats();
+            stats.setMode(0);
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.position = '0px';
+            stats.domElement.style.position = '0px';
+            document.getElementById("Stats-output").appendChild(stats.domElement);
+            return stats;
+        }
+        //初始化场景
+        function init() {
+            var stats = initStats();
+            //场景、摄像机、渲染器
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setClearColor(0xeeeeee);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMapEnabled = true;
+            //轴向指示
+            var axes = new THREE.AxisHelper(5);
+            scene.add(axes);
+
+            var lightGroup=new THREE.Group();
+
+            scene.add(lightGroup);
+
+            camera.position.set(-40, 60, 40);
+            camera.lookAt(scene.position);
+            scene.add(camera);
+            document.getElementById("WebGL-output").appendChild(renderer.domElement);
+
+            //轨道控制器
+            var controls=new THREE.OrbitControls(camera)
+
+            function renderScene() {
+                stats.update();
+                requestAnimationFrame(renderScene);
+                renderer.render(scene, camera);
+            }
+
+            //场景雾
+            // scene.fog=new THREE.FogExp2(0xffffff,0.01);
+
+            //监听窗口尺寸
+            function onResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            window.addEventListener('resize', onResize, false);
+
+            renderScene();
+
+            window.scene=scene;
+            window.lightGroup=lightGroup;
+        }
+        function setLights(){
+            //点光源
+            // var spotLight = new THREE.SpotLight(0xffffff);
+            // spotLight.position.set(-40, 60, -10);
+            // spotLight.castShadow = true;
+            // lightGroup.add(spotLight);
+
+            var light1=new THREE.PointLight(0xEEAF1C)
+            light1.position.set(8.8,31,-10);
+            lightGroup.add(light1);
+
+            var light2=new THREE.DirectionalLight(0x37FFFA,0.6);
+            light2.position.set(-40,28,16);
+            lightGroup.add(light2);
+
+            var light3=new THREE.AmbientLight(0x888888);
+            lightGroup.add(light3);
+
+            var light4=new THREE.PointLight(0xB8FFB8,0.5);
+            light4.position.set(10,20,30);
+            lightGroup.add(light4);
+        }
+
+        function addCone(){
+            var loader=new THREE.GLTFLoader();
+            loader.load('../_res/201911071948_cone_no_texture/cone_no_texture.gltf',function(e){
+                var cone=e.scene.children[0]
+                var baseTexture=new THREE.TextureLoader().load('../_res/201911071948_cone_no_texture/cone_DefaultMaterial_BaseColor.jpg');
+                baseTexture.mapping=THREE.UVMapping;
+                baseTexture.flipY=false;
+
+                var roughTexture=new THREE.TextureLoader().load('../_res/201911071948_cone_no_texture/cone_DefaultMaterial_Roughness.jpg');
+                roughTexture.mapping=THREE.UVMapping;
+                roughTexture.flipY=false;
+
+                var normalTexture=new THREE.TextureLoader().load('../_res/201911071948_cone_no_texture/cone_DefaultMaterial_Normal.jpg');
+                normalTexture.mapping=THREE.UVMapping;
+                normalTexture.flipY=false;
+
+                var metalTexture=new THREE.TextureLoader().load('../_res/201911071948_cone_no_texture/cone_DefaultMaterial_Metallic.jpg');
+                metalTexture.mapping=THREE.UVMapping;
+                metalTexture.flipY=false;
+
+                var mat=new THREE.MeshPhysicalMaterial();
+                mat.map=baseTexture;
+                mat.roughnessMap=roughTexture;
+                mat.normalMap=normalTexture;
+                mat.metalness=1;
+                mat.metalnessMap=metalTexture;
+
+
+
+                cone.children[1].material=mat;
+
+                scene.add(cone)
+            })
+
+
+        }
+
+        function autoRotateObject(obj3d){
+            var deg1=Math.PI/180;
+            obj3d.rotateY(5*deg1);
+        }
+
+        function animate(){
+            autoRotateObject(lightGroup);
+            requestAnimationFrame(animate)
+        }
+
+
+        document.addEventListener("DOMContentLoaded",()=>{
+            init();
+            setLights();
+            addCone();
+            animate();
+        })
+
+
+
+        
+
+    </script>
+</body>
+
+</html>
