@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>canvas鼠标绘图</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="can"></canvas>
+    <script>
+        var rectArr=[]
+        function Draw(el, afterDraw) {
+            var _this = this;
+            if (!el) {
+                console.error('元素无效');
+                return
+            }
+            _this.el = el;
+            _this.ctx = el.getContext('2d');
+
+            var hue = 0, lineWidth = 10;
+
+            _this.pos = {
+                xCur: NaN,
+                yCur: NaN,
+                xNew: NaN,
+                yNew: NaN
+            }
+            console.log(this.el)
+            _this.dataUrl = _this.el.toDataURL()
+            Draw.prototype.init = function () {
+                var w = window.innerWidth;
+                var h = window.innerHeight;
+                _this.el.width = w;
+                _this.el.height = h;
+
+                _this.pos.xCur = _this.el.offsetLeft;
+                _this.pos.yCur = _this.el.offsetTop;
+                _this.el.addEventListener('mousedown', _this.startDrawBind, false);
+            }
+            Draw.prototype.startDraw = function (e) {
+                var ctx = _this.ctx;
+                _this.pos.xCur = e.clientX;
+                _this.pos.yCur = e.clientY;
+                //开始新的路径
+                ctx.beginPath();
+                // ctx.moveTo(_this.pos.xCur,_this.pos.yCur)
+
+                document.body.addEventListener('mousemove', _this.drawingBind, false);
+                document.body.addEventListener('mouseup', _this.endDrawBind, false);
+            }
+            Draw.prototype.drawing = function (e) {
+                var ctx = _this.ctx;
+
+                hue++;
+
+            }
+            Draw.prototype.endDraw = function (e) {
+                var ctx = _this.ctx;
+                ctx.rect(_this.pos.xCur, _this.pos.yCur, e.clientX - _this.pos.xCur, e.clientY - _this.pos.yCur);
+
+                console.log(rectArr)
+
+                ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+                ctx.fill()
+                if (afterDraw instanceof Function) {
+                    afterDraw()
+                }
+
+                rectArr.push({
+                    x:_this.pos.xCur,
+                    y:_this.pos.yCur,
+                    w:e.clientX - _this.pos.xCur,
+                    h:e.clientY - _this.pos.yCur,
+                    fillColor:ctx.fillStyle
+                })
+
+                document.body.removeEventListener('mousemove', _this.drawingBind, false);
+                document.body.removeEventListener('mouseup', _this.endDrawBind, false);
+            }
+
+            _this.startDrawBind = _this.startDraw.bind(_this);
+            _this.drawingBind = _this.drawing.bind(_this);
+            _this.endDrawBind = _this.endDraw.bind(_this);
+            _this.init()
+        }
+
+        var a = new Draw(document.getElementById('can'))
+    </script>
+</body>
+
+</html>
