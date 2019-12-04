@@ -1,0 +1,50 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+</head>
+
+<body>
+    <div id="app">
+    </div>
+    <script>
+        var rand = function (min, max, ifInt) {
+            if (ifInt == true) {
+                return Math.floor(Math.random() * (max - min) + min);
+            } else {
+                return Math.random() * (max - min) + min;
+            }
+        };
+    </script>
+    <script>
+        function resolveHandler(func, arg) {
+            func(arg);
+        }
+        var p1 = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                var anyValue = Math.random();
+                if (anyValue > 0.5) {
+                    resolveHandler(resolve, '第一次解决');
+                } else {
+                    reject('第一次拒绝')
+                }
+            })
+        }).then((arg) => {
+            console.log(arg)
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolveHandler(resolve, '第二次解决'), 2000)
+            })
+        }).then((arg) => {
+            console.log(arg);
+            return fetch('/_res/bookmark.json')
+        }).then((arg) => {
+            console.log(arg);
+            // return fetch('http://qq.com/')
+        }).catch(function (e) {
+            console.log(e)
+        })
+    </script>
+</body>
+
+</html>
