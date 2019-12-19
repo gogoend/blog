@@ -38,8 +38,11 @@
         }).then((arg) => {
             console.log(arg);
             return fetch('/_res/bookmark.json')
-        }).then((arg) => {
-            console.log(arg);
+        }).then((res) => {
+            return res.json()
+            // return fetch('http://qq.com/')
+        }).then((json) => {
+            console.log(json);
             // return fetch('http://qq.com/')
         }).catch(function (e) {
             console.log(e)
