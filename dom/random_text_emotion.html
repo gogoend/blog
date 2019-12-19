@@ -5,7 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>dowob</title>
+    <script>
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+                recalc = function () {
+                    var clientWidth = docEl.clientWidth;
+                    if (!clientWidth) return;
+                    if (clientWidth >= 640) {
+                        docEl.style.fontSize = '100px';
+                    } else {
+                        docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+                    }
+                };
+
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            doc.addEventListener('DOMContentLoaded', recalc, false);
+        })(document, window);
+    </script>
     <style>
+        @keyframes roty {
+            from {
+                transform: rotateY(-45deg);
+            }
+
+            to {
+                transform: rotateY(45deg);
+            }
+
+        }
+
+        @keyframes translatey {
+            from {
+                transform: translateY(20px);
+            }
+
+            to {
+                transform: translateY(-20px);
+            }
+
+        }
+
         html,
         body {
             width: 100%;
@@ -20,14 +61,20 @@
             align-items: center;
             justify-content: center;
             background-image: linear-gradient(45deg, rgb(0, 168, 158), rgb(0, 116, 186));
+            perspective: 400px;
         }
 
         .big-title {
-            font-size: 1rem;
+            font-size: 1.5rem;
             line-height: 1em;
             margin: 0;
             color: #fff;
             font-weight: 400;
+            animation: roty 0.5s ease 0s infinite alternate;
+        }
+
+        .big-title>span:first-child,.big-title>span:last-child{
+            /* animation: translatey 0.5s ease 0s infinite alternate; */
         }
     </style>
 </head>
@@ -49,24 +96,27 @@
                 ['T'],
                 ['*'],
                 ['~'],
-                ['v'],
-                ['w'],
+                // ['w'],
                 ['&gt;', '&lt;']
             ]
             var mouth = [
                 ['m'],
-                ['_'],
-                ['w']
+                // ['_'],
+                ['w'],
+                ['v']
             ]
 
-            var oEye, oMouth;
+            var oEye = [], oMouth = [];
+
+            oEye = eyes[Math.floor(rand(0, eyes.length))];
+            oMouth = mouth[Math.floor(rand(0, mouth.length))];
 
             while (
-                (!oEye && !oMouth)
+                (!oEye[0] && !oMouth[0])
                 || (oEye[0] == oMouth[0])
                 || (oEye[0] == 'v' && oMouth[0] == 'w')
                 || (oEye[0] == 'm' && oMouth[0] == 'w')
-                ) {
+            ) {
                 oEye = eyes[Math.floor(rand(0, eyes.length))];
                 oMouth = mouth[Math.floor(rand(0, mouth.length))];
             }
@@ -78,7 +128,7 @@
 
         }
 
-        setInterval(getFace, 500)
+        setInterval(getFace, 1000)
         // document.addEventListener('click',getFace)
     </script>
 </body>
