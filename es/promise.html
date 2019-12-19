@@ -39,6 +39,7 @@
             console.log(arg);
             return fetch('/_res/bookmark.json')
         }).then((res) => {
+            console.log(res)
             return res.json()
             // return fetch('http://qq.com/')
         }).then((json) => {
