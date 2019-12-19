@@ -1,0 +1,136 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <script src="https://unpkg.com/highcharts@7.1.3/highcharts.js"></script>
+    <script src="https://unpkg.com/highcharts@7.1.3/modules/data.js"></script>
+    <!-- <script src="https://unpkg.com/highcharts@7.1.3/modules/exporting.js"></script> -->
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <style>
+        .highchart-cotainer {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="highchart-cotainer"></div>
+    </div>
+    <script>
+        var getStyle = function (node) {
+            return window.getComputedStyle(node, false);
+        }
+        var rand = function (min, max, ifInt) {
+            if (ifInt == true) {
+                return Math.floor(Math.random() * (max - min) + min);
+            } else {
+                return Math.random() * (max - min) + min;
+            }
+        };
+    </script>
+    <script>
+        var myChartContainer = document.querySelector('.highchart-cotainer');
+        var option =
+        {
+            chart: {
+                type: 'bar',
+                height: 600
+            },
+            title: {
+                text: 'Server Monitoring Demo'
+            },
+            legend: {
+                enabled: false
+            },
+            subtitle: {
+                text: 'Instance Load'
+            },
+            data: {
+                // csvURL: 'data:text/csv;base64,U2VydmVyLEluc3RhbmNlIExvYWQKZWMyLTI5NS0yMzItNTIuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20sMzYuMzk2MDQ4MDc2Nzk5OTEKZWMyLTI5NC0xOTQtMTQzLmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDc5LjU3ODc2MzQ1OTIxNDcxCmVjMi0zNDgtMTE2LTU1LmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDkwLjAxMzQ5NjM4NDIwMDk5CmVjMi0yOTQtMjUxLTQ5LmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDEyLjcwNzQ1NjA5OTMzNjQ1NAplYzItMjc0LTktMjAyLmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDc2Ljg1NjcxNTc3NzI0ODEzCmVjMi0zMDYtMjI4LTE4MS5jb21wdXRlLTEuYW1hem9uYXdzLmNvbSw4NS40Mzk0MjM4NDU0ODEyMwplYzItMjg1LTE1MS0yMTYuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20sNzQuMzg5MTE1ODQ0Nzk3MDgKZWMyLTMxNC0yMjktNjUuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20sNy40MjY4MzM0OTk3MDc5OTQKZWMyLTI5Ni0zMi0xNTQuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20sODEuMTU3NDM2MDA3NjM5NTcKZWMyLTI5Ny0yMTctMjMzLmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDUwLjk2MTM1MDYxNjY5NDA4CmVjMi0zMDktNjQtOTcuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20sOTcuMDk0NzAwODEyOTUzODMKZWMyLTI4NC0xMzUtOC5jb21wdXRlLTEuYW1hem9uYXdzLmNvbSwzOC45OTI3NTM2MjM2MDgyCmVjMi0zMDAtMTMzLTE2OC5jb21wdXRlLTEuYW1hem9uYXdzLmNvbSwxNS44NjkxNjAyNjMxOTAwODYKZWMyLTI5NS0yMzYtODguY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20sMTUuMDY4MDYwNzQ1MzkxNDUzCmVjMi0zMTMtMjI3LTQ0LmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDQ1LjQ4NzcwNzc3NTQ2OTc2CmVjMi0zNDQtNDgtMTg4LmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDY2LjcwNTA2NTIzMzk2MDIxCmVjMi0zMzYtNzAtMTkwLmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDU3LjI2OTcyMDE3NDU5MjE2CmVjMi0yODUtNzMtMTUuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20sNjMuMTA5NjUwOTIxNDI2MjEKZWMyLTI5Ni05Ni0yMzYuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb20sMTMuNTg2MDI4NTc1Njg4ODk1CmVjMi0yODAtMTc0LTgwLmNvbXB1dGUtMS5hbWF6b25hd3MuY29tLDU3LjE2ODg1MzE1ODI4MzMz',
+                csvURL: 'https://demo-live-data.highcharts.com/vs-load.csv',
+                enablePolling: true,
+                dataRefreshRate: 1
+            },
+            plotOptions: {
+                bar: {
+                    colorByPoint: true
+                },
+                series: {
+                    zones: [{
+                        color: '#4CAF50',
+                        value: 0
+                    }, {
+                        color: '#8BC34A',
+                        value: 10
+                    }, {
+                        color: '#CDDC39',
+                        value: 20
+                    }, {
+                        color: '#CDDC39',
+                        value: 30
+                    }, {
+                        color: '#FFEB3B',
+                        value: 40
+                    }, {
+                        color: '#FFEB3B',
+                        value: 50
+                    }, {
+                        color: '#FFC107',
+                        value: 60
+                    }, {
+                        color: '#FF9800',
+                        value: 70
+                    }, {
+                        color: '#FF5722',
+                        value: 80
+                    }, {
+                        color: '#F44336',
+                        value: 90
+                    }, {
+                        color: '#F44336',
+                        value: Number.MAX_VALUE
+                    }],
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.0f}%'
+                    }
+                }
+            },
+            tooltip: {
+                valueDecimals: 1,
+                valueSuffix: '%'
+            },
+            xAxis: {
+                type: 'category',
+                labels: {
+                    style: {
+                        fontSize: '10px'
+                    }
+                }
+            },
+            yAxis: {
+                max: 100,
+                title: false,
+                plotBands: [{
+                    from: 0,
+                    to: 30,
+                    color: '#E8F5E9'
+                }, {
+                    from: 30,
+                    to: 70,
+                    color: '#FFFDE7'
+                }, {
+                    from: 70,
+                    to: 100,
+                    color: "#FFEBEE"
+                }]
+            }
+        }
+        var myChart = Highcharts.chart(myChartContainer, option);
+
+    </script>
+</body>
+
+</html>
