@@ -1,0 +1,86 @@
+<html lang="en" style="font-size: 100px;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>dowob</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: consolas, tahoma, Arial, Helvetica, sans-serif;
+        }
+
+        .app {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: linear-gradient(45deg, rgb(0, 168, 158), rgb(0, 116, 186));
+        }
+
+        .big-title {
+            font-size: 1rem;
+            line-height: 1em;
+            margin: 0;
+            color: #fff;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="app">
+        <h1 class="big-title" style="text-align: center;">dowob</h1>
+    </div>
+
+    <script type="module">
+        function rand(min, max) {
+            return Math.random() * (max - min) + min
+        }
+
+        function getFace() {
+            var eyes = [
+                ['o'],
+                ['-'],
+                ['T'],
+                ['*'],
+                ['~'],
+                ['v'],
+                ['w'],
+                ['&gt;', '&lt;']
+            ]
+            var mouth = [
+                ['m'],
+                ['_'],
+                ['w']
+            ]
+
+            var oEye, oMouth;
+
+            while (
+                (!oEye && !oMouth)
+                || (oEye[0] == oMouth[0])
+                || (oEye[0] == 'v' && oMouth[0] == 'w')
+                || (oEye[0] == 'm' && oMouth[0] == 'w')
+                ) {
+                oEye = eyes[Math.floor(rand(0, eyes.length))];
+                oMouth = mouth[Math.floor(rand(0, mouth.length))];
+            }
+
+            var emotionStr = `<span>d</span><span>${oEye[0]}</span><span>${oMouth[0]}</span><span>${oEye.length > 1 ? oEye[1] : oEye[0]}</span><span>b</span>`;
+            console.log(emotionStr);
+
+            document.querySelector('h1').innerHTML = emotionStr;
+
+        }
+
+        setInterval(getFace, 500)
+        // document.addEventListener('click',getFace)
+    </script>
+</body>
+
+</html>
