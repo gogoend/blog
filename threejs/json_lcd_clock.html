@@ -10,13 +10,34 @@
     <script src="https://unpkg.com/stats.js@0.17.0/build/stats.min.js"></script>
     <script src="https://unpkg.com/dat.gui@0.7.6/build/dat.gui.js"></script>
     <script src="https://unpkg.com/three@0.109.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: consolas, tahoma, Arial, Helvetica, sans-serif;
+        }
+
+        .app {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: linear-gradient(45deg, rgb(0, 168, 158), rgb(0, 116, 186));
+            perspective: 400px;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="Stats-output"></div>
-    <div id="WebGL-output"></div>
+    <div id="app" class="app">
+        <div id="Stats-output"></div>
+        <div id="WebGL-output"></div>
+    </div>
+
     <script>
-        var cone,controls;
+        var cone, controls;
         //初始化指示器
         function initStats() {
             var stats = new Stats();
@@ -33,15 +54,15 @@
             //场景、摄像机、渲染器
             var scene = new THREE.Scene();
             var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-            var renderer = new THREE.WebGLRenderer({antialias:true,alpha:true});
-            renderer.setClearColor(0x0,0);
+            var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setClearColor(0x0, 0);
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMapEnabled = true;
             //轴向指示
             var axes = new THREE.AxisHelper(5);
             scene.add(axes);
 
-            var lightGroup=new THREE.Group();
+            var lightGroup = new THREE.Group();
 
             scene.add(lightGroup);
 
@@ -51,12 +72,12 @@
             document.getElementById("WebGL-output").appendChild(renderer.domElement);
 
             //轨道控制器
-            controls=new THREE.OrbitControls(camera);
-            controls.autoRotate=true;
-            controls.enablePan=false;
-            controls.enableZoom=false;
-            controls.maxPolarAngle=Math.PI*0.6;
-            controls.minPolarAngle=Math.PI*0.4;
+            controls = new THREE.OrbitControls(camera);
+            controls.autoRotate = true;
+            controls.enablePan = false;
+            controls.enableZoom = false;
+            controls.maxPolarAngle = Math.PI * 0.6;
+            controls.minPolarAngle = Math.PI * 0.4;
 
 
             function renderScene() {
@@ -78,55 +99,55 @@
 
             renderScene();
 
-            window.scene=scene;
-            window.lightGroup=lightGroup;
+            window.scene = scene;
+            window.lightGroup = lightGroup;
         }
-        function setLights(){
+        function setLights() {
             //点光源
             var spotLight = new THREE.SpotLight(0xffffff);
             spotLight.position.set(-40, 60, -10);
             spotLight.castShadow = true;
             lightGroup.add(spotLight);
 
-            var light1=new THREE.PointLight(0xEEAF1C)
-            light1.position.set(8.8,31,-10);
+            var light1 = new THREE.PointLight(0xEEAF1C)
+            light1.position.set(8.8, 31, -10);
             lightGroup.add(light1);
 
-            var light2=new THREE.DirectionalLight(0x37FFFA,0.6);
-            light2.position.set(-40,28,16);
+            var light2 = new THREE.DirectionalLight(0x37FFFA, 0.6);
+            light2.position.set(-40, 28, 16);
             lightGroup.add(light2);
 
-            var light3=new THREE.AmbientLight(0x888888);
+            var light3 = new THREE.AmbientLight(0x888888);
             lightGroup.add(light3);
 
-            var light4=new THREE.PointLight(0xB8FFB8,0.5);
-            light4.position.set(10,20,30);
+            var light4 = new THREE.PointLight(0xB8FFB8, 0.5);
+            light4.position.set(10, 20, 30);
             lightGroup.add(light4);
         }
 
-        function addModel(){
-            var loader=new THREE.ObjectLoader();
-            loader.load('../_res/lcd_clock.json',function(e){
+        function addModel() {
+            var loader = new THREE.ObjectLoader();
+            loader.load('../_res/lcd_clock.json', function (e) {
                 console.log(e);
                 scene.add(e);
-                cone=e;
+                cone = e;
 
-                e.position.set(0,0,0)
+                e.position.set(0, 0, 0)
 
             })
 
 
         }
 
-        function autoRotateObject(obj3d,speed=5){
-            if(!(obj3d instanceof THREE.Object3D)){
+        function autoRotateObject(obj3d, speed = 5) {
+            if (!(obj3d instanceof THREE.Object3D)) {
                 return
             }
-            var deg1=Math.PI/180;
-            obj3d.rotateY(speed*deg1);
+            var deg1 = Math.PI / 180;
+            obj3d.rotateY(speed * deg1);
         }
 
-        function animate(){
+        function animate() {
             autoRotateObject(lightGroup);
             controls.update();
             // autoRotateObject(cone,-0.2);
@@ -134,7 +155,7 @@
         }
 
 
-        document.addEventListener("DOMContentLoaded",()=>{
+        document.addEventListener("DOMContentLoaded", () => {
             init();
             setLights();
             addModel();
