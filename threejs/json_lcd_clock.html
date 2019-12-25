@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/stats.js@0.17.0/build/stats.min.js"></script>
     <script src="https://unpkg.com/dat.gui@0.7.6/build/dat.gui.js"></script>
     <script src="https://unpkg.com/three@0.109.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://unpkg.com/moment@2.24.0/moment.js"></script>
     <style>
         html,
         body {
@@ -37,7 +38,11 @@
     </div>
 
     <script>
-        var cone, controls;
+        var cone, controls, backMat, frontMat, canvas2dDOM;
+
+        canvas2dDOM = document.createElement('canvas');
+        canvas2dDOM.width = 1024;
+        canvas2dDOM.height = 1024;
         //初始化指示器
         function initStats() {
             var stats = new Stats();
@@ -74,10 +79,11 @@
             //轨道控制器
             controls = new THREE.OrbitControls(camera);
             controls.autoRotate = true;
+            controls.autoRotateSpeed = 4;
             controls.enablePan = false;
-            controls.enableZoom = false;
+            // controls.enableZoom = false;
             controls.maxPolarAngle = Math.PI * 0.6;
-            controls.minPolarAngle = Math.PI * 0.4;
+            controls.minPolarAngle = Math.PI * 0.6;
 
 
             function renderScene() {
@@ -132,7 +138,10 @@
                 scene.add(e);
                 cone = e;
 
-                e.position.set(0, 0, 0)
+                e.position.set(0, 0, 0);
+
+                backMat = cone.getObjectByProperty('uuid', '67670E8D-66A3-40E1-B86C-3110BB0B372F').material;
+                frontMat = cone.getObjectByProperty('uuid', 'EC083D49-0ECC-4461-B6AE-0473861B3129').material;
 
             })
 
@@ -151,8 +160,38 @@
             autoRotateObject(lightGroup);
             controls.update();
             // autoRotateObject(cone,-0.2);
-            requestAnimationFrame(animate)
+            requestAnimationFrame(animate);
         }
+
+        setInterval(() => {
+            if (cone && frontMat && backMat) {
+
+                var c = canvas2dDOM.getContext('2d');
+                c.clearRect = (0, 0, canvas2dDOM.width, canvas2dDOM.height);
+                c.fillStyle = 'rgb(38,38,38)';
+                c.fillRect(0, 0, canvas2dDOM.width, canvas2dDOM.height);
+                c.textAlign = 'center';
+                c.fillStyle = 'rgb(0,255,242)';
+                c.font = '110px Bahnschrift';
+                c.fillText(moment().format('YYYY-MM-DD'), 512, 730);
+                c.font = '220px Bahnschrift';
+                c.fillText(moment().format('HH:mm:ss'), 512, 940);
+
+                frontMat.map.image.src = canvas2dDOM.toDataURL("image/jpeg", 0.5);
+                frontMat.emissiveMap.image.src = frontMat.map.image.src;
+
+
+                backMat.map = frontMat.map;
+                backMat.emissiveMap = frontMat.emissiveMap;
+
+                frontMat.map.needsUpdate = true;
+                frontMat.emissiveMap.needsUpdate = true;
+
+                // console.log(frontMat.map.image.src)
+                // frontMat.needsUpdate=true;
+
+            }
+        }, 500)
 
 
         document.addEventListener("DOMContentLoaded", () => {

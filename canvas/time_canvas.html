@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <script src="https://unpkg.com/moment@2.24.0/moment.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <canvas id="canvas" width="1024" height="1024"></canvas>
+    </div>
+
+    <script>
+
+        (function () {
+            var canvasDOM=document.createElement('canvas');
+            canvasDOM.width=1024;
+            canvasDOM.height=1024;
+            var c = canvas.getContext('2d');
+            time();
+            function time() {
+                c.clearRect = (0, 0, canvasDOM.width, canvasDOM.height);
+                c.fillStyle = 'rgb(38,38,38)';
+                c.fillRect(0, 0, canvasDOM.width, canvasDOM.height);
+                c.textAlign = 'center';
+                c.fillStyle = 'rgb(0,255,242)';
+                c.font = '110px Bahnschrift';
+                c.fillText(moment().format('YYYY-MM-DD'), 512, 730);
+
+                c.font = '220px Bahnschrift';
+                c.fillText(moment().format('HH:mm:ss'), 512, 940);
+                canvasDOM.toDataURL("image/jpeg", 0.5);
+
+                requestAnimationFrame(time)
+            }
+        })()
+
+    </script>
+</body>
+
+</html>
