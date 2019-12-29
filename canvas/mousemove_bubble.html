@@ -35,7 +35,7 @@
         }
         var cancon = canvas.getContext("2d");
         cancon.strokeStyle = "red";
-        var txtArry = ["生日快乐", "福如东海", "天天开心", "寿比南山", "万事如意"];
+        // var txtArry = ["生日快乐", "福如东海", "天天开心", "寿比南山", "万事如意"];
         function Color() {
             var r = Math.floor(random(0, 255));
             var g = Math.floor(random(0, 255));
@@ -55,19 +55,27 @@
                 this.color = Color();
                 this.dx = random(-1, 1);
                 this.dy = random(-1, 1);
-                this.text = txtArry[Math.floor(random(0, txtArry.length))];
+                this.rad=random(0,1.9);
+                this.radDirection=random(0,0.09);
+                this.type=Math.random()>0.5?'circle':'rect';
+                // this.text = txtArry[Math.floor(random(0, txtArry.length))];
             },
             draw: function () {
                 cancon.beginPath();//重新拿笔画
                 cancon.strokeStyle = this.color;
                 cancon.fillStyle = this.color;
-                cancon.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+
+                if(this.type=='circle'){
+                    cancon.arc(this.x, this.y, this.r, 0, Math.PI * this.rad);
+                }else{
+                    cancon.rect(this.x,this.y,this.r*2,this.r*2)
+                }
                 cancon.stroke();
                 cancon.fill();
-                cancon.font = "bold 15px sans-serif";
-                cancon.textAlign = 'center';
-                if (this.r > 20)
-                    cancon.fillText(this.text, this.x, this.y, this.r * 2);	//绘制文字
+                // cancon.font = "bold 15px sans-serif";
+                // cancon.textAlign = 'center';
+                // if (this.r > 20)
+                //     cancon.fillText(this.text, this.x, this.y, this.r * 2);	//绘制文字
             },
             update: function () {
                 this.x += this.dx;
@@ -75,11 +83,21 @@
 
                 //泡泡反弹
 
-                if ((this.x + this.r) > w || (this.x - this.r) < 0)
-                    this.dx = -this.dx;
-                if ((this.y + this.r) > h || (this.y - this.r) < 0)
-                    this.dy = -this.dy;
+                if ((this.x + this.r) > w || (this.x - this.r) < 0){
+                    // this.dx = -this.dx;
+                    bArry.splice(bArry.indexOf(this),1)
+                }
+                if ((this.y + this.r) > h || (this.y - this.r) < 0){
+                    // this.dy = -this.dy;
+                    bArry.splice(bArry.indexOf(this),1)
+                }
 
+                if(this.rad>1.999 || this.rad<0){
+                    // this.rad+=this.radDirection
+                    this.radDirection=-this.radDirection
+                }
+
+                this.rad+=this.radDirection
 
                 this.xD = (positionX - this.x) < 0 ? -1 * (positionX - this.x) : (positionX - this.x);
                 this.yD = (positionY - this.y) < 0 ? -1 * (positionY - this.y) : (positionY - this.y);
@@ -89,8 +107,6 @@
                     if (this.r < 30)
                         this.r += 1;
                 }
-
-
 
                 else if (this.r > 10 && this.xD > d && this.yD > d) {
                     this.r -= 1;
