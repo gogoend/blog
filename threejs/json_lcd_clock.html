@@ -83,7 +83,7 @@
             controls.enablePan = false;
             // controls.enableZoom = false;
             controls.maxPolarAngle = Math.PI * 0.6;
-            controls.minPolarAngle = Math.PI * 0.6;
+            controls.minPolarAngle = Math.PI * 0.4;
 
 
             function renderScene() {
@@ -157,7 +157,7 @@
         }
 
         function animate() {
-            autoRotateObject(lightGroup);
+            autoRotateObject(lightGroup,2);
             controls.update();
             // autoRotateObject(cone,-0.2);
             requestAnimationFrame(animate);
