@@ -1,0 +1,38 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>三角形</title>
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <script src="https://unpkg.com/stats.js@0.17.0/build/stats.min.js"></script>
+</head>
+
+<body>
+    <div id="Stats-output"></div>
+    <div id="WebGL-output">
+        <canvas id ='c' width='480' height='320'></canvas>
+
+    </div>
+    <script>
+        //初始化指示器
+        (function initStats() {
+            var stats = new Stats();
+            stats.setMode(0);
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.position = '0px';
+            stats.domElement.style.position = '0px';
+            document.getElementById("Stats-output").appendChild(stats.domElement);
+            return stats;
+        })()
+    </script>
+    <script>
+        var canvas = document.getElementById('c');
+        var gl=canvas.getContext("webgl");
+        gl.clearColor(0,0,0.5,1);
+        gl.clear(gl.COLOR_BUFFER_BIT)
+    </script>
+</body>
+
+</html>
