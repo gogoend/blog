@@ -1,0 +1,86 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body,
+        html {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wow" style="width:0;height: 400px;background-color: orangered;"></div>
+    <script type="module">
+        import { easingFuncs as ease } from './easing_funcs.js';
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+        function getStyle(obj, attr) {
+            if (obj.currentStyle) {
+                return obj.currentStyle[attr];
+            }
+            else {
+                return getComputedStyle(obj, false)[attr];
+            }
+        }
+
+        let theEl = document.getElementById('wow');
+        animation(theEl, {
+            width: 10,
+            height: 500
+        }, 2000)
+
+        function animation(el, finalStatus, duration) {
+            let startTime = new Date().getTime();
+            let endTime = startTime + duration;
+
+            var oldStatus = {
+                width: parseFloat(getStyle(el, 'width')),
+                height: parseFloat(getStyle(el, 'height'))
+            }
+            let totalDelta = {
+                width: finalStatus.width - parseInt(el.style.width),
+                height: finalStatus.height - parseInt(el.style.height),
+            }
+
+
+            var timer = setInterval(() => {
+
+                let currentTime = new Date().getTime();
+                let currentProgress = clamp((currentTime - startTime) / duration,0,1);
+
+                if (currentProgress >= 1) {
+                    clearInterval(timer)
+                }
+                console.log(currentProgress)
+
+                el.style.width = oldStatus.width + totalDelta.width * ease.linear(currentProgress) + 'px';//parseFloat(el.style.width)+1+'px';
+
+                // let currentProgress=(parseInt(el.style.width)-props.width)/totalDelta.width;
+                // el.style.width=parseFloat(el.style.width)+1+'px';
+                // console.log(currentProgress*100,ease.circularInOut(currentProgress)*100)
+                // if(progress>=1){
+                //     clearInterval(timer)
+                // }
+
+            }, 1000 / 60)
+
+            // setInterval(()=>{
+            //     if(parseInt(el.style.height)<finalStatus.height){
+            //        el.style.height=parseFloat(el.style.height)+1+'px'
+            //     }
+            // },50)
+
+        }
+    </script>
+</body>
+
+</html>
