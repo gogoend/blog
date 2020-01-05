@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>缓动动画测试</title>
     <style>
         body,
         html {
@@ -12,6 +12,10 @@
             height: 100vh;
             margin: 0;
             box-sizing: border-box;
+        }
+
+        #wow {
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -33,16 +37,19 @@
         }
 
         let theEl = document.getElementById('wow');
-        animation(theEl, {
-            width: 10,
-            height: 500
-        }, 2000)
 
-        function animation(el, finalStatus, duration) {
+        setTimeout(() =>
+            animation(theEl, {
+                width: 600,
+                height: 500
+            }, 2000, 'bounceOut')
+            , 400)
+
+
+        function animation(el, finalStatus, duration, easeType) {
             let startTime = new Date().getTime();
-            let endTime = startTime + duration;
 
-            var oldStatus = {
+            let oldStatus = {
                 width: parseFloat(getStyle(el, 'width')),
                 height: parseFloat(getStyle(el, 'height'))
             }
@@ -51,34 +58,22 @@
                 height: finalStatus.height - parseInt(el.style.height),
             }
 
-
-            var timer = setInterval(() => {
-
+            let loop = () => {
+                let endTime = startTime + duration;
                 let currentTime = new Date().getTime();
-                let currentProgress = clamp((currentTime - startTime) / duration,0,1);
-
-                if (currentProgress >= 1) {
-                    clearInterval(timer)
-                }
+                let currentProgress = clamp((currentTime - startTime) / duration, 0, 1);
+                console.log(el.style.width)
+                el.style.width = oldStatus.width + totalDelta.width * ease[easeType](currentProgress) + 'px';
                 console.log(currentProgress)
 
-                el.style.width = oldStatus.width + totalDelta.width * ease.linear(currentProgress) + 'px';//parseFloat(el.style.width)+1+'px';
-
-                // let currentProgress=(parseInt(el.style.width)-props.width)/totalDelta.width;
-                // el.style.width=parseFloat(el.style.width)+1+'px';
-                // console.log(currentProgress*100,ease.circularInOut(currentProgress)*100)
-                // if(progress>=1){
-                //     clearInterval(timer)
-                // }
-
-            }, 1000 / 60)
-
-            // setInterval(()=>{
-            //     if(parseInt(el.style.height)<finalStatus.height){
-            //        el.style.height=parseFloat(el.style.height)+1+'px'
-            //     }
-            // },50)
-
+                if (currentProgress == 1) {
+                    // clearInterval(timer)
+                    cancelAnimationFrame(loop);
+                    return
+                }
+                requestAnimationFrame(loop)
+            }
+            loop()
         }
     </script>
 </body>
