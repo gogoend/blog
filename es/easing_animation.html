@@ -21,7 +21,7 @@
 </head>
 
 <body>
-    <div id="wow" style="width:0;height: 400px;background-color: orangered;"></div>
+    <div id="wow" style="width:0;height: 0px;background-color: orangered;"></div>
     <script type="module">
         import { easingFuncs as ease } from './easing_funcs.js';
         function clamp(value, min, max) {
@@ -42,7 +42,7 @@
             animation(theEl, {
                 width: 600,
                 height: 500
-            }, 2000, 'bounceOut')
+            }, 2000, 'backInOut')
             , 400)
 
 
@@ -62,8 +62,10 @@
                 let endTime = startTime + duration;
                 let currentTime = new Date().getTime();
                 let currentProgress = clamp((currentTime - startTime) / duration, 0, 1);
-                console.log(el.style.width)
+                // console.log(el.style.width)
                 el.style.width = oldStatus.width + totalDelta.width * ease[easeType](currentProgress) + 'px';
+                el.style.height = oldStatus.height + totalDelta.height * ease[easeType](currentProgress) + 'px';
+
                 console.log(currentProgress)
 
                 if (currentProgress == 1) {
