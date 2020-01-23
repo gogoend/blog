@@ -1,20 +1,23 @@
 import { easingFuncs as ease } from './easing_funcs.js';
 import { clamp } from './util.js';
 
-function* animation(el,queue,duration=200,easeType='quadraticInOut'){
+function* animation(el, queue, duration = 2000, easeType = 'quadraticInOut') {
     console.log(queue);
 
-    let index=0;
-    if(!queue[index]){
-        return;
-    }else{
-        yield animationExecutor(el,queue[index].props,queue[index++].props,duration,easeType)
+    let i = 0;
+
+    while (i <= queue.length) {
+        yield queue[i + 1] ? (
+            animationExecutor(el, queue[i].props, queue[++i].props, duration, easeType),
+            true
+            ) 
+            :
+            false;
     }
 
 }
 
-function animationExecutor(el,perviousStatus, finalStatus, duration, easeType) {
-    debugger;
+function animationExecutor(el, perviousStatus, finalStatus, duration, easeType) {
     let startTime = new Date().getTime();
 
     let totalDelta = {
@@ -42,4 +45,4 @@ function animationExecutor(el,perviousStatus, finalStatus, duration, easeType) {
     loop()
 }
 
-export {animation}
+export { animation }
