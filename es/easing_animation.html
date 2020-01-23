@@ -23,60 +23,20 @@
 <body>
     <div id="wow" style="width:0;height: 0px;background-color: orangered;"></div>
     <script type="module">
-        import { easingFuncs as ease } from './easing_funcs.js';
-        function clamp(value, min, max) {
-            return Math.max(min, Math.min(max, value));
-        }
-        function getStyle(obj, attr) {
-            if (obj.currentStyle) {
-                return obj.currentStyle[attr];
-            }
-            else {
-                return getComputedStyle(obj, false)[attr];
-            }
-        }
+        import {animation} from './animation.js';
+        import {getStyle} from './util.js';
 
         let theEl = document.getElementById('wow');
 
-        setTimeout(() =>
-            animation(theEl, {
+            animation(theEl,
+            {
+                width: parseFloat(getStyle(theEl, 'width')),
+                height: parseFloat(getStyle(theEl, 'height'))
+            }
+            , {
                 width: 600,
                 height: 500
             }, 2000, 'backInOut')
-            , 400)
-
-
-        function animation(el, finalStatus, duration, easeType) {
-            let startTime = new Date().getTime();
-
-            let oldStatus = {
-                width: parseFloat(getStyle(el, 'width')),
-                height: parseFloat(getStyle(el, 'height'))
-            }
-            let totalDelta = {
-                width: finalStatus.width - parseInt(el.style.width),
-                height: finalStatus.height - parseInt(el.style.height),
-            }
-
-            let loop = () => {
-                let endTime = startTime + duration;
-                let currentTime = new Date().getTime();
-                let currentProgress = clamp((currentTime - startTime) / duration, 0, 1);
-                // console.log(el.style.width)
-                el.style.width = oldStatus.width + totalDelta.width * ease[easeType](currentProgress) + 'px';
-                el.style.height = oldStatus.height + totalDelta.height * ease[easeType](currentProgress) + 'px';
-
-                console.log(currentProgress)
-
-                if (currentProgress == 1) {
-                    // clearInterval(timer)
-                    cancelAnimationFrame(loop);
-                    return
-                }
-                requestAnimationFrame(loop)
-            }
-            loop()
-        }
     </script>
 </body>
 
