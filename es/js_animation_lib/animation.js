@@ -8,11 +8,17 @@ function* animation(el, queue, duration = 2000, easeType = 'quadraticInOut') {
 
     while (i <= queue.length) {
         yield queue[i + 1] ? (
-            animationExecutor(el, queue[i].props, queue[++i].props, duration, easeType),
+            animationExecutor(
+                el, 
+                queue[i].props, 
+                queue[++i].props, 
+                queue[i].duration?queue[i].duration:duration, 
+                ease[queue[i].easeType]?queue[i].easeType:easeType
+            ),
             true
             ) 
             :
-            false;
+            undefined;
     }
 
 }
@@ -32,8 +38,6 @@ function animationExecutor(el, perviousStatus, finalStatus, duration, easeType) 
         // console.log(el.style.width)
         el.style.width = perviousStatus.width + totalDelta.width * ease[easeType](currentProgress) + 'px';
         el.style.height = perviousStatus.height + totalDelta.height * ease[easeType](currentProgress) + 'px';
-
-        console.log(currentProgress)
 
         if (currentProgress == 1) {
             // clearInterval(timer)
