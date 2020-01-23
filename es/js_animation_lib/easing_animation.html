@@ -23,20 +23,39 @@
 <body>
     <div id="wow" style="width:0;height: 0px;background-color: orangered;"></div>
     <script type="module">
-        import {animation} from './animation.js';
-        import {getStyle} from './util.js';
+        import { animation } from './animation.js';
+        import { getStyle } from './util.js';
 
         let theEl = document.getElementById('wow');
 
-            animation(theEl,
+        let animationQueue = [
             {
-                width: parseFloat(getStyle(theEl, 'width')),
-                height: parseFloat(getStyle(theEl, 'height'))
+                duration:200,
+                easeType:'',
+                props: {
+                    width: parseFloat(getStyle(theEl, 'width')),
+                    height: parseFloat(getStyle(theEl, 'height'))
+                },
+            },
+            {
+                duration:200,
+                easeType:'',
+                props: {
+                    width: 600,
+                    height: 500
+                },
+            },
+            {
+                duration:200,
+                easeType:'',
+                props: {
+                    width: 400,
+                    height: 200
+                },
             }
-            , {
-                width: 600,
-                height: 500
-            }, 2000, 'backInOut')
+        ]
+
+        window.zzz=animation(theEl, animationQueue, 2000, 'backInOut')
     </script>
 </body>
 
