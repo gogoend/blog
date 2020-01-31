@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Anikyu is a simple tween animation library, based on JavaScript, can create continuous tween animation for number values in one specified object.
+Anikyu, a simple tween animation library based on JavaScript, can create continuous tween animation for number values in one specified object.
 
 Current version temporarily only support the tween animation of CSS property whose unit is *px*.
 
