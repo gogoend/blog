@@ -1,0 +1,35 @@
+{
+  "name": "anikyu",
+  "version": "0.1.4",
+  "description": "A simple animation library for creating queued motion tweens for CSS attributes which are using 'px' as its unit.",
+  "main": "src/anikyu.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "build": "webpack-cli"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gogoend/anikyu.git"
+  },
+  "keywords": [
+    "js",
+    "animation",
+    "tween",
+    "motion",
+    "css"
+  ],
+  "author": "gogoend",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gogoend/anikyu/issues"
+  },
+  "homepage": "https://github.com/gogoend/anikyu#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/polyfill": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "babel-loader": "^8.0.6",
+    "webpack": "^4.41.5"
+  }
+}
