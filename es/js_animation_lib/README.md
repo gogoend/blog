@@ -8,8 +8,8 @@ Anikyu is a simple tween animation library, based on JavaScript, can create cont
 Current version temporarily only support the tween animation of CSS property whose unit is *px*.
 
 ## Browser Compatibility
-
-The Anikyu uses some features or functions, like ES Module, Generator and requestAnimationFrame, which are not support in Internet Explorer and some older browsers. As for this, you can use the Anikyu.js in dist folder, which is built with Webpack and Babel, and import via script tag, then Anikyu will become a global variable.
+At least IE 9 for Anikyu.js in dist folder.
+The Anikyu uses some features or functions, like ES Module, Generator and requestAnimationFrame, which are not support in Internet Explorer and some older browsers. As for this, you can use Anikyu.js in dist folder, which is built with Webpack and Babel, and import via script tag, then Anikyu will become a global variable.
 
 
 ## Import to your project
