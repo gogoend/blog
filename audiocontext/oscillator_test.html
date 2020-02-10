@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>audioContext测试</title>
+</head>
+
+<body>
+    <div></div>
+    <script>
+
+        let i = 0;
+
+        let arrFreq = [196.00, 220.00, 246.94, 261.63, 293.66, 329.63, 349.23];
+
+        window.onclick = () => {
+            let timer = setInterval(() => {
+
+                if(!arrFreq[i]){
+                    clearInterval(timer)
+                    return
+                }
+
+                let aCtx = new AudioContext();
+                // 振荡器
+                let oscillator = aCtx.createOscillator();
+
+                oscillator.type = 'sine';
+                //设置频率
+                oscillator.frequency.value = arrFreq[i];
+                oscillator.connect(aCtx.destination);
+
+                oscillator.start(aCtx.currentTime);
+                oscillator.stop(aCtx.currentTime + 1);
+
+                console.log(i);
+                i++;
+            }, 1000)
+        }
+
+    </script>
+</body>
+
+</html>
