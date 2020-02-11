@@ -9,22 +9,33 @@
 </head>
 
 <body>
-    <div></div>
+    <div id="wow"></div>
     <script>
 
-        let i = 0;
+        let i = 0, direction = 1;
 
         let arrFreq = [196.00, 220.00, 246.94, 261.63, 293.66, 329.63, 349.23];
+
+        let aCtx = new AudioContext();
 
         window.onclick = () => {
             let timer = setInterval(() => {
 
-                if(!arrFreq[i]){
-                    clearInterval(timer)
-                    return
+                // if(!arrFreq[i+1]){
+                //     direction=-direction
+                // }
+                // if(i<0){
+                //     i++;direction=-direction
+                // }
+
+                // 到头时掉头
+                let freq = arrFreq[i]
+                if (!freq) {
+                    direction = -direction;
+                    i = i + 2 * direction;
+                    freq = arrFreq[i];
                 }
 
-                let aCtx = new AudioContext();
                 // 振荡器
                 let oscillator = aCtx.createOscillator();
 
@@ -36,8 +47,9 @@
                 oscillator.start(aCtx.currentTime);
                 oscillator.stop(aCtx.currentTime + 1);
 
-                console.log(i);
-                i++;
+                document.getElementById('wow').innerText+=i;
+
+                i += direction;
             }, 1000)
         }
 
