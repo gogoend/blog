@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>audioContext - 一闪一闪亮晶晶</title>
+</head>
+
+<body>
+    <div id="wow"></div>
+    <script>
+
+        let i = 0;
+
+        let noteMap = {
+            1: 523.251,
+            '1b': 554.365,
+            2: 587.33,
+            '2b': 622.254,
+            3: 659.255,
+            4: 698.456,
+            '4b': 739.989,
+            5: 783.991,
+            '5b': 830.609,
+            6: 880,
+            '6b': 932.328,
+            7: 987.767,
+        }
+        let scores = [
+            1, 1, 5, 5, 6, 6, 5,
+            4, 4, 3, 3, 2, 2, 1,
+            5, 5, 4, 4, 3, 3, 2,
+            5, 5, 4, 4, 3, 3, 2,
+            1, 1, 5, 5, 6, 6, 5,
+            4, 4, 3, 3, 2, 2, 1,
+        ]
+
+
+        let aCtx = new AudioContext();
+
+        window.onclick = () => {
+            let timer = setInterval(() => {
+
+                let freq = noteMap[scores[i]]
+                if (!freq) {
+                    i = 0
+                    freq = noteMap[scores[i]]
+                }
+
+                // 振荡器
+                let oscillator = aCtx.createOscillator();
+                let gainNode = aCtx.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(aCtx.destination);
+
+                oscillator.type = 'sine';
+                //设置频率
+                oscillator.frequency.value = freq;
+                // oscillator.connect(aCtx.destination);
+
+                gainNode.gain.setValueAtTime(0, aCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(1, aCtx.currentTime + 0.01)
+                gainNode.gain.linearRampToValueAtTime(6, aCtx.currentTime + 0.45)
+                gainNode.gain.exponentialRampToValueAtTime(0.001, aCtx.currentTime + 0.5);
+
+                oscillator.start(aCtx.currentTime);
+                oscillator.stop(aCtx.currentTime + 0.5);
+
+                document.getElementById('wow').innerText += i;
+
+                i += 1;
+            }, 1000)
+        }
+
+    </script>
+</body>
+
+</html>
