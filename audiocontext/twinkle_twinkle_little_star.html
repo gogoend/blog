@@ -56,14 +56,15 @@
                 oscillator.connect(gainNode);
                 gainNode.connect(aCtx.destination);
 
-                oscillator.type = 'sine';
+                // sine square sawtooth triangle custom
+                oscillator.type = 'triangle';
                 //设置频率
                 oscillator.frequency.value = freq;
                 // oscillator.connect(aCtx.destination);
 
                 gainNode.gain.setValueAtTime(0, aCtx.currentTime);
                 gainNode.gain.linearRampToValueAtTime(1, aCtx.currentTime + 0.01)
-                gainNode.gain.linearRampToValueAtTime(6, aCtx.currentTime + 0.45)
+                gainNode.gain.linearRampToValueAtTime(6, aCtx.currentTime + 0.35)
                 gainNode.gain.exponentialRampToValueAtTime(0.001, aCtx.currentTime + 0.5);
 
                 oscillator.start(aCtx.currentTime);
