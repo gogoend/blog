@@ -2,7 +2,6 @@
 
 <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
     <style>
         #app {
             height: 100%;
@@ -23,17 +22,25 @@
         <div class="click-area"></div>
     </div>
     <script>
-        window.addEventListener('done', function (e) {
+        let oO = new EventTarget();
+
+        oO.addEventListener('done', function (e) {
             console.log(e)
         })
-        
-        let myEvent = new CustomEvent('done', {
-            detail: {
-                msg: '哈哈哈'
-            }
+        oO.addEventListener('done', function (e) {
+            alert()
         })
 
-        window.dispatchEvent(myEvent)
+        function dispatchByName(obj, eventName) {
+            // 推荐的初始化事件的方法
+            let theEvent = new CustomEvent('done', {
+                detail: {
+                    msg: 'i`m a messgae'
+                }
+            })
+
+            obj.dispatchEvent(theEvent)
+        }
     </script>
 </body>
 
