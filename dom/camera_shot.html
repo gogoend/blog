@@ -1,0 +1,56 @@
+<html>
+
+</html>
+
+<body>
+    <video id="video" width="480" height="320" controls>
+    </video>
+    <div>
+        <button id="captureBtn">拍照</button>
+    </div>
+    <canvas id="canvas" width="480" height="320"></canvas>
+    <script>
+        function getUserMedia(constraints, success, error) {
+            if (navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
+            } else if (navigator.webkitGetUserMeida) {
+                navigator.webkitGetUserMedia(constraints, success, error)
+            } else if (navigator.mozGetUserMedia) {
+                navigator.mozGetUserMedia(constraints, success, error)
+            } else if (navigator.getUserMedia) {
+                navigator.getUserMedia(constraints, success, error)
+            }
+        }
+
+        let video = document.querySelector('#video');
+        let canvas = document.querySelector('#canvas');
+        let context = canvas.getContext('2d');
+
+        function success(stream) {
+            //let compatibleURL=window.URL || window.webkitURL;
+            console.log(stream);
+            video.srcObject = stream;
+            //video.src=window.URL.createObjectURL(stream);
+            video.onloadedmetadata = function (e) {
+                video.play();
+            }
+        }
+
+        function error(error) {
+            console.log(error);
+        }
+        let constraints = { video: { width: 480, height: 320 } }
+
+        if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+            getUserMedia(constraints, success, error);
+        } else {
+            alert('不支持')
+        }
+
+
+        let captureBtn = document.querySelector('#captureBtn');
+        captureBtn.onclick = function () {
+            context.drawImage(video, 0, 0, 480, 320);//将video当前帧绘制到Canvas上，即完成拍照过程
+        }
+    </script>
+</body>
