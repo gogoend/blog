@@ -1,0 +1,99 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        ul.particle-wrap {
+            display: flex;
+            list-style: none;
+            position: absolute;
+            padding: 0;
+            margin: auto;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 75%;
+            height: 75%;
+            flex-wrap: wrap;
+        }
+
+        ul.particle-wrap>li {
+            width: calc(16.6% - 10px);
+            height: calc(16.6% - 10px);
+            background-color: orangered;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="particle-wrap">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <script>
+        function calcTheDistanceToMouse(els, mousePos) {
+            if (!Array.isArray(els)) return []
+            let distanceArr = []
+
+            return distanceArr
+        }
+        let liEls = document.querySelectorAll('ul.particle-wrap>li')
+        window.addEventListener('mousemove', function (e) {
+            let mousePos = [e.clientX, e.clientY]
+            let distanceArr = Array.from(liEls).map((el, index) => {
+                let aBox=el.getBoundingClientRect()
+                return Math.sqrt((e.clientX-aBox.x)**2+(e.clientY-aBox.y)**2)
+            })
+            let max=Math.max.apply(this,distanceArr)
+            // console.log(max)
+
+            let deltaArr = distanceArr.map((item,index)=>{
+                return (1-(max-item)/max)**2
+            }).forEach((item,index)=>{
+                liEls[index].style.transform=`scale(${item}) rotate(${item*90}deg)`
+            })
+            // console.log(deltaArr)
+
+        })
+    </script>
+</body>
+
+</html>
