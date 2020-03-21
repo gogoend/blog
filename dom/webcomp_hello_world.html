@@ -10,37 +10,60 @@
             padding: 0;
             margin: 0;
         }
+        p.blue{
+            color: blue;
+        }
     </style>
 </head>
 
 <body>
-    <div>
-        <p>
-            外部内容
-        </p>
-    </div>
-    <hello-world></hello-world>
-    <hello-world></hello-world>
-    <hello-world></hello-world>
-    <hello-world></hello-world>
-    <hello-world></hello-world>
+    <p class="blue">
+        外部内容
+    </p>
+    <hello-world>
+        <button slot="name">具名插槽</button>
+    </hello-world>
+    <hello-world>
+        <button slot="name2">另一个具名插槽</button>
+        <button>匿名插槽</button>
+    </hello-world>
     <template id="helloWorld">
         <style>
-            :host p{
+            p {
                 color: orangered;
             }
         </style>
-        <p>HelloWorld~</p>
+        <p class="blue">
+            HelloWorld~
+            <slot></slot>
+            <slot name="name"></slot>
+            <slot name="name2"></slot>
+        </p>
     </template>
     <script>
         class HelloWorld extends HTMLElement {
             constructor() {
                 super();
-                let templateEl = document.getElementById('helloWorld')
 
+                var shadow = this.attachShadow({ mode: 'open' });
+
+                let templateEl = document.getElementById('helloWorld')
                 let content = templateEl.content.cloneNode(true);
-                this.append(content)
+                shadow.append(content)
             }
+            connectedCallback() {
+                console.log(`connectedCallback`)
+            }
+            disconnectedCallback() {
+                console.log(`disconnectedCallback`)
+            }
+            adoptedCallback() {
+                console.log(`adoptedCallback`)
+            }
+            attributeChangedCallback() {
+                console.log(`attributeChangedCallback`)
+            }
+
         }
         customElements.define('hello-world', HelloWorld)
     </script>
