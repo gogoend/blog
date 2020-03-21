@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>querySelectorAll 测试</title>
+</head>
+
+<body>
+    <p>原文：
+        <a href="https://www.zhangxinxu.com/wordpress/2015/11/know-dom-queryselectorall/" target="_blank">
+            https://www.zhangxinxu.com/wordpress/2015/11/know-dom-queryselectorall/"
+        </a>
+    </p>
+    <div class="ooo">
+        <div class="i">
+            <div class="o"></div>
+            <div class="o"></div>
+            <div class="o">
+                <div class="i">
+                    <div class="o">
+                        <div class="i">
+                            <div class="o">
+                            </div>
+                            <div class="o"></div>
+                        </div>
+                    </div>
+                    <div class="o">
+                        <div class="i">
+                            <div class="o"></div>
+                            <div class="o"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="i">
+        </div>
+        <div class="i">
+        </div>
+    </div>
+    <div class="iiii">
+        <div class="iii">
+            <div class="ii"></div>
+            <div class="ii"></div>
+            <div class="ii"></div>
+        </div>
+        <div class="iii"></div>
+        <div class="iii"></div>
+        <div class="iii"></div>
+    </div>
+    <script>
+        function select() {
+            // 期望选中
+            console.log(document.querySelectorAll(".ooo div div"))
+            // 期望和上一行代码效果一致
+            console.log(document.querySelector(".ooo").querySelectorAll("div div"));
+
+            //修复后
+            // console.log(document.querySelector(".ooo").querySelectorAll(":scope div div"));
+        }
+    </script>
+
+</body>
+
+</html>
