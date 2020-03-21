@@ -1,0 +1,49 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Components 测试</title>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <p>
+            外部内容
+        </p>
+    </div>
+    <hello-world></hello-world>
+    <hello-world></hello-world>
+    <hello-world></hello-world>
+    <hello-world></hello-world>
+    <hello-world></hello-world>
+    <template id="helloWorld">
+        <style>
+            :host p{
+                color: orangered;
+            }
+        </style>
+        <p>HelloWorld~</p>
+    </template>
+    <script>
+        class HelloWorld extends HTMLElement {
+            constructor() {
+                super();
+                let templateEl = document.getElementById('helloWorld')
+
+                let content = templateEl.content.cloneNode(true);
+                this.append(content)
+            }
+        }
+        customElements.define('hello-world', HelloWorld)
+    </script>
+</body>
+
+</html>
