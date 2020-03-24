@@ -1,0 +1,77 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let arr1 = [15, 16]
+        let obj = {
+            a: 1,
+            b: 2,
+            c: {
+                d: 4,
+                e: {
+                    f: 5,
+                    g: [6, 7, 8, [
+                        9, 10, 11, 12, [
+                            13, 14, arr1,
+                            {
+                                h: 17,
+                                i: [
+                                    18, 19
+                                ]
+                            }
+                        ],
+                        {
+                            j: 20
+                        }
+                    ]],
+                    k: {
+                        l: 21,
+                        m: 22
+                    }
+                }
+            },
+            n: 23,
+            o: [24, 25, 26],
+            p: [27, 28, 29,
+                [30, 31, 32, 33]],
+            r: null,
+            s: undefined,
+            t: [NaN, null, undefined, NaN, 0, {
+                u: undefined,
+                v: null
+            }],
+            w: 34,
+            x: [35, 36, [37], [38]],
+            y: 39,
+            z: [undefined, null, function () { }, 40]
+        }
+
+        function deepCopy(o, newO) {
+            for (let key in o) {
+                if (o[key] instanceof Object) {
+                    let tempO
+                    if (Array.isArray(o[key])) {
+                        tempO = []
+                    } else {
+                        tempO = {}
+                    }
+                    deepCopy(o[key], tempO)
+                    newO[key] = tempO
+                } else {
+                    newO[key] = o[key]
+                }
+            }
+        }
+
+        let newObj = {}
+        let zzz = deepCopy(obj, newObj)
+    </script>
+</body>
+
+</html>
