@@ -1,0 +1,45 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解构示例</title>
+</head>
+
+<body>
+    <script>
+        // 改变本地变量名
+        let aObj = {
+            a: 1,
+            b: 2,
+            c: 3,
+            d: 4,
+            e: {
+                a: 1,
+                b: 2,
+                c: 3,
+                d: 4,
+                g: {
+                    a: 1,
+                    b: 2,
+                    cc: window.alert
+                }
+            }
+        }
+        let { 
+            a: num1,
+            b: num2,
+            // c,
+            // d,
+            e: { g: { cc:alertt } },
+            ...etc
+            } = aObj
+        // 可能是因为已经被解构过的原因，etc里面不再包含e
+
+        // 前两个直接提取，后三个提取到n3
+        let aArr = [0, 9, 8, 7, 6]
+        let [n1, n2, ...n3] = aArr
+    </script>
+</body>
+
+</html>

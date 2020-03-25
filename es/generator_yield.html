@@ -1,0 +1,38 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>generator示例</title>
+</head>
+
+<body>
+    <script>
+        function* todo(aItem) {
+            // 碰到yield时暂停执行，不会死循环
+            while (1) {
+                yield Math.random() * 100;
+            }
+        }
+
+        var todoer = todo('WTF');
+
+        // 底线值
+        var floorVal = 15;
+        // 当前值
+        var count = 100;
+
+        // 当前值大于底线值的时候
+        // 不断循环，产生新的当前值
+        while (count > floorVal) {
+            count = todoer.next().value
+            console.log('current', count)
+        }
+        // 直到最后当前值小于底线值
+        // 跳出循环
+        console.log('final', count)
+
+    </script>
+</body>
+
+</html>
