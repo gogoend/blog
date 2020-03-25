@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello React!</title>
+  <script src="https://cdn.staticfile.org/axios/0.19.2/axios.js"></script>
+  <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+  <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <script type="text/babel">
+
+      class AppMain extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {};
+        }
+        render() {
+          return (
+            <div>
+              <InnerForm1 />
+              <Reservation />
+            </div>
+          )
+        }
+      }
+
+      class InnerForm1 extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            formData: {
+              msg: ''
+            }
+          }
+        }
+        onFormDataChange(e) {
+          var formData = this.state.formData;
+          console.log(formData);
+          var tempData = {};
+          tempData[e.target.getAttribute('label')] = e.target.value
+          this.setState({
+            formData: tempData
+          });
+        }
+        render() {
+          var formData = this.state.formData
+          return (
+            <div>
+              <form>
+                <input onChange={this.onFormDataChange.bind(this)} type="text" value={formData.msg} label='msg' />
+                <input onChange={this.onFormDataChange.bind(this)} type="text" value={formData.msg} label='msg' />
+              </form>
+              <h1>{formData.msg}</h1>
+            </div>
+          )
+        }
+      }
+
+      class Reservation extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            isGoing: true,
+            numberOfGuests: 2
+          };
+
+          this.handleInputChange = this.handleInputChange.bind(this);
+        }
+
+        handleInputChange(event) {
+          const target = event.target;
+          const value = target.type === 'checkbox' ? target.checked : target.value;
+          const name = target.name;
+
+          this.setState({
+            [name]: value
+          });
+        }
+
+        render() {
+          return (
+            <form>
+              <label>
+                参与:
+          <input
+                  name="isGoing"
+                  type="checkbox"
+                  checked={this.state.isGoing}
+                  onChange={this.handleInputChange} />
+              </label>
+              <br />
+              {
+                this.state.isGoing?
+                <label>
+                来宾人数:
+
+                
+          <input
+                  name="numberOfGuests"
+                  type="number"
+                  value={this.state.numberOfGuests}
+                  onChange={this.handleInputChange} />
+              </label>:''
+            }
+
+            </form>
+          );
+        }
+      }
+      ReactDOM.render(<AppMain />, document.getElementById('app'))
+
+    </script>
+  </div>
+</body>

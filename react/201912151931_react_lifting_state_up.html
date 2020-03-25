@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React!</title>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+    </div>
+    <script type="text/babel">
+        function BoilingVerdict(props) {
+            if (props.celsius >= 100) {
+                return <p>boil!</p>
+            }
+            return <p>no boil...</p>
+        }
+        const scaleNames = {
+            c: 'Celsius',
+            f: 'Fahrenheit'
+        }
+        function toCelsius(fahrenheit) {
+            return (fahrenheit - 32) * 5 / 9;
+        }
+
+        function toFahrenheit(celsius) {
+            return (celsius * 9 / 5) + 32;
+        }
+
+        function tryConvert(temperature, convert) {
+            const input = parseFloat(temperature);
+            if (Number.isNaN(input)) {
+                return '';
+            }
+            const output = convert(input);
+            const rounded = Math.round(output * 1000) / 1000;
+            return rounded.toString();
+        }
+
+        class TemperatureInput extends React.Component {
+            constructor(props) {
+                super(props);
+                this.handleChange=this.handleChange.bind(this)
+                console.log(this.props.onTemperatureChange)
+                this.state = { temperature: '',scale:'c' };
+            }
+            handleChange(e){
+                console.log(e.target.value)
+
+                this.props.onTemperatureChange(e)
+                this.setState({
+                    temperature: e.target.value
+                })
+            }
+
+            render() {
+                const temperature = this.props.temperature;
+                const scale = this.props.scale;
+                return (
+                    <fieldset>
+                        <legend>输入一个{scaleNames[scale]}温度：</legend>
+                        <input type="text" value={temperature} onChange={this.handleChange} />
+                    </fieldset>
+                )
+            }
+        }
+        class Calculator extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    temperature: '',
+                    scale:'c'
+                }
+            }
+            handleCelesiusChange=(e)=> {
+                console.log(e.target.value)
+                this.setState({
+                    temperature: e.target.value,
+                    scale:'c'
+                })
+            }
+            handleFahrenheitChange=(e)=>{
+                this.setState({
+                    temperature:e.target.value,
+                    scale:'f'
+                })
+            }
+
+            // handleTemperatureChange=(e)=> {
+            //     console.log(e);
+            //     this.setState({
+            //         temperature: e.target.value
+            //     })
+            // }
+            render() {
+                const scale=this.state.scale;
+                const tempratureture = this.state.temperature;
+
+                const celsius = scale ==='f' ? tryConvert(tempratureture,toCelsius):tempratureture;
+                const fahrenheit = scale === 'c'? tryConvert(tempratureture,toFahrenheit): tempratureture;
+
+                return (
+                    <div>
+                        <TemperatureInput onTemperatureChange={this.handleCelesiusChange} temperature={celsius} scale="c" />
+                        <TemperatureInput onTemperatureChange={this.handleFahrenheitChange} temperature={fahrenheit} scale="f" />
+                        <BoilingVerdict celsius={celsius}/>
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(<Calculator />, document.getElementById('app'))
+    </script>
+</body>
+
+</html>
