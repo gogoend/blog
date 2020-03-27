@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>天气接口调用测试</title>
+    <script src="https://cdn.staticfile.org/axios/0.19.2/axios.js"></script>
+    <script src="https://cdn.staticfile.org/qs/6.8.0/qs.js"></script>
+    <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+    </div>
+    <script>
+        axios.defaults.timeout = 15000
+        axios.interceptors.request.use(
+            config => {
+                config.baseURL = './'
+                // config.withCredentials = true // 允许携带token ,这个是解决跨域产生的相关问题
+                config.timeout = 6000
+                return config
+            },
+            error => {
+                return Promise.reject(error)
+            }
+        )
+        axios.interceptors.response.use(
+            response => {
+                return response
+            },
+            error => {
+                return Promise.reject(error)
+            }
+        )
+        function get(url, params) {
+            return new Promise((resolve, reject) => {
+                axios.get(url, {
+                    params: params
+                }).then(res => {
+                    resolve(res.data);
+                }).catch(err => {
+                    reject(err.data)
+                })
+            });
+        }
+        function post(url, params) {
+            return new Promise((resolve, reject) => {
+                axios.post(url, Qs.stringify(params))
+                    .then(res => {
+                        resolve(res.data);
+                    })
+                    .catch(err => {
+                        reject(err.data)
+                    })
+            });
+        }
+    </script>
+    <script type="text/babel">
+        async function getWeather(city) {
+            let { data } = await get('http://wthrcdn.etouch.cn/weather_mini', {
+                city
+            })
+            return data
+        }
+
+        // 天气组件
+        class WeatherApp extends React.Component {
+            constructor(prop) {
+                super()
+                this.state = {
+                    city: '北京',
+                    weatherInfo: {},
+                    cachedInfo: {}
+                }
+            }
+            componentWillMount() {
+                // let weatherInfo = await getWeather()
+                // console.log(weatherInfo)
+                let { city } = this.state
+
+                this.cityChange(city)
+            }
+            componentDidMount() { }
+            componentWillUnmount() { }
+
+            cacheInfo(city, info) {
+                this.state.cachedInfo[city] = {
+                    updateTime: new Date().getTime(),
+                    info
+                }
+            }
+
+            async cityChange(e) {
+                let { cachedInfo } = this.state
+                let newCity = e.target ? e.target.value : e;
+                let newInfo
+
+                if (cachedInfo[newCity] && ((new Date().getTime()) - cachedInfo[newCity].updateTime) < 5000) {
+                    newInfo = cachedInfo[newCity].info
+                    // debugger
+                } else {
+                    newInfo = await getWeather(newCity)
+                    this.cacheInfo(newCity, newInfo)
+                }
+
+                this.setState({
+                    city: newCity,
+                    weatherInfo: newInfo
+                })
+
+                // this.setState((prev,next)=>{
+                //     return {
+                //         city:
+                //     }
+                // })
+            }
+
+            render() {
+                let { city, weatherInfo } = this.state
+
+                this.cityChange = this.cityChange.bind(this)
+
+                let a = {
+                    "date": "27日星期五",
+                    "high": "高温 13℃",
+                    "fengli": "<![CDATA[3-4级]]>",
+                    "low": "低温 0℃",
+                    "fengxiang": "西北风",
+                    "type": "晴"
+                }
+                let forecastDOM = ''
+                if (weatherInfo && Array.isArray(weatherInfo.forecast)) {
+                    forecastDOM = weatherInfo.forecast.map((item, index) => {
+                        return (
+                            <li key={index}>
+                                {item.date}
+                                {item.type}
+                                {item.high}
+                                {item.low}
+                                {item.fengli}
+                                {item.fengxiang}
+                            </li>
+                        )
+                    })
+                }
+
+                return (
+                    <div>
+                        <select onChange={this.cityChange} defaultValue={city}>
+                            <option value="北京">北京</option>
+                            <option value="上海">上海</option>
+                            <option value="广州">广州</option>
+                            <option value="深圳">深圳</option>
+                            <option value="杭州">杭州</option>
+                            <option value="成都">成都</option>
+                            <option value="重庆">重庆</option>
+                            <option value="台北">台北</option>
+                        </select>
+                        <section className="weather-app-container">
+                            <ul>
+                                {forecastDOM}
+                            </ul>
+                        </section>
+                    </div>
+                )
+            }
+            // componentWillReceiveProps(nextProps) { }
+            // shouldComponentUpdate(nextProps, nextState) { }
+            // componentWillUpdate(nextProps, nextState) { }
+            // componentDidUpdate(prevProps, prevState) { }
+        }
+        ReactDOM.render(<WeatherApp />, document.getElementById('app'))
+    </script>
+</body>
+
+</html>
