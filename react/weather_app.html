@@ -140,7 +140,6 @@
                     info
                 }
                 this.forceUpdate();
-
             }
 
             async cityChange(e) {
@@ -148,7 +147,7 @@
                 let newCity = e.target ? e.target.value : e;
                 let newInfo
 
-                if (cachedInfo[newCity] && ((new Date().getTime()) - cachedInfo[newCity].updateTime) < 5000) {
+                if (cachedInfo[newCity] && ((new Date().getTime()) - cachedInfo[newCity].updateTime) < 600000) {
                     newInfo = cachedInfo[newCity].info
                     // debugger
                 } else {
@@ -160,12 +159,6 @@
                     city: newCity,
                     weatherInfo: newInfo
                 })
-
-                // this.forceUpdate();
-            }
-            shouldComponentUpdate() {
-                console.log('应当刷新')
-                return true
             }
 
             render() {
