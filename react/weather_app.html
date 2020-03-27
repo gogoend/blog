@@ -8,7 +8,8 @@
     <script src="https://cdn.staticfile.org/qs/6.8.0/qs.js"></script>
     <script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
     <script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
-    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+    <script src="https://cdn.staticfile.org/react-router-dom/5.1.2/react-router-dom.js"></script>
+    <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.js"></script>
 </head>
 
 <body>
@@ -112,7 +113,7 @@
             }
         ]
 
-        // 天气组件
+        // 天气App
         class WeatherApp extends React.Component {
             constructor(prop) {
                 super()
@@ -163,19 +164,69 @@
 
             render() {
                 let { city, weatherInfo } = this.state
-                let chineseDigi = [
-                    '〇','一','二','三','四','五','六','七','八','九','十'
-                ]
+                let {
+                    BrowserRouter: Router,
+                    Switch,
+                    Route,
+                    Link,
+                    useRouteMatch,
+                    useParams,
+                    HashRouter
+                } = ReactRouterDOM
 
                 this.cityChange = this.cityChange.bind(this)
 
+                let cityOptionDOM = cityList.map((item, index) => {
+                    return (
+                        <option key={index} value={item.code}>{item.city}</option>
+                    )
+                })
+
+                return (
+                    <HashRouter>
+                        <div>
+                            <nav className="app-nav">
+                                <select onChange={this.cityChange} value={city}>
+                                    {cityOptionDOM}
+                                </select>
+                                <Link to="/home">天气</Link>
+                                <Link to="/city-tip">城市</Link>
+                            </nav>
+
+                            <Switch>
+                                <Route path="/home">
+                                    <WeatherBox city={city} casts={(weatherInfo && Array.isArray(weatherInfo.forecasts) && weatherInfo.forecasts[0]) ? weatherInfo.forecasts[0].casts : []} />
+                                </Route>
+                                <Route path="/city-tip">
+                                    <CityTip city={city} />
+                                </Route>
+                            </Switch>
+                        </div>
+                    </HashRouter>
+                )
+            }
+            // componentWillReceiveProps(nextProps) { }
+            // shouldComponentUpdate(nextProps, nextState) { }
+            // componentWillUpdate(nextProps, nextState) { }
+            // componentDidUpdate(prevProps, prevState) { }
+        }
+
+        // 天气展示区域
+        class WeatherBox extends React.Component {
+            constructor(prop) {
+                super(prop)
+            }
+            render() {
+                let chineseDigi = [
+                    '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'
+                ]
                 let forecastDOM = ''
 
-                if (weatherInfo && Array.isArray(weatherInfo.forecasts[0].casts)) {
-                    forecastDOM = weatherInfo.forecasts[0].casts.map((item, index) => {
+                if (Array.isArray(this.props.casts)) {
+                    forecastDOM = this.props.casts.map((item, index) => {
                         return (
                             <li key={index}>
-                                <span>{item.date} 星期{item.week==='7' ? '日':chineseDigi[item.week]}</span>
+                                <span>{item.date} 星期{item.week === '7' ? '日' : chineseDigi[item.week]}</span>
                                 <section>
                                     <header>
                                         白天
@@ -202,30 +253,22 @@
                         )
                     })
                 }
-
-                let cityOptionDOM = cityList.map((item, index) => {
-                    return (
-                        <option key={index} value={item.code}>{item.city}</option>
-                    )
-                })
-
-                return (
-                    <div>
-                        <select onChange={this.cityChange} value={city}>
-                            {cityOptionDOM}
-                        </select>
-                        <section className="weather-app-container">
-                            <ul>
-                                {forecastDOM}
-                            </ul>
-                        </section>
-                    </div>
-                )
+                return <section className="weather-app-container">
+                    <ul>
+                        {forecastDOM}
+                    </ul>
+                </section>
             }
-            // componentWillReceiveProps(nextProps) { }
-            // shouldComponentUpdate(nextProps, nextState) { }
-            // componentWillUpdate(nextProps, nextState) { }
-            // componentDidUpdate(prevProps, prevState) { }
+        }
+
+        // 城市信息
+        class CityTip extends React.Component {
+            constructor(props) {
+                super(props)
+            }
+            render() {
+                return <h1>{this.props.city}</h1>
+            }
         }
         ReactDOM.render(<WeatherApp />, document.getElementById('app'))
     </script>
