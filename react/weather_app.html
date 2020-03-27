@@ -59,29 +59,77 @@
         }
     </script>
     <script type="text/babel">
-        async function getWeather(city) {
-            let { data } = await get('http://wthrcdn.etouch.cn/weather_mini', {
-                city
+        async function getWeather(cityCode) {
+            let data = await get('http://restapi.amap.com/v3/weather/weatherInfo', {
+                key: '516786aa1da89347ad99cc19c24488ac',
+                city: cityCode,
+                extensions: 'all'
             })
+            console.log(data)
             return data
         }
+
+        const cityList = [
+            {
+                city: '北京',
+                code: 110000
+            },
+            {
+                city: '上海',
+                code: 310000
+            },
+            {
+                city: '成都',
+                code: 510100
+            },
+            {
+                city: '三沙',
+                code: 460300
+            },
+            {
+                city: '深圳',
+                code: 440300
+            },
+            {
+                city: '厦门',
+                code: 350200
+            },
+            {
+                city: '广州',
+                code: 440100
+            },
+            {
+                city: '重庆',
+                code: 500000
+            },
+            {
+                city: '杭州',
+                code: 330100
+            },
+            {
+                city: '拉萨',
+                code: 540100
+            }
+        ]
 
         // 天气组件
         class WeatherApp extends React.Component {
             constructor(prop) {
                 super()
                 this.state = {
-                    city: '北京',
-                    weatherInfo: {},
+                    city: 110000,
+                    weatherInfo: {
+                        forecasts: [[]]
+                    },
                     cachedInfo: {}
                 }
             }
-            componentWillMount() {
+            async componentWillMount() {
                 // let weatherInfo = await getWeather()
                 // console.log(weatherInfo)
                 let { city } = this.state
 
-                this.cityChange(city)
+                await this.cityChange(city)
             }
             componentDidMount() { }
             componentWillUnmount() { }
@@ -91,6 +139,8 @@
                     updateTime: new Date().getTime(),
                     info
                 }
+                this.forceUpdate();
+
             }
 
             async cityChange(e) {
@@ -111,53 +161,65 @@
                     weatherInfo: newInfo
                 })
 
-                // this.setState((prev,next)=>{
-                //     return {
-                //         city:
-                //     }
-                // })
+                // this.forceUpdate();
+            }
+            shouldComponentUpdate() {
+                console.log('应当刷新')
+                return true
             }
 
             render() {
                 let { city, weatherInfo } = this.state
+                let chineseDigi = [
+                    '〇','一','二','三','四','五','六','七','八','九','十'
+                ]
 
                 this.cityChange = this.cityChange.bind(this)
 
-                let a = {
-                    "date": "27日星期五",
-                    "high": "高温 13℃",
-                    "fengli": "<![CDATA[3-4级]]>",
-                    "low": "低温 0℃",
-                    "fengxiang": "西北风",
-                    "type": "晴"
-                }
                 let forecastDOM = ''
-                if (weatherInfo && Array.isArray(weatherInfo.forecast)) {
-                    forecastDOM = weatherInfo.forecast.map((item, index) => {
+
+                if (weatherInfo && Array.isArray(weatherInfo.forecasts[0].casts)) {
+                    forecastDOM = weatherInfo.forecasts[0].casts.map((item, index) => {
                         return (
                             <li key={index}>
-                                {item.date}
-                                {item.type}
-                                {item.high}
-                                {item.low}
-                                {item.fengli}
-                                {item.fengxiang}
+                                <span>{item.date} 星期{item.week==='7' ? '日':chineseDigi[item.week]}</span>
+                                <section>
+                                    <header>
+                                        白天
+                                    </header>
+                                    <ul>
+                                        <li>{item.dayweather}</li>
+                                        <li>{item.daytemp}℃</li>
+                                        <li>{item.daywind}</li>
+                                        <li>{item.daypower}级</li>
+                                    </ul>
+                                </section>
+                                <section>
+                                    <header>
+                                        夜间
+                                    </header>
+                                    <ul>
+                                        <li>{item.nightweather}</li>
+                                        <li>{item.nighttemp}℃</li>
+                                        <li>{item.nightwind}</li>
+                                        <li>{item.nightpower}级</li>
+                                    </ul>
+                                </section>
                             </li>
                         )
                     })
                 }
 
+                let cityOptionDOM = cityList.map((item, index) => {
+                    return (
+                        <option key={index} value={item.code}>{item.city}</option>
+                    )
+                })
+
                 return (
                     <div>
-                        <select onChange={this.cityChange} defaultValue={city}>
-                            <option value="北京">北京</option>
-                            <option value="上海">上海</option>
-                            <option value="广州">广州</option>
-                            <option value="深圳">深圳</option>
-                            <option value="杭州">杭州</option>
-                            <option value="成都">成都</option>
-                            <option value="重庆">重庆</option>
-                            <option value="台北">台北</option>
+                        <select onChange={this.cityChange} value={city}>
+                            {cityOptionDOM}
                         </select>
                         <section className="weather-app-container">
                             <ul>
