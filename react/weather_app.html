@@ -143,10 +143,28 @@
                 code: 540100
             }
         ]
+        // App框架
+        class App extends React.Component {
+            constructor(props) {
+                super(props)
+            }
+            render() {
+                let {
+                    // BrowserRouter: Router,
+                    Route,
+                    HashRouter: Router
+                } = ReactRouterDOM
+                return (
+                    <Router>
+                        <Route path="/" component={WeatherApp} />
+                    </Router>
+                )
+            }
+        }
 
         // 天气App
         class WeatherApp extends React.Component {
-            constructor(prop) {
+            constructor(props) {
                 super()
                 this.state = {
                 }
@@ -176,7 +194,6 @@
 
             async cityChange(e) {
 
-
                 let { cachedWeatherInfo } = store.getState()
                 let newCity = e.target ? e.target.value : e;
                 let newInfo
@@ -187,7 +204,6 @@
                 } else {
                     newInfo = await getWeather(newCity)
                     this.cacheInfo(newCity, newInfo)
-
                 }
 
                 store.dispatch({
@@ -202,6 +218,8 @@
                     city: newCity,
                     weatherInfo: newInfo
                 })
+
+                this.props.history.push(`/${store.getState().city}/home`)
             }
 
             render() {
@@ -213,7 +231,8 @@
                     Link,
                     useRouteMatch,
                     useParams,
-                    HashRouter: Router
+                    HashRouter: Router,
+                    IndexRoute
                 } = ReactRouterDOM
 
                 let { Provider } = ReactRedux
@@ -221,24 +240,20 @@
                 this.cityChange = this.cityChange.bind(this)
 
                 return (
-                    <Provider store={store}>
-                        <Router>
-                            <div>
-                                <PublicNav cityChange={this.cityChange} city={this.city} />
-
-                                <Switch>
-                                    <Route path="/home/:id" component={WeatherBox}></Route>
-                                    <Route path="/city-tip" component={CityTip}></Route>
-                                </Switch>
-                                {/*
-                            <Route path="/about" children={() => {
-                                return <section>关于</section>
-                            }} />
-                            */}
-
-                            </div>
-                        </Router>
-                    </Provider>
+                    <Router>
+                        <div>
+                            <PublicNav cityChange={this.cityChange} city={city} />
+                            <Switch>
+                                <Route path="/:id/home" component={WeatherBox}></Route>
+                                <Route path="/:id/city-tip" component={CityTip}></Route>
+                            </Switch>
+                            {/*
+                        <Route path="/about" children={() => {
+                            return <section>关于</section>
+                        }} />
+                        */}
+                        </div>
+                    </Router>
                 )
             }
             // componentWillReceiveProps(nextProps) { }
@@ -273,8 +288,8 @@
                         <select onChange={this.props.cityChange} value={this.props.city}>
                             {cityOptionDOM}
                         </select>
-                        <Link to={`/home/${store.getState().city}`}>天气</Link>
-                        <Link to="/city-tip">城市</Link>
+                        <Link to={`/${store.getState().city}/home`}>天气</Link>
+                        <Link to={`/${store.getState().city}/city-tip`}>城市</Link>
                     </nav>
                 )
             }
@@ -347,7 +362,7 @@
                 </section>
             }
         }
-        ReactDOM.render(<WeatherApp />, document.getElementById('app'))
+        ReactDOM.render(<App />, document.getElementById('app'))
     </script>
 </body>
 
