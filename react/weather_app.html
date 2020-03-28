@@ -62,9 +62,9 @@
         }
 
         let initState = {
-            city: 110000,
+            city: '110000',
             weatherInfo: {
-                forecasts: [[]]
+                forecasts: []
             },
             cachedWeatherInfo: {}
         }
@@ -98,7 +98,6 @@
                 city: cityCode,
                 extensions: 'all'
             })
-            console.log(data)
             return data
         }
 
@@ -150,17 +149,10 @@
             constructor(prop) {
                 super()
                 this.state = {
-                    city: 110000,
-                    weatherInfo: {
-                        forecasts: [[]]
-                    },
-                    cachedWeatherInfo: {}
                 }
             }
             async componentWillMount() {
-                // let weatherInfo = await getWeather()
-                // console.log(weatherInfo)
-                let { city } = this.state
+                let { city } = store.getState()
 
                 await this.cityChange(city)
             }
@@ -168,10 +160,6 @@
             componentWillUnmount() { }
 
             cacheInfo(city, info) {
-                this.state.cachedWeatherInfo[city] = {
-                    updateTime: new Date().getTime(),
-                    info
-                }
                 store.dispatch({
                     type: 'CHANGE_CACHED_WEATHER_INFO',
                     payload: {
@@ -189,7 +177,7 @@
             async cityChange(e) {
 
 
-                let { cachedWeatherInfo } = this.state
+                let { cachedWeatherInfo } = store.getState()
                 let newCity = e.target ? e.target.value : e;
                 let newInfo
 
@@ -200,17 +188,6 @@
                     newInfo = await getWeather(newCity)
                     this.cacheInfo(newCity, newInfo)
 
-                    store.dispatch({
-                        type: 'CHANGE_CACHED_WEATHER_INFO',
-                        payload: {
-                            cachedWeatherInfo: {
-                                [newCity]: {
-                                    updateTime: new Date().getTime(),
-                                    newInfo
-                                }
-                            }
-                        }
-                    })
                 }
 
                 store.dispatch({
@@ -228,7 +205,7 @@
             }
 
             render() {
-                let { city, weatherInfo } = this.state
+                let { city, weatherInfo } = store.getState()
                 let {
                     // BrowserRouter: Router,
                     Switch,
@@ -239,13 +216,9 @@
                     HashRouter: Router
                 } = ReactRouterDOM
 
-                let {Provider} = ReactRedux
+                let { Provider } = ReactRedux
 
                 this.cityChange = this.cityChange.bind(this)
-
-                const unsubscribe = store.subscribe(() =>
-                    console.log(store.getState())
-                )
 
                 return (
                     <Provider store={store}>
@@ -254,20 +227,8 @@
                                 <PublicNav cityChange={this.cityChange} city={this.city} />
 
                                 <Switch>
-                                    <Route path="/home/:id" component={WeatherBox}>
-                                        {/*<WeatherBox 
-                                        city={city} 
-                                        casts={(weatherInfo 
-                                            && Array.isArray(weatherInfo.forecasts) 
-                                            && weatherInfo.forecasts[0]) ?
-                                               weatherInfo.forecasts[0].casts 
-                                               :
-                                               []}
-                                        /> */}
-                                    </Route>
-                                    <Route path="/city-tip" component={CityTip}>
-                                        {/* <CityTip city={city} /> */}
-                                    </Route>
+                                    <Route path="/home/:id" component={WeatherBox}></Route>
+                                    <Route path="/city-tip" component={CityTip}></Route>
                                 </Switch>
                                 {/*
                             <Route path="/about" children={() => {
@@ -285,7 +246,7 @@
             // componentWillUpdate(nextProps, nextState) { }
             // componentDidUpdate(prevProps, prevState) { }
         }
-        ReactRedux.connect(WeatherApp)
+        // ReactRedux.connect(WeatherApp)
 
         // 公共nav
         class PublicNav extends React.Component {
@@ -312,7 +273,7 @@
                         <select onChange={this.props.cityChange} value={this.props.city}>
                             {cityOptionDOM}
                         </select>
-                        <Link to="/home/111222333">天气</Link>
+                        <Link to={`/home/${store.getState().city}`}>天气</Link>
                         <Link to="/city-tip">城市</Link>
                     </nav>
                 )
@@ -321,17 +282,22 @@
 
         // 天气展示区域
         class WeatherBox extends React.Component {
-            constructor(prop) {
-                super(prop)
+            constructor(props) {
+                super(props)
+                this.unsubscribe = store.subscribe(() =>
+                    this.render()
+                )
             }
             render() {
+                let { casts } = (store.getState().weatherInfo.forecasts.length === 0 ? [] : store.getState().weatherInfo.forecasts[0])
+                casts = casts ? casts : []
+
                 let chineseDigi = [
                     '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'
                 ]
                 let forecastDOM = ''
-
-                if (Array.isArray(this.props.casts)) {
-                    forecastDOM = this.props.casts.map((item, index) => {
+                if (Array.isArray(casts)) {
+                    forecastDOM = casts.map((item, index) => {
                         return (
                             <li key={index}>
                                 <span>{item.date} 星期{item.week === '7' ? '日' : chineseDigi[item.week]}</span>
@@ -361,7 +327,6 @@
                         )
                     })
                 }
-                console.log(this)
                 return <section className="weather-app-container">
                     <h1>天气:{this.props.match.params.id}</h1>
                     <ul>
