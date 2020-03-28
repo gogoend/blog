@@ -165,13 +165,13 @@
             render() {
                 let { city, weatherInfo } = this.state
                 let {
-                    BrowserRouter: Router,
+                    // BrowserRouter: Router,
                     Switch,
                     Route,
                     Link,
                     useRouteMatch,
                     useParams,
-                    HashRouter
+                    HashRouter: Router
                 } = ReactRouterDOM
 
                 this.cityChange = this.cityChange.bind(this)
@@ -183,7 +183,7 @@
                 })
 
                 return (
-                    <HashRouter>
+                    <Router>
                         <div>
                             <nav className="app-nav">
                                 <select onChange={this.cityChange} value={city}>
@@ -194,15 +194,23 @@
                             </nav>
 
                             <Switch>
-                                <Route path="/home">
-                                    <WeatherBox city={city} casts={(weatherInfo && Array.isArray(weatherInfo.forecasts) && weatherInfo.forecasts[0]) ? weatherInfo.forecasts[0].casts : []} />
+                                <Route path="/home" component={WeatherBox}>
+                                    {/*<WeatherBox 
+                                        city={city} 
+                                        casts={(weatherInfo 
+                                            && Array.isArray(weatherInfo.forecasts) 
+                                            && weatherInfo.forecasts[0]) ?
+                                               weatherInfo.forecasts[0].casts 
+                                               :
+                                               []}
+                                        /> */}
                                 </Route>
-                                <Route path="/city-tip">
-                                    <CityTip city={city} />
+                                <Route path="/city-tip" component={CityTip}>
+                                    {/* <CityTip city={city} /> */}
                                 </Route>
                             </Switch>
                         </div>
-                    </HashRouter>
+                    </Router>
                 )
             }
             // componentWillReceiveProps(nextProps) { }
@@ -254,6 +262,7 @@
                     })
                 }
                 return <section className="weather-app-container">
+                    <h1>天气</h1>
                     <ul>
                         {forecastDOM}
                     </ul>
@@ -267,7 +276,9 @@
                 super(props)
             }
             render() {
-                return <h1>{this.props.city}</h1>
+                return <section>
+                    <h1>当前城市：{this.props.city}</h1>
+                    </section>
             }
         }
         ReactDOM.render(<WeatherApp />, document.getElementById('app'))
