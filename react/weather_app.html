@@ -9,6 +9,7 @@
     <script src="https://cdn.staticfile.org/react/16.8.0/umd/react.development.js"></script>
     <script src="https://cdn.staticfile.org/react-dom/16.8.0/umd/react-dom.development.js"></script>
     <script src="https://cdn.staticfile.org/react-router-dom/5.1.2/react-router-dom.js"></script>
+    <script src="https://cdn.staticfile.org/redux/4.0.5/redux.js"></script>
     <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.js"></script>
 </head>
 
@@ -176,25 +177,13 @@
 
                 this.cityChange = this.cityChange.bind(this)
 
-                let cityOptionDOM = cityList.map((item, index) => {
-                    return (
-                        <option key={index} value={item.code}>{item.city}</option>
-                    )
-                })
-
                 return (
                     <Router>
                         <div>
-                            <nav className="app-nav">
-                                <select onChange={this.cityChange} value={city}>
-                                    {cityOptionDOM}
-                                </select>
-                                <Link to="/home">天气</Link>
-                                <Link to="/city-tip">城市</Link>
-                            </nav>
+                            <PublicNav cityChange={this.cityChange} city={this.city} />
 
                             <Switch>
-                                <Route path="/home" component={WeatherBox}>
+                                <Route path="/home/:id" component={WeatherBox}>
                                     {/*<WeatherBox 
                                         city={city} 
                                         casts={(weatherInfo 
@@ -209,6 +198,12 @@
                                     {/* <CityTip city={city} /> */}
                                 </Route>
                             </Switch>
+                            {/*
+                            <Route path="/about" children={() => {
+                                return <section>关于</section>
+                            }} />
+                            */}
+
                         </div>
                     </Router>
                 )
@@ -217,6 +212,38 @@
             // shouldComponentUpdate(nextProps, nextState) { }
             // componentWillUpdate(nextProps, nextState) { }
             // componentDidUpdate(prevProps, prevState) { }
+        }
+
+        // 公共nav
+        class PublicNav extends React.Component {
+            constructor(props) {
+                super(props)
+            }
+            render() {
+                let {
+                    // BrowserRouter: Router,
+                    Switch,
+                    Route,
+                    Link,
+                    useRouteMatch,
+                    useParams,
+                    HashRouter: Router
+                } = ReactRouterDOM
+                let cityOptionDOM = cityList.map((item, index) => {
+                    return (
+                        <option key={index} value={item.code}>{item.city}</option>
+                    )
+                })
+                return (
+                    <nav className="app-nav">
+                        <select onChange={this.props.cityChange} value={this.props.city}>
+                            {cityOptionDOM}
+                        </select>
+                        <Link to="/home/111222333">天气</Link>
+                        <Link to="/city-tip">城市</Link>
+                    </nav>
+                )
+            }
         }
 
         // 天气展示区域
@@ -261,8 +288,9 @@
                         )
                     })
                 }
+                console.log(this)
                 return <section className="weather-app-container">
-                    <h1>天气</h1>
+                    <h1>天气:{this.props.match.params.id}</h1>
                     <ul>
                         {forecastDOM}
                     </ul>
@@ -278,7 +306,7 @@
             render() {
                 return <section>
                     <h1>当前城市：{this.props.city}</h1>
-                    </section>
+                </section>
             }
         }
         ReactDOM.render(<WeatherApp />, document.getElementById('app'))
