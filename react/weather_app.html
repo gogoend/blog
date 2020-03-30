@@ -9,8 +9,8 @@
     <script src="https://cdn.staticfile.org/react/16.8.0/umd/react.development.js"></script>
     <script src="https://cdn.staticfile.org/react-dom/16.8.0/umd/react-dom.development.js"></script>
     <script src="https://cdn.staticfile.org/react-router-dom/5.1.2/react-router-dom.js"></script>
-    <script src="https://cdn.staticfile.org/redux/4.0.5/redux.js"></script>
-    <script src="https://cdn.staticfile.org/react-redux/7.2.0/react-redux.js"></script>
+    <!-- <script src="https://cdn.staticfile.org/redux/4.0.5/redux.js"></script>
+    <script src="https://cdn.staticfile.org/react-redux/7.2.0/react-redux.js"></script> -->
     <script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.js"></script>
 </head>
 
@@ -60,39 +60,6 @@
                     })
             });
         }
-
-        let initState = {
-            city: '110000',
-            weatherInfo: {
-                forecasts: []
-            },
-            cachedWeatherInfo: {}
-        }
-        function weatherApp(state = initState, action) {
-            switch (action.type) {
-                case 'CHANGE_CITY': {
-                    return Object.assign({}, state, action.payload ? action.payload : {})
-                }
-                case 'CHANGE_CACHED_WEATHER_INFO': {
-                    let tempState = Object.assign({}, state);
-                    // tempState.cachedWeatherInfo
-                    for (let key in action.payload.cachedWeatherInfo) {
-                        tempState.cachedWeatherInfo[key] = action.payload.cachedWeatherInfo[key]
-                    }
-                    return tempState
-                }
-                default: {
-                    // 这里暂不处理任何 action，
-                    // 仅返回传入的 state。
-                    return state
-                }
-            }
-
-        }
-        let store = Redux.createStore(
-            weatherApp,
-            window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-        )
     </script>
     <script type="text/babel">
         async function getWeather(cityCode) {
@@ -146,120 +113,84 @@
                 code: 540100
             }
         ]
+
+        let CityContext = React.createContext("110000")
+
         // App框架
-
-
         class App extends React.Component {
             constructor(props) {
                 super(props)
             }
             render() {
-                // let { Provider } = ReactRedux
-
                 let {
                     // BrowserRouter: Router,
                     Route,
                     HashRouter: Router
                 } = ReactRouterDOM
                 return (
-                    <Router>
-                        <Route path="/" component={WeatherApp} />
-                    </Router>
+                    <div>
+                    <CityContext.Provider value='110000'>
+                        <Router>
+                            <Route path="/" component={WeatherApp} />
+                        </Router>
+                    </CityContext.Provider>
+                    </div>
                 )
             }
         }
-        function mapStateToProps(state) {
-            return Object.assign({}, state)
-        }
-        function mapDispatchToProps(state) {
-            console.log(state)
-            return {}
-        }
-        let AppWithStore = ReactRedux.connect(
-            mapStateToProps,
-            mapDispatchToProps
-        )(App)
 
-        function cacheInfo(city, info) {
-            store.dispatch({
-                type: 'CHANGE_CACHED_WEATHER_INFO',
-                payload: {
-                    cachedWeatherInfo: {
-                        [city]: {
-                            updateTime: new Date().getTime(),
-                            info
-                        }
-                    }
-                }
-            })
-        }
         // 天气App
         class WeatherApp extends React.Component {
             constructor(props) {
                 super()
                 this.state = {
+                    city: '110000',
+                    weatherInfo: {
+                        forecasts: []
+                    },
+                    cachedWeatherInfo: {}
                 }
-                this.cityChange = this.cityChange.bind(this)
             }
             async componentWillMount() {
-                let { city } = store.getState()
-                this.cityChange(city)
-            }
-            componentDidMount() {
-                // this.unlisten = this.props.history.listen(location => {
-                //     console.log(location)
-                //     if (location.state) {
-                //         let { city, weatherInfo } = location.state
-                //         store.dispatch({
-                //             type: 'CHANGE_CITY',
-                //             payload: {
-                //                 city,
-                //                 weatherInfo
-                //             }
-                //         })
-                //     }
+                let { city } = this.state
 
-                // });
+                await this.cityChange(city)
             }
+            componentDidMount() { }
             componentWillUnmount() { }
 
-            cityChange(e) {
+            cacheInfo(city, info) {
+                this.state.cachedWeatherInfo[city] = {
+                    updateTime: new Date().getTime(),
+                    info
+                }
+                this.forceUpdate();
+            }
 
-                let { cachedWeatherInfo } = store.getState()
+            async cityChange(e) {
+
+                let { cachedWeatherInfo } = this.state
                 let newCity = e.target ? e.target.value : e;
+                let newInfo
 
-                // console.log(e instanceof Object ? e.target.value : e)
+                if (cachedWeatherInfo[newCity] && ((new Date().getTime()) - cachedWeatherInfo[newCity].updateTime) < 600000) {
+                    newInfo = cachedWeatherInfo[newCity].info
+                    // debugger
+                } else {
+                    newInfo = await getWeather(newCity)
+                    this.cacheInfo(newCity, newInfo)
+                }
 
-                let newInfo = {}
-
-                // this.setState({
-                //     city: newCity,
-                //     weatherInfo: newInfo
-                // })
-
-                store.dispatch({
-                    type: 'CHANGE_CITY',
-                    payload: {
-                        city: newCity,
-                        weatherInfo: newInfo
-                    }
+                this.setState({
+                    city: newCity,
+                    weatherInfo: newInfo
                 })
 
-                // 之前出现下拉框内容改不掉的情况，似乎是因为没有以下这句
-                this.forceUpdate()
-                // console.log(newCity, store.getState().city)
-
-                // this.props.history.push({
-                //     pathname: `/home/${newCity}`,
-                //     state: {
-                //         city: newCity,
-                //         weatherInfo: newInfo
-                //     }
-                // })
+                // this.props.history.push(`/${store.getState().city}/home`)
             }
 
             render() {
-                let { city, weatherInfo } = store.getState()
+                let { city, weatherInfo } = this
                 let {
                     // BrowserRouter: Router,
                     Switch,
@@ -271,19 +202,25 @@
                     IndexRoute
                 } = ReactRouterDOM
 
+                // let { Provider } = ReactRedux
+
+                this.cityChange = this.cityChange.bind(this)
+
                 return (
-                    <div>
-                        <PublicNav cityChange={this.cityChange} city={city} />
-                        <Switch>
-                            <Route path="/home/:id" component={WeatherBox}></Route>
-                            <Route path="/city-tip/:id" component={CityTip}></Route>
-                        </Switch>
-                        {/*
+                    <Router>
+                        <div>
+                            <PublicNav cityChange={this.cityChange} city={city} />
+                            <Switch>
+                                <Route path="/home/:id" component={WeatherBox}></Route>
+                                <Route path="/city-tip/:id" component={CityTip}></Route>
+                            </Switch>
+                            {/*
                         <Route path="/about" children={() => {
                             return <section>关于</section>
                         }} />
                         */}
-                    </div>
+                        </div>
+                    </Router>
                 )
             }
             // componentWillReceiveProps(nextProps) { }
@@ -291,14 +228,14 @@
             // componentWillUpdate(nextProps, nextState) { }
             // componentDidUpdate(prevProps, prevState) { }
         }
+        // ReactRedux.connect(WeatherApp)
 
         // 公共nav
         class PublicNav extends React.Component {
+            static contextType = CityContext;
+
             constructor(props) {
                 super(props)
-                this.state = {
-                    // city:store.getState().city
-                }
             }
             render() {
                 let {
@@ -317,7 +254,7 @@
                 })
                 return (
                     <nav className="app-nav">
-                        <select onChange={this.props.cityChange} value={this.props.city}>
+                        <select onChange={this.props.cityChange} value={this.context}>
                             {cityOptionDOM}
                         </select>
                         <Link to={`/home/${this.props.city}`}>天气</Link>
@@ -331,79 +268,12 @@
         class WeatherBox extends React.Component {
             constructor(props) {
                 super(props)
-                let _this = this
-                _this.getCityWeather()
-                // this.unsubscribe = store.subscribe(async () => {
-
-                //     _this.setState({
-                //         city: store.getState().city,
-                //         weatherInfo: store.getState().weatherInfo
-                //     })
-                //     _this.render()
-                // })
-
-                this.state = {
-                    city: '',
-                    weatherInfo: {}
-                }
-            }
-            componentDidMount() {
-
-            }
-
-            getCityWeather() {
-
-                let { cachedWeatherInfo, city } = store.getState()
-
-                let newInfo = {}
-                if (cachedWeatherInfo[city] && ((new Date().getTime()) - cachedWeatherInfo[city].updateTime) < 5000) {
-                    console.log('数据已缓存在本地')
-                    newInfo = cachedWeatherInfo[city].info
-                    store.dispatch({
-                        type: 'CHANGE_CITY',
-                        payload: {
-                            city,
-                            weatherInfo: newInfo
-                        }
-                    })
-                    this.forceUpdate()
-                    // debugger
-                } else {
-                    console.log('数据过期，正在重新加载')
-                    newInfo = getWeather(city).then((res) => {
-                        console.log(res)
-                        // 缓存临时值
-                        // debugger
-                        cacheInfo(city, res)
-                        store.dispatch({
-                            type: 'CHANGE_CITY',
-                            payload: {
-                                city,
-                                weatherInfo: res
-                            }
-                        })
-                        this.forceUpdate()
-                    })
-                }
-
-
-                // this.setState({
-                //     city,
-                //     weatherInfo: newInfo
-                // })
             }
             render() {
+                // let { casts } = (this.weatherInfo.forecasts.length === 0 ? [] : this.weatherInfo.forecasts[0])
+                // casts = casts ? casts : []
 
-                // this.getCityWeather()
-                if (!Array.isArray(this.state.weatherInfo.forecasts)) {
-                    var casts = []
-                } else {
-                    var { casts } = (this.state.weatherInfo.forecasts.length === 0 ? { casts: [] } : this.state.weatherInfo.forecasts[0])
-                }
-
-                if (casts.length > 0) {
-                    debugger
-                }
+                let casts = []
 
                 let chineseDigi = [
                     '〇', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'
@@ -441,7 +311,7 @@
                     })
                 }
                 return <section className="weather-app-container">
-                    <h1>天气:{this.state.city}</h1>
+                    <h1>天气:{this.props.match.params.id}</h1>
                     <ul>
                         {forecastDOM}
                     </ul>
@@ -460,9 +330,7 @@
                 </section>
             }
         }
-        let { Provider } = ReactRedux
-
-        ReactDOM.render(<Provider store={store}><AppWithStore /></Provider>, document.getElementById('app'))
+        ReactDOM.render(<App />, document.getElementById('app'))
     </script>
 </body>
 
