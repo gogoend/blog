@@ -14,10 +14,10 @@
     <script>
 
         (function () {
-            var canvasDOM=document.createElement('canvas');
+            var canvasDOM=document.getElementById('canvas');
             canvasDOM.width=1024;
             canvasDOM.height=1024;
-            var c = canvas.getContext('2d');
+            var c = canvasDOM.getContext('2d');
             time();
             function time() {
                 c.clearRect = (0, 0, canvasDOM.width, canvasDOM.height);
