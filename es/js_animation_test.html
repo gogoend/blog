@@ -35,7 +35,9 @@
 
                 currentProgress = clamp(currentProgress, 0, 1)
 
-                let sumNumber = (666 - 222) * bounceOut(currentProgress) // currentProgress
+                let sumNumber = (end - init) * bounceOut(currentProgress)
+
+                // let sumNumber = (end - init) * currentProgress
 
                 let currentStatus = init + sumNumber
 
