@@ -18,36 +18,43 @@
         };
     </script>
     <script>
-        function resolveHandler(func, arg) {
-            func(arg);
+var p1 = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        var anyValue = Math.random();
+        if (anyValue > 0.5) {
+            resolve('第一次解决');
+        } else {
+            reject('第一次拒绝')
         }
-        var p1 = new Promise((resolve, reject) => {
-            setTimeout(() => {
-                var anyValue = Math.random();
-                if (anyValue > 0.5) {
-                    resolveHandler(resolve, '第一次解决');
-                } else {
-                    reject('第一次拒绝')
-                }
-            })
-        }).then((arg) => {
-            console.log(arg)
-            return new Promise((resolve, reject) => {
-                setTimeout(() => resolveHandler(resolve, '第二次解决'), 2000)
-            })
-        }).then((arg) => {
-            console.log(arg);
-            return fetch('/_res/bookmark.json')
-        }).then((res) => {
-            console.log(res)
-            return res.json()
-            // return fetch('http://qq.com/')
-        }).then((json) => {
-            console.log(json);
-            // return fetch('http://qq.com/')
-        }).catch(function (e) {
-            console.log(e)
+    })
+}).then((arg) => {
+    console.log(arg)
+    return new Promise((resolve, reject) => {
+        setTimeout(() => resolve('第二次解决'), 2000)
+    })
+}).then((arg) => {
+    console.log(arg);
+    return new Promise((resolve, reject) => {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://api.github.com/users/gogoend', true); // 第三个参数，true为异步，false为同步
+        xhr.send()
+        xhr.addEventListener('readystatechange', function (e) {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                resolve(JSON.parse(xhr.responseText));
+            }
         })
+    })
+}).then((json) => {
+    console.log(json);
+    return new Promise((resolve, reject) => {
+        // 此处直接reject
+        setTimeout(() => reject('第三次拒绝'), 4000)
+    })
+}).catch((err) => {
+    console.error(err)
+}).finally(function () {
+    console.log('Promise已完成')
+})
     </script>
 </body>
 
