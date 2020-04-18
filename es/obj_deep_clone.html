@@ -53,14 +53,11 @@
         }
 
         function deepCopy(o, newO) {
+            
             for (let key in o) {
                 if (o[key] instanceof Object) {
-                    let tempO
-                    if (Array.isArray(o[key])) {
-                        tempO = []
-                    } else {
-                        tempO = {}
-                    }
+                    let tempO = o.constructor === Array ? [] : {}
+
                     deepCopy(o[key], tempO)
                     newO[key] = tempO
                 } else {
