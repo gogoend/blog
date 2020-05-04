@@ -6,21 +6,25 @@
 <style>
 .bfc-test {
 	background-color: aqua;
-	width: 400px;
-/*	overflow: auto*/
-	display: inline-block
+	width: 600px;
+	overflow: auto;
+/*	display: inline-block;*/
 }
 .b{
 	margin: 10px;
-			background-color: blueviolet;
+	background-color: blueviolet;
 	width: 300px;
 	height: 200px;
-	}
+}
 .b1 {
 	float: right;
 }
 .b2 {
 	float: left;
+}
+.b3{
+	width: 305px;
+	background-color: rgba(55,55,55,0.84)
 }
 /*
 .bfc-test::after {
@@ -35,9 +39,12 @@
 <body>
 <div class="bfc-test">
   <section class="b b2"></section>
-	  <section class="b b1"></section>
-
+	<section class="b b1"></section>
   <section class="b b2"></section>
+<!--	b3 margin发生折叠 -->
+  <section class="b b3"></section>
+  <section class="b b3"></section>
+  <section class="b b3"></section>
 </div>
 </body>
 </html>
