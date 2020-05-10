@@ -10,43 +10,36 @@
             padding: 0;
             margin: 0;
         }
-        p.blue{
-            color: blue;
-        }
     </style>
 </head>
 
 <body>
-    <p class="blue">
-        外部内容
-    </p>
     <hello-world>
-        <button slot="name">具名插槽</button>
-    </hello-world>
-    <hello-world>
-        <button slot="name2">另一个具名插槽</button>
-        <button>匿名插槽</button>
+        <button>我是匿名插槽里的信息</button>
+        <span slot="info">我是对话框里要提示的信息1。</span>
+        <span slot="info">我是对话框里要提示的信息2。</span>
+        “游离的被插入匿名插槽的内容1”
+        <p slot="none">没地方插入的内容</p>
+        “游离的被插入匿名插槽的内容2”
     </hello-world>
     <template id="helloWorld">
         <style>
             p {
-                color: orangered;
+                color: #00f
             }
         </style>
-        <p class="blue">
+        <p>
             HelloWorld~
             <slot></slot>
-            <slot name="name"></slot>
-            <slot name="name2"></slot>
+            <slot name="info"></slot>
+            <slot></slot>
         </p>
     </template>
     <script>
         class HelloWorld extends HTMLElement {
             constructor() {
                 super();
-
                 var shadow = this.attachShadow({ mode: 'open' });
-
                 let templateEl = document.getElementById('helloWorld')
                 let content = templateEl.content.cloneNode(true);
                 shadow.append(content)
@@ -60,8 +53,11 @@
             adoptedCallback() {
                 console.log(`adoptedCallback`)
             }
-            attributeChangedCallback() {
+            attributeChangedCallback(attrName, oldVal, newVal) {
                 console.log(`attributeChangedCallback`)
+            }
+            static get observedAttributes() {
+                return ['value'];
             }
 
         }
