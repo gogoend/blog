@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flex测试</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+        }
+
+        ul,
+        li {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            display: flex;
+            height: 200px;
+            width: 100%;
+            overflow: auto;
+            resize: both;
+            max-width: 100%;
+        }
+        li {
+            border: 1px solid #000;
+        }
+    </style>
+    <style>
+        li {
+            flex-basis: 100px;
+        }
+
+        li:nth-child(1) {
+            flex-shrink: 0.25;
+            /* 容器宽度不够（无剩余空间）的时候，子元素缩小的比例 */
+            flex-grow: 1;
+            /* 容器宽度太大（有剩余空间）的时候，子元素放大的比例 */
+        }
+
+        li:nth-child(2) {
+            flex-shrink: 0.5;
+            /* 容器宽度不够（无剩余空间）的时候，子元素缩小的比例 */
+            flex-grow: 1;
+            /* 容器宽度太大（有剩余空间）的时候，子元素放大的比例 */
+        }
+
+        li:nth-child(3) {
+            flex-shrink: 1;
+            /* 容器宽度不够的时候，子元素缩小的比例 */
+            flex-grow: 1;
+            /* 容器宽度太大的时候，子元素放大的比例 */
+        }
+        li:nth-child(4) {
+            flex-shrink: 1.5;
+            /* 容器宽度不够的时候，子元素缩小的比例 */
+            flex-grow: 0.5;
+            /* 容器宽度太大的时候，子元素放大的比例 */
+        }
+        li:nth-child(5) {
+            flex-shrink: 2;
+            /* 容器宽度不够的时候，子元素缩小的比例 */
+            flex-grow: 0.5;
+            /* 容器宽度太大的时候，子元素放大的比例 */
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="flex-container">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+    </ul>
+</body>
+
+</html>
