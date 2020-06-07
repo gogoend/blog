@@ -1,0 +1,68 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>js 继承 - 原型链继承</title>
+</head>
+
+<body>
+    <script>
+        let EventDoer = function (name) {
+            this.name = name
+            this.listeners = {};
+        };
+
+        EventDoer.prototype = Object.assign({}, {
+            listeners: null,
+            name: null,
+            getName() {
+                return this.name
+            },
+            addEventListener(type, callback) {
+                if (!(type in this.listeners)) {
+                    this.listeners[type] = [];
+                }
+                this.listeners[type].push(callback);
+            },
+            removeEventListener(type, callback) {
+                if (!(type in this.listeners)) return;
+                let typeHandlers = this.listeners[type];
+                for (let i = 0; i < typeHandlers.length; i++) {
+                    if (typeHandlers[i] === callback) {
+                        typeHandlers.splice(i, 1);
+                        return;
+                    }
+                }
+            },
+            fireEvent(name, detail) {
+                if (!(name in this.listeners)) {
+                    return true;
+                }
+                let typeHandlers = this.listeners[name].concat();
+
+                for (let i = 0; i < typeHandlers.length; i++) {
+                    typeHandlers[i].call(this, detail);
+                }
+            },
+            getListeners(name) {
+                if (name) {
+                    return this.listeners[name];
+                }
+                return this.listeners;
+            }
+        });
+    </script>
+
+    <script>
+        // 此处从父类继承
+        function Trump(name = ''){
+            this.name = name
+        }
+        Trump.prototype = new EventDoer();
+
+        // 此处实例化子类
+        let donaldTrump = new Trump('donald')
+    </script>
+</body>
+
+</html>
