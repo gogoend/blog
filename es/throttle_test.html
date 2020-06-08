@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节流测试</title>
+</head>
+<body>
+    <h1 id="throttleEl">
+        节流
+    </h1>
+    <h1 id="debounceEl">
+        防抖
+    </h1>
+    <script>
+        function mousemoveHandler(e){
+            console.log(e)
+        }
+        function throttle(func, wait){
+            let timeout
+            return function(){
+                let ctx = this;
+                let args = arguments;
+                if(!timeout){
+                    timeout = setTimeout(()=>{
+                        timeout = null;
+                        func.apply(ctx,args)
+                    },wait)
+                }
+            }
+        }
+        function debounce(func, wait){
+            let timeout
+            return function(){
+                let ctx = this;
+                let args = arguments;
+                if(timeout) clearTimeout(timeout)
+                timeout = setTimeout(()=>{
+                    func.apply(ctx,args)
+                },wait)
+            }
+        }
+        throttleEl.addEventListener('click',throttle(mousemoveHandler,500))
+        debounceEl.addEventListener('click',debounce(mousemoveHandler,500))
+    </script>
+</body>
+</html>
