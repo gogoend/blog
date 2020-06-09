@@ -1,47 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>节流测试</title>
 </head>
-<body>
-    <h1 id="throttleEl">
-        节流
-    </h1>
-    <h1 id="debounceEl">
-        防抖
-    </h1>
+
+<body style="margin:0;width:100vw;height:100vh">
+    <h1 style="margin:0" id="h1">滚一滚，有惊喜</h1>
     <script>
-        function mousemoveHandler(e){
-            console.log(e)
-        }
-        function throttle(func, wait){
-            let timeout
-            return function(){
-                let ctx = this;
-                let args = arguments;
-                if(!timeout){
-                    timeout = setTimeout(()=>{
-                        timeout = null;
-                        func.apply(ctx,args)
-                    },wait)
-                }
+        let timer = null
+        function wheelHandler(e) {
+            if (!timer) {
+                timer = setTimeout(() => {
+                    console.log(e)
+                    clearTimeout(timer)
+                    timer =null
+                }, 1000)
             }
         }
-        function debounce(func, wait){
-            let timeout
-            return function(){
-                let ctx = this;
-                let args = arguments;
-                if(timeout) clearTimeout(timeout)
-                timeout = setTimeout(()=>{
-                    func.apply(ctx,args)
-                },wait)
-            }
-        }
-        throttleEl.addEventListener('click',throttle(mousemoveHandler,500))
-        debounceEl.addEventListener('click',debounce(mousemoveHandler,500))
+        document.body.addEventListener('wheel', wheelHandler)
     </script>
 </body>
+
 </html>
