@@ -34,8 +34,9 @@
         function dispatchByName(obj, eventName) {
             // 过时的的初始化事件的方法
             let theEvent = document.createEvent('CustomEvent')
-            theEvent.initEvent('done', true, true)
-            theEvent.msg = 'i`m a messgae'
+            theEvent.initCustomEvent('done', true, true,{
+                msg:'i`m a messgae'
+            })
 
             obj.dispatchEvent(theEvent)
         }
