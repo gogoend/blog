@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 遮罩测试</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        picture.test-image img {
+            mask-image: repeating-linear-gradient(45deg, #000 10%, #fff 30%);
+            mask-mode: luminance;
+            mask-repeat: repeat;
+        }
+    </style>
+</head>
+
+<body>
+    <picture class="test-image" style="height:100vh">
+        <img style="height: 100%;display: block;" src="../_res/bbb-splash.png" />
+    </picture>
+</body>
+
+</html>
