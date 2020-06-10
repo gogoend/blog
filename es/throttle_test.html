@@ -10,17 +10,25 @@
 <body style="margin:0;width:100vw;height:100vh">
     <h1 style="margin:0" id="h1">滚一滚，有惊喜</h1>
     <script>
-        let timer = null
         function wheelHandler(e) {
-            if (!timer) {
-                timer = setTimeout(() => {
-                    console.log(e)
-                    clearTimeout(timer)
-                    timer =null
-                }, 1000)
+            console.log(e)
+        }
+        document.body.addEventListener('wheel', throttle(wheelHandler,2000))
+
+        function throttle(fn, wait) {
+            let timer = null
+            return function () {
+                let ctx = this;
+                let args = arguments;
+                if (!timer) {
+                    timer = setTimeout(() => {
+                        fn.apply(ctx,args)
+                        clearTimeout(timer)
+                        timer = null
+                    }, wait)
+                }
             }
         }
-        document.body.addEventListener('wheel', wheelHandler)
     </script>
 </body>
 

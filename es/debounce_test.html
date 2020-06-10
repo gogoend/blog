@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防抖测试</title>
+</head>
+
+<body>
+    <h1 id="h1">点我有惊喜</h1>
+    <script>
+        function clickHandler(e) {
+            console.log(e)
+        }
+        h1.addEventListener('click', debounce(clickHandler))
+
+        function debounce(fn, timeout) {
+            let timer = null
+            // 清除定时器
+            if (timer) {
+                clearTimeout(timer)
+                timer = null
+            }
+            timer = setTimeout(() => {
+                fn()
+            }, timeout)
+        }
+    </script>
+</body>
+
+</html>
