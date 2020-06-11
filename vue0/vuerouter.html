@@ -1,0 +1,93 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>VueRouter测试</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1>{{pageTitle}}</h1>
+        <ro></ro>
+        <div class="router-link-container">
+            <router-link to="/login">login</router-link> |
+            <router-link to="/reg">reg</router-link>
+        </div>
+        <router-view></router-view>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+    <script>
+        Vue.component('ro', {
+            data: function () {
+                return {
+                    // currentRouter: ''
+                }
+            },
+            template: `
+            <div>
+                
+            </div>`,
+        })
+        var login = {
+            template: `<div><h1>Login</h1></div>`
+        }
+        var reg = {
+            template: `<div><h1>Reg</h1></div>`
+        }
+        var page404={
+            template: `<div><h1>404</h1><h2>404</h2></div>`
+        }
+        var routes = [
+            {
+                path: '/',
+                redirect:'/reg'
+            },
+            {
+                path: '/login',
+                component: login,
+                meta: {
+                    title: 'Login'
+                }
+            },
+            {
+                path: '/reg',
+                component: reg,
+                meta: {
+                    title: 'Reg'
+                }
+            },
+            {
+                path:'*',
+                component: page404,
+                meta:{
+                    title:'404 Not Found'
+                }
+            }
+        ]
+        var router = new VueRouter({
+            routes
+        })
+        // console.log(router)
+        router.beforeEach((to,from,next)=>{
+            document.title=to.meta.title;
+            next();
+        })
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                pageTitle: `VueRouter测试`
+            },
+            router,
+            updated(){
+                console.log(this.$route)
+            }
+        })
+    </script>
+</body>
+
+</html>

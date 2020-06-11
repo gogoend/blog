@@ -1,0 +1,27 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>自定义v-model（双向绑定）</title>
+</head>
+
+<body>
+    <div id="app">
+        <div v-for="(item,index) in values">
+            <input @blur="values[index]=$event.target.value" :value="values[index]" />
+        </div>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                values: [111, 222, 333],
+                btn1: true
+            }
+        });
+    </script>
+</body>
+
+</html>

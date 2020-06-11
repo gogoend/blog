@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>VueRouter 嵌套路由测试</title>
+</head>
+
+<body>
+    <div id="app">
+        <p>
+            <router-link to="/user/foo">/user/foo</router-link>
+            <router-link to="/user/foo/profile">/user/foo/profile</router-link>
+            <router-link to="/user/foo/posts">/user/foo/posts</router-link>
+        </p>
+        <router-view></router-view>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+    <script>
+        const User = {
+            template: `
+    <div class="user">
+      <h2>User {{ $route.params.id }}</h2>
+      <router-view></router-view>
+    </div>
+  `
+        }
+
+        const UserHome = {
+            template: '<div>Home</div>'
+        }
+        const UserProfile = {
+            template: '<div>Profile</div>'
+        }
+        const UserPosts = {
+            template: '<div>Posts</div>'
+        }
+
+        const router = new VueRouter({
+            routes: [
+                {
+                    path: '/user/:id', component: User,
+                    children: [
+                        // UserHome will be rendered inside User's <router-view>
+                        // when /user/:id is matched
+                        { path: '', component: UserHome },
+
+                        // UserProfile will be rendered inside User's <router-view>
+                        // when /user/:id/profile is matched
+                        { path: 'profile', component: UserProfile },
+
+                        // UserPosts will be rendered inside User's <router-view>
+                        // when /user/:id/posts is matched
+                        { path: 'posts', component: UserPosts }
+                    ]
+                }
+            ]
+        })
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                pageTitle: `VueRouter 嵌套路由测试`
+            },
+            router,
+            updated() {
+                console.log(this.$route)
+            }
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,198 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>keep-alive 与 VueRouter 嵌套路由测试</title>
+    <script src="./vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="https://unpkg.com/vuex@3.1.2/dist/vuex.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p>
+            <router-link to="/user/foo">/user/foo</router-link>
+            <router-link to="/user/foo/profile">/user/foo/profile</router-link>
+            <router-link to="/user/foo/posts">/user/foo/posts</router-link>
+        </p>
+        <router-view></router-view>
+    </div>
+    <script>
+        const store = new Vuex.Store({
+            state: {
+                cacheList: []
+            },
+
+            mutations: {
+                ADD_KEEP_ALIVE(state, keepAlive) {
+                    if (state.cacheList.indexOf(keepAlive) >= 0) {
+                        return
+                    }
+                    state.cacheList.push(keepAlive)
+                },
+                DEL_KEEP_ALIVE(state, keepAlive) {
+                    let targetIndex = state.cacheList.indexOf(keepAlive)
+                    if (targetIndex < 0) {
+                        return
+                    } else {
+                        state.cacheList.splice(targetIndex, 1)
+                    }
+                }
+            },
+            actions: {
+
+            }
+        })
+    </script>
+    <script>
+        const User = {
+            template: `
+    <div class="user">
+      <h2>User {{ $route.params.id }}</h2>
+      <keep-alive :include="cacheList">
+        <router-view></router-view>
+      </keep-alive>
+    </div>
+  `,
+            data() {
+                return {
+                    // cacheList: ['UserHome']
+                }
+            },
+            methods: {
+            },
+            computed: {
+                cacheList() {
+                    return this.$store.state.cacheList
+                }
+            },
+            mounted() {
+            }
+        }
+
+        const UserHome = {
+            name: 'UserHome',
+            template: '<div>Home,{{count}}</div>',
+            data() {
+                return {
+                    count: 0
+                }
+            },
+            activated() {
+                this.$store.commit('ADD_KEEP_ALIVE', 'UserHome')
+            },
+            mounted() {
+                setInterval(() => {
+                    this.count++
+                }, 500)
+            },
+            beforeRouteEnter: function (to, from, next) {
+                // debugger
+
+                if (from.name === 'posts') {
+                    next((vm) => {
+                        debugger
+                        console.warn('此处应该销毁原来的组件！')
+                        vm.$store.commit('DEL_KEEP_ALIVE', 'UserHome')
+                    })
+                    // debugger
+                    // alert()
+                } else {
+                    next((vm) => {
+                        debugger
+                        console.warn('此处应该保持原来的组件！')
+                        vm.$store.commit('ADD_KEEP_ALIVE', 'UserHome')
+                    })
+                }
+                // next(function (vm) { })
+            }
+        }
+        const UserProfile = {
+            template: '<div>Profile,{{count}}</div>',
+            data() {
+                return {
+                    count: 0
+                }
+            },
+            activated() {
+
+            },
+            mounted() {
+                setInterval(() => {
+                    this.count++
+                }, 500)
+            }
+        }
+        const UserPosts = {
+            template: '<div>Posts</div>'
+        }
+
+        const router = new VueRouter({
+            routes: [
+                {
+                    path: '/user/:id',
+                    component: User,
+                    children: [
+                        // UserHome will be rendered inside User's <router-view>
+                        // when /user/:id is matched
+                        {
+                            path: '',
+                            name: 'userHome',
+                            component: UserHome
+                            // beforeEnter: function (to, from, next) {
+                            //     // debugger
+
+                            //     if (from.name === 'posts') {
+                            //         next((vm) => {
+                            //             debugger
+                            //             console.warn('此处应该销毁原来的组件！')
+                            //             vm.$store.commit('DEL_KEEP_ALIVE', 'UserHome')
+                            //         })
+                            //         // debugger
+                            //         // alert()
+                            //     } else {
+                            //         next((vm) => {
+                            //             debugger
+                            //             console.warn('此处应该保持原来的组件！')
+                            //             vm.$store.commit('ADD_KEEP_ALIVE', 'UserHome')
+                            //         })
+                            //     }
+                            //     // next(function (vm) { })
+                            // }
+                        },
+
+                        // UserProfile will be rendered inside User's <router-view>
+                        // when /user/:id/profile is matched
+                        {
+                            name: 'profile',
+                            path: 'profile',
+                            component: UserProfile
+                        },
+
+                        // UserPosts will be rendered inside User's <router-view>
+                        // when /user/:id/posts is matched
+                        {
+                            name: 'posts',
+                            path: 'posts',
+                            component: UserPosts
+                        }
+                    ]
+                }
+            ]
+        })
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                pageTitle: `VueRouter 嵌套路由测试`
+            },
+            router, store,
+            updated() {
+                console.log(this.$route)
+            }
+        })
+    </script>
+</body>
+
+</html>

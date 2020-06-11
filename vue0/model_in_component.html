@@ -1,0 +1,43 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>自定义组件的v-model</title>
+</head>
+
+<body>
+    <div id="app">
+        <div v-for="(item,index) in values">
+            <a-comp v-model="values[index]" />
+        </div>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+        // 定义一个名为 comp 的新组件
+        Vue.component('a-comp', {
+            model: {
+                prop: 'value',
+                event: 'change'
+            },
+            props: {
+                value: [String, Number]
+            },
+            template: `<label>表单项：
+            <input @change="$emit('change', $event.target.value)" :value="value"/>
+            </label>
+            `,
+        })
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                values: [111, 222, 333],
+                btn1: true
+            }
+        });
+    </script>
+</body>
+
+</html>

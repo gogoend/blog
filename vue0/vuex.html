@@ -1,0 +1,82 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>数字点击增加 - vuex</title>
+</head>
+
+<body>
+    <div id="app">
+        <div id="app">
+            <counter></counter>
+        </div>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script src="https://unpkg.com/vuex@3.1.2/dist/vuex.js"></script>
+
+    <script>
+        const store = new Vuex.Store({
+            state: {
+                count: 0
+            },
+            mutations: {
+                increment: (state,payload) => {
+                    console.log(state);state.count+=payload.a
+                },
+                decrement: state => state.count--
+            },
+            actions: {
+                increment: (context,payload) => {
+                    setTimeout( () =>{
+                        context.commit('increment',payload)
+                    })
+                },
+                decrement: (context,payload) => {
+                    setTimeout( () =>{
+                        context.commit('decrement',payload)
+                    })
+                }
+            }
+        })
+
+        const Counter = {
+            template: `
+            <div>
+                <button @click.left="increse" @click.right="decrese">{{ count }}</button>
+            </div>`,
+            computed: {
+                count() {
+                    return store.state.count
+                }
+            },
+            methods: {
+                increse (e) {
+                    e.preventDefault()
+                    // store.commit('increment',{a:111})
+                    store.dispatch('increment',{a:111})
+                },
+                decrese (e) {
+                    e.preventDefault()
+                    // store.commit('decrement')
+                    store.dispatch('decrement')
+                }
+            }
+        }
+
+        new Vue({
+            el: '#app',
+            components: {
+                Counter
+            },
+            store,
+            computed: {
+                count() {
+                    return store.state.count
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

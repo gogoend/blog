@@ -1,0 +1,78 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>自定义v-model（双向绑定）</title>
+</head>
+
+<body>
+    <!-- 参考自：https://www.cnblogs.com/xiaohuochai/p/7395694.html -->
+    <div id="app">
+
+        <button v-for="(item,index) in arr" @click="change(index)">{{item}}</button>
+
+        <component :is="currentView"></component>
+
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+        var subComp = {
+            template: `<input v-model="inputContent" />`,
+            data(){
+                return {
+                    inputContent:''
+                }
+            }
+        }
+        var app = new Vue({
+            el: '#app',
+            components: {
+                home: {
+                    template: `
+<div>
+    我是主页
+    <keep-alive>
+        <component :is="subComp"/>
+    </keep-alive>
+</div>
+`,
+                    components: { subComp },
+                    computed: {
+                        subComp() {
+                            return subComp
+                        }
+                    }
+                },
+                post: {
+                    template: '<div>我是提交页<subComp /></div>',
+                    components: {
+                        subComp
+                    }
+                },
+                archive: {
+                    template: '<div>我是存档页<subComp /></div>',
+                    components: {
+                        subComp
+                    }
+                },
+            },
+            data: {
+                index: 0,
+                arr: ['home', 'post', 'archive'],
+            },
+            computed: {
+                currentView() {
+                    return this.arr[this.index];
+                }
+            },
+            methods: {
+                change(index) {
+                    this.index = index
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

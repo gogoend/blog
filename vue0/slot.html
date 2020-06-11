@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>插槽测试</title>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <slot-comp>
+                <i>23333333</i>
+            </slot-comp>
+        </div>
+        <div>
+            <slot-comp>
+                <i>23333333</i>
+            </slot-comp>
+        </div>
+        <div>
+            <slot-comp>
+                <i>23333333</i>
+            </slot-comp>
+        </div>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+        Vue.component('slot-comp', {
+          data: function () {
+            return {
+              count: 0
+            }
+          },
+          template: `
+            <div>
+                <button v-on:click="count++">{{ count }}</button>
+                <slot></slot>
+            </div>`
+        })
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                value: 5,
+                btn1:true
+            }
+        });
+    </script>
+</body>
+
+</html>

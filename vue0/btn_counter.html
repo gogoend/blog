@@ -1,0 +1,44 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>按钮上的计数器</title>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <button-counter />
+        </div>
+        <div>
+            <button-counter />
+        </div>
+        <div>
+            <button-counter />
+        </div>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script>
+        // 定义一个名为 button-counter 的新组件
+        Vue.component('button-counter', {
+          data: function () {
+            return {
+              count: 0
+            }
+          },
+          template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+        })
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                value: 5,
+                btn1:true
+            }
+        });
+    </script>
+</body>
+
+</html>
