@@ -1,7 +1,11 @@
-[submodule "weather-app-web-component"]  #子模块名称
-	path = html/weather-app-web-component   #存放子模块的地址
-	url = https://github.com/gogoend/weather-app-web-component  #子模块的原始路径
+[submodule "weather-app-web-component"]	#子模块名称
+	path = html/weather-app-web-component	#存放子模块的地址
+	url = https://github.com/gogoend/weather-app-web-component	#子模块的原始路径
 
-[submodule "weather-app-react"]  #子模块名称
-	path = react/weather-app-react   #存放子模块的地址
-	url = https://github.com/gogoend/weather-app-react  #子模块的原始路径
+[submodule "weather-app-react"]
+	path = react/weather-app-react
+	url = https://github.com/gogoend/weather-app-react
+
+[submodule "vue-cli-test"]
+	path = vue/vue-cli-test
+	url = https://github.com/gogoend/vue_study
