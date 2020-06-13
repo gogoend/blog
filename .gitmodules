@@ -1,0 +1,3 @@
+[submodule "weather-app-web-component"] #子模块名称
+	path = html/weather-app-web-component   #存放子模块的地址
+	url = https://github.com/gogoend/weather-app-web-component  #子模块的原始路径
