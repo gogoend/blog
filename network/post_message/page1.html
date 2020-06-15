@@ -9,7 +9,7 @@
     <iframe id="iframe" src="http://localhost/page2.html"></iframe>
     <script>
         iframe.onload=()=>{
-            iframe.contentWindow.postMessage('gogoend','*')
+            iframe.contentWindow.postMessage('gogoend','http://localhost/')
         }
         window.onmessage=(e)=>{
             console.log(e.data)
