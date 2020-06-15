@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.staticfile.org/axios/0.19.2/axios.js"></script>
     <title>跨域测试</title>
 </head>
 <body>
     <article></article>
     <script>
-        axios.get('https://me4vr.com/random.php').then(({data})=>{
-            debugger
-        })
+        let jsonpEl = document.createElement('script')
+        jsonpEl.src = 'https://me4vr.com/random_jsonp.php?callback=console.log'
+        document.head.appendChild(jsonpEl)
     </script>
 </body>
 </html>
