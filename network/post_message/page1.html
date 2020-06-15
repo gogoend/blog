@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>page1</title>
+</head>
+<body>
+    <iframe id="iframe" src="http://localhost/page2.html"></iframe>
+    <script>
+        iframe.onload=()=>{
+            iframe.contentWindow.postMessage('gogoend','*')
+        }
+        window.onmessage=(e)=>{
+            console.log(e.data)
+        }
+    </script>
+</body>
+</html>
