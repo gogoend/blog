@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>树状结构测试</title>
+</head>
+
+<body>
+    <script>
+        function traverseTree(tree){
+            if(tree){
+                tree.forEach(item=>{
+                    console.log(item)
+                    if(item && typeof item==='object'){
+                        traverseTree(item.children)
+                    }
+                })
+            }
+        }
+        let tree = [{
+            a: 'apple',
+            b: 'banana',
+            c: 'chocolate',
+            children: [{
+                a: 'apple',
+                b: 'banana',
+                c: 'chocolate',
+                children: [{
+                    a: 'apple',
+                    b: 'banana',
+                    c: 'chocolate',
+                    children: [{
+                        a: 'apple',
+                        b: 'banana',
+                        c: 'chocolate',
+                        children: null
+                    }]
+                },
+                {
+                    a: 'apple',
+                    b: 'banana',
+                    c: 'chocolate',
+                    children: [{
+                        a: 'apple',
+                        b: 'banana',
+                        c: 'chocolate',
+                        children: [{
+                            a: 'apple',
+                            b: 'banana',
+                            c: 'chocolate',
+                            children: [{
+                                a: 'apple',
+                                b: 'banana',
+                                c: 'chocolate',
+                                children: null
+                            }]
+                        },
+                        {
+                            a: 'apple',
+                            b: 'banana',
+                            c: 'chocolate',
+                            children: null
+                        }, {
+                            a: 'apple',
+                            b: 'banana',
+                            c: 'chocolate',
+                            children: null
+                        }]
+                    }]
+                }]
+            }]
+        }]
+        traverseTree(tree)
+
+    </script>
+</body>
+
+</html>
