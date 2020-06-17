@@ -13,10 +13,12 @@
         zzzz
     </div>
     <script>
-        // 一种表示
         function h() {
-            // ...
+            console.log(h)
         }
+    </script>
+    <script>
+        // 一种表示
         h(
             'div', {
             id: 'wrapper',
@@ -30,33 +32,35 @@
             'zzzz'
         )
         // 另一种表示，大致了解
-        let vdom = {
-            type:'div',
-            props:{
-                id:'wrapper',
-                a:1
-            },
-            children:[
-                {
-                    type:'span',
-                    props:{
-                        color:'red'
-                    },
-                    children:[{
-                        type:'',
-                        props:'',
-                        children:'',
-                        text:'hello'
-                    }]
-                },
-                {
-                    type:'',
-                    props:'',
-                    children:[],
-                    text:'zzzz'
-                }
-            ]
-        }
+        // let vdom = {
+            // type: 'div',
+            // props: {
+                // id: 'wrapper',
+                // a: 1
+            // },
+            // children: [
+                // {
+                    // type: 'span',
+                    // props: {
+                        // style: {
+                            // color: 'red'
+                        // }
+                    // },
+                    // children: [{
+                        // type: '',
+                        // props: '',
+                        // children: '',
+                        // text: 'hello'
+                    // }]
+                // },
+                // {
+                    // type: '',
+                    // props: '',
+                    // children: [],
+                    // text: 'zzzz'
+                // }
+            // ]
+        // }
     </script>
 </body>
 
