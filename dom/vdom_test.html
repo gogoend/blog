@@ -93,6 +93,9 @@
             if (type) {
                 vnode.domElement = document.createElement(type); // 建立虚拟节点和真实元素关系
                 updateProperties(vnode) // 根据当前虚拟节点的属性，更新真实DOM元素
+                // children中放的也是一个个的虚拟节点
+                // 此处递归渲染子的虚拟节点
+                children.forEach(childVnode=> render(childVnode, vnode.domElement) )
             } else {
                 vnode.domElement = document.createTextNode(text)
             }
