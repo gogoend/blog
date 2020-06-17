@@ -13,25 +13,33 @@
         zzzz
     </div>
     <script>
-        function h(type,props={},...children) {
+        function h(type, props = {}, ...children) {
             let key;
-            if(props.key){
-                key=props.key;
+            if (props.key) {
+                key = props.key;
                 delete props.key
             }
-            console.log(h)
+            // console.log(h)
+            return vnode(
+                type,
+                key,
+                props,
+                children
+            )
+        }
+        function vnode(type, key, props, children, text) {
             return {
                 type,
-                props,
                 key,
+                props,
                 children,
-                text: undefined
+                text
             }
         }
     </script>
     <script>
         // 一种表示
-        h(
+        let theVNode= h(
             'div', {
             id: 'wrapper',
             a: 1
