@@ -13,6 +13,17 @@
         zzzz
     </div>
     <script>
+        function vnode(type, key, props, children, text) {
+            return {
+                type,
+                key,
+                props,
+                children,
+                text
+            }
+        }
+    </script>
+    <script>
         function h(type, props = {}, ...children) {
             let key;
             if (props.key) {
@@ -21,10 +32,10 @@
             }
             // console.log(h)
             // 判断子节点是否为字符串；如果是也把它转成vnode
-            children = children.map(child=>{
-                if(typeof child==='string'){
-                    return vnode(undefined,undefined,undefined,undefined,child)
-                }else{
+            children = children.map(child => {
+                if (typeof child === 'string') {
+                    return vnode(undefined, undefined, undefined, undefined, child)
+                } else {
                     return child
                 }
             })
@@ -34,15 +45,6 @@
                 props,
                 children
             )
-        }
-        function vnode(type, key, props, children, text) {
-            return {
-                type,
-                key,
-                props,
-                children,
-                text
-            }
         }
     </script>
     <script>
