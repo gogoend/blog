@@ -20,6 +20,14 @@
                 delete props.key
             }
             // console.log(h)
+            // 判断子节点是否为字符串；如果是也把它转成vnode
+            children = children.map(child=>{
+                if(typeof child==='string'){
+                    return vnode(undefined,undefined,undefined,undefined,child)
+                }else{
+                    return child
+                }
+            })
             return vnode(
                 type,
                 key,
@@ -39,11 +47,12 @@
     </script>
     <script>
         // 一种表示
-        let theVNode= h(
-            'div', {
-            id: 'wrapper',
-            a: 1
-        },
+        let theVNode = h(
+            'div',
+            {
+                id: 'wrapper',
+                a: 1
+            },
             h('span', {
                 style: {
                     color: 'red'
