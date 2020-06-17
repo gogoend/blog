@@ -49,7 +49,21 @@
         // vonde: 节点
         // container: 目标容器
         function render(vnode,container) {
-            console.log(vnode,container)
+            let ele = createDomElementFromVnode(vnode) // 将vnode转换为真实node
+
+            container.appendChild(ele)
+            // console.log(vnode,container)
+        }
+        // 通过虚拟Dom，创建一个真实的dom元素
+        function createDomElementFromVnode(vnode){
+            let {type,key,props,children,text} = vnode
+            // 是否是文本节点
+            if(type){
+                vnode.domElement = document.createElement(type); // 建立虚拟节点和真实元素关系
+            }else{
+                vnode.domElement = document.createTextNode(text)
+            }
+            return vnode.domElement
         }
     </script>
     <script>
