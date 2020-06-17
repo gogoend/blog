@@ -54,12 +54,27 @@
             container.appendChild(ele)
             // console.log(vnode,container)
         }
+        // 后续比对时，根据老的属性和新的属性，重新更新节点
+        function updateProperties(newVnode,oldProps={}){
+            let domElement = newVnode.domElement;
+            let newProps = newVnode.props;
+
+            // 若老的里面有，新的里面没有，这个属性被移除了
+            for(let oldPropName in oldProps){
+                delete domElement[oldPropName]
+            }
+            // 若老的里面没有，新的里面有
+            for(let newPropName in newProps){ // 用新节点属性覆盖掉老节点属性
+                domElement[newPropName] = newProps[newPropName]
+            }
+        }
         // 通过虚拟Dom，创建一个真实的dom元素
         function createDomElementFromVnode(vnode){
             let {type,key,props,children,text} = vnode
             // 是否是文本节点
             if(type){
                 vnode.domElement = document.createElement(type); // 建立虚拟节点和真实元素关系
+                updateProperties(vnode) // 根据当前虚拟节点的属性，更新真实DOM元素
             }else{
                 vnode.domElement = document.createTextNode(text)
             }
