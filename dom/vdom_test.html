@@ -13,8 +13,20 @@
         zzzz
     </div>
     <script>
-        function h() {
+        function h(type,props={},...children) {
+            let key;
+            if(props.key){
+                key=props.key;
+                delete props.key
+            }
             console.log(h)
+            return {
+                type,
+                props,
+                key,
+                children,
+                text: undefined
+            }
         }
     </script>
     <script>
