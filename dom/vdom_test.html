@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>vdom测试</title>
+    <meta name="description" content="https://www.bilibili.com/video/BV1jJ411x7FX" />
 </head>
 
 <body>
@@ -68,8 +69,8 @@
             let newStyleObj = newProps.style || {}
             let oldStyleObj = oldProps.style || {}
 
-            for( let propName in oldStyleObj){
-                if(!newStyleObj[propName]){
+            for (let propName in oldStyleObj) {
+                if (!newStyleObj[propName]) {
                     domElement.style[propName] = '' // 老DOM元素上更新后，若没有某个样式，则需要删除
                 }
             }
@@ -95,7 +96,7 @@
                 updateProperties(vnode) // 根据当前虚拟节点的属性，更新真实DOM元素
                 // children中放的也是一个个的虚拟节点
                 // 此处递归渲染子的虚拟节点
-                children.forEach(childVnode=> render(childVnode, vnode.domElement) )
+                children.forEach(childVnode => render(childVnode, vnode.domElement))
             } else {
                 vnode.domElement = document.createTextNode(text)
             }
@@ -113,11 +114,12 @@
                     color: '#f00'
                 }
             },
-            h('span', {
-                style: {
-                    color: 'red'
-                }
-            }, 'hello'),
+            h('h1', {
+                id:Math.random()
+            }, 'hello','aaa'),
+            h('h2', {
+                id:Math.random()
+            }, 'hello',Math.random().toString(),h('h3',{},'hi')),
             'zzzz'
         )
 
