@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vdom测试</title>
+</head>
+
+<body>
+    <div id="wrapper" a="1">
+        <span style="color:red">hello</span>
+        zzzz
+    </div>
+    <script>
+        function h() {
+
+        }
+        h(
+            'div', {
+            id: 'wrapper',
+            a: 1
+        },
+            h('span', {
+                style: {
+                    color: 'red'
+                }
+            }, 'hello'),
+            'zzzz'
+        )
+    </script>
+</body>
+
+</html>
