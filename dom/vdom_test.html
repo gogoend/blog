@@ -8,9 +8,7 @@
 </head>
 
 <body>
-    <div id="wrapper" a="1">
-        <span style="color:red">hello</span>
-        zzzz
+    <div id="app">
     </div>
     <script>
         function vnode(type, key, props, children, text) {
@@ -48,6 +46,13 @@
         }
     </script>
     <script>
+        // vonde: 节点
+        // container: 目标容器
+        function render(vnode,container) {
+            console.log(vnode,container)
+        }
+    </script>
+    <script>
         // 一种表示
         let theVNode = h(
             'div',
@@ -62,6 +67,10 @@
             }, 'hello'),
             'zzzz'
         )
+
+        // 将虚拟节点转化为真实DOM节点，并插入到app元素中
+        render(theVNode, app)
+
         // 另一种表示，大致了解
         // let vdom = {
             // type: 'div',
