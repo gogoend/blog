@@ -9,3 +9,7 @@
 [submodule "vue-cli-test"]
 	path = vue/vue-cli-test
 	url = https://github.com/gogoend/vue_study
+	
+[submodule "weather-app-vue-vite"]
+	path = vue/weather-app-vue-vite
+	url = https://github.com/gogoend/weather-app-vue-vite
