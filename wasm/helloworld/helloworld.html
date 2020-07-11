@@ -1,0 +1,23 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let wasmFun={}
+        fetch("helloworld.wasm").
+            then(response => response.arrayBuffer()).
+            then(bytes => WebAssembly.instantiate(bytes)).
+            then(mod => mod.instance).
+            then(instance => {
+                wasmFun = instance.exports;
+                console.log(wasmFun)
+            });
+    </script>
+</body>
+
+</html>
