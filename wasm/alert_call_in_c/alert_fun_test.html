@@ -1,0 +1,55 @@
+<!--
+ * @Author: gogoend
+ * @Date: 2020-07-11 16:22:40
+ * @LastEditors: gogoend
+ * @LastEditTime: 2020-07-11 23:21:51
+ * @FilePath: \demo\wasm\alert_call_in_c\alert_fun_test.html
+ * @Description: 
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let importObject = {
+            env: {
+                // 内存空间
+                '__memory_base': 0,
+                memory: new WebAssembly.Memory({ initial: 256 }),
+                // 变量映射表
+                tableBase: 0,
+                table: new WebAssembly.Table({ initial: 0, element: "anyfunc" }),
+                // 注入函数
+                alert:(str)=>{
+                    alert(utf8ToString(str))
+                }
+            }
+        }
+
+        function utf8ToString(p) {
+            let h = new Uint8Array(importObject.env.memory.buffer);
+            let s = "";
+            for (let i = p; h[i]; i++) {
+                s += String.fromCharCode(h[i]);
+            }
+            return s;
+        }
+
+
+        fetch("alert_fn.wasm").
+            then(response => response.arrayBuffer()).
+            then(bytes => WebAssembly.instantiate(bytes, importObject)).
+            then(mod => mod.instance).
+            then(instance => {
+                let exports = instance.exports;
+                exports.sayHi();
+            });
+    </script>
+</body>
+
+</html>
