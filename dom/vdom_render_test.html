@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vdom测试</title>
+    <meta name="description" content="https://www.bilibili.com/video/BV1jJ411x7FX" />
+</head>
+
+<body>
+    <div id="app">
+    </div>
+    <script>
+        function vnode(type, key, props, children, text) {
+            return {
+                type,
+                key,
+                props,
+                children,
+                text
+            }
+        }
+    </script>
+    <script>
+        function h(type, props = {}, ...children) {
+            let key;
+            if (props.key) {
+                key = props.key;
+                delete props.key
+            }
+            // console.log(h)
+            // 判断子节点是否为字符串；如果是也把它转成vnode
+            children = children.map(child => {
+                if (typeof child === 'string') {
+                    return vnode(undefined, undefined, undefined, undefined, child)
+                } else {
+                    return child
+                }
+            })
+            return vnode(
+                type,
+                key,
+                props,
+                children
+            )
+        }
+    </script>
+    <script>
+        // vonde: 节点
+        // container: 目标容器
+        function render(vnode, container) {
+            let ele = createDomElementFromVnode(vnode) // 将vnode转换为真实node
+
+            container.appendChild(ele)
+            // console.log(vnode,container)
+        }
+        // 后续比对时，根据老的属性和新的属性，重新更新节点
+        function updateProperties(newVnode, oldProps = {}) {
+            let domElement = newVnode.domElement;
+            let newProps = newVnode.props;
+
+            // 若老的里面有，新的里面没有，这个属性被移除了
+            for (let oldPropName in oldProps) {
+                delete domElement[oldPropName]
+            }
+            // 若新的里面有style，老的里面也有style
+            // style还可能不一样：老的里面有background，而新的里面没有
+            let newStyleObj = newProps.style || {}
+            let oldStyleObj = oldProps.style || {}
+
+            for (let propName in oldStyleObj) {
+                if (!newStyleObj[propName]) {
+                    domElement.style[propName] = '' // 老DOM元素上更新后，若没有某个样式，则需要删除
+                }
+            }
+
+            // 若老的里面没有，新的里面有
+            for (let newPropName in newProps) { // 用新节点属性覆盖掉老节点属性
+                if (newPropName === 'style') {
+                    let styleObj = newProps.style;
+                    for (let s in styleObj) {
+                        domElement.style[s] = styleObj[s]
+                    }
+                } else {
+                    domElement[newPropName] = newProps[newPropName]
+                }
+            }
+        }
+        // 通过虚拟Dom，创建一个真实的dom元素
+        function createDomElementFromVnode(vnode) {
+            let { type, key, props, children, text } = vnode
+            // 是否是文本节点
+            if (type) {
+                vnode.domElement = document.createElement(type); // 建立虚拟节点和真实元素关系
+                updateProperties(vnode) // 根据当前虚拟节点的属性，更新真实DOM元素
+                // children中放的也是一个个的虚拟节点
+                // 此处递归渲染子的虚拟节点
+                children.forEach(childVnode => render(childVnode, vnode.domElement))
+            } else {
+                vnode.domElement = document.createTextNode(text)
+            }
+            return vnode.domElement
+        }
+    </script>
+    <script>
+        // 一种表示
+        let theVNode = h(
+            'div',
+            {
+                id: 'wrapper',
+                a: 1,
+                style: {
+                    color: '#f00'
+                }
+            },
+            h('h1', {
+                id:Math.random()
+            }, 'hello','aaa'),
+            h('h2', {
+                id:Math.random()
+            }, 'hello',Math.random().toString(),h('h3',{},'hi')),
+            'zzzz'
+        )
+
+        // 将虚拟节点转化为真实DOM节点，并插入到app元素中
+        render(theVNode, app)
+
+        // 另一种表示，大致了解
+        // let vdom = {
+            // type: 'div',
+            // props: {
+                // id: 'wrapper',
+                // a: 1
+            // },
+            // children: [
+                // {
+                    // type: 'span',
+                    // props: {
+                        // style: {
+                            // color: 'red'
+                        // }
+                    // },
+                    // children: [{
+                        // type: '',
+                        // props: '',
+                        // children: '',
+                        // text: 'hello'
+                    // }]
+                // },
+                // {
+                    // type: '',
+                    // props: '',
+                    // children: [],
+                    // text: 'zzzz'
+                // }
+            // ]
+        // }
+    </script>
+</body>
+
+</html>
