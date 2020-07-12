@@ -1,0 +1,86 @@
+<!--
+ * @Author: gogoend
+ * @Date: 2020-07-12 12:07:32
+ * @LastEditors: gogoend
+ * @LastEditTime: 2020-07-12 15:00:33
+ * @FilePath: \demo\dom\file_mulit_upload_xhr.html
+ * @Description: 
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多文件上传测试 - XHR</title>
+</head>
+
+<body>
+    <form method="POST" action="http://localhost:8000/upload-test.php">
+        <fieldset>
+            <legend>选择文件</legend>
+            <input name="file" id="fileInputDOM" type="file" multiple />
+            <ul id="fileListDOM">
+            </ul>
+        </fieldset>
+        <progress id="progressDOM" value="0" max="100"></progress>
+        <button id="submitBtn" type="button">提交</button>
+    </form>
+    <template id="fileListItemDOM">
+        <li>
+            <span>${item.name}</span><button type="button">删除</button>
+        </li>
+    </template>
+    <script>
+        let fileList = [];
+        // let fileListItemDOM = document.createDocumentFragment();
+
+        fileInputDOM.addEventListener('change', function (e) {
+            let tempFileList = [];
+            // tempFileList.length = 0
+            for (let key in this.files) {
+                if (this.files[key] instanceof File) {
+                    tempFileList.push(this.files[key])
+                }
+            }
+            let allFile = fileList.concat(tempFileList)
+            fileList = Array.from(new Set(allFile))
+            fileListDOM.innerHTML = ''
+            fileList.forEach((item, index) => {
+                let itemDOM = fileListItemDOM.content.firstElementChild.cloneNode(true)
+                itemDOM.querySelector('span') ? itemDOM.querySelector('span').textContent = item.name : void 0
+                fileListDOM.append(itemDOM)
+            })
+            console.log(fileList)
+        })
+
+        submitBtn.addEventListener('click', function (e) {
+            let formData = new FormData()
+            fileList.forEach(file => {
+                formData.append('file', file)
+            })
+
+            let xhr = new XMLHttpRequest()
+            console.log(xhr)
+            // 此处需要对upload对象增加"progress"监听
+            xhr.upload.addEventListener("progress", (e) => {
+                console.log(e,'progress')
+                if (e.lengthComputable) {
+                    var percentComplete = e.loaded / e.total * 100;
+                    progressDOM.setAttribute('value',percentComplete)
+                    console.log(percentComplete)
+                    // ...
+                }
+            });
+            xhr.onreadystatechange = (e) => {
+                if (xhr.status === 200 && xhr.readyState) {
+                    console.log('over!')
+                }
+            }
+            xhr.open('POST', 'http://localhost:8000/upload-test.php')
+            xhr.send(formData)
+
+        })
+    </script>
+</body>
+
+</html>
