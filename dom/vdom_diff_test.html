@@ -29,7 +29,6 @@
                 key = props.key;
                 delete props.key
             }
-            // console.log(h)
             // 判断子节点是否为字符串；如果是也把它转成vnode
             children = children.map(child => {
                 if (typeof child === 'string') {
@@ -115,47 +114,86 @@
                 }
             },
             h('h1', {
-                id:Math.random()
-            }, 'hello','aaa'),
+                id: Math.random()
+            }, 'hello', 'aaa'),
             h('h2', {
-                id:Math.random()
-            }, 'hello',Math.random().toString(),h('h3',{},'hi')),
+                id: Math.random()
+            }, 'hello', Math.random().toString(), h('h3', {}, 'hi')),
             'zzzz'
         )
 
         // 将虚拟节点转化为真实DOM节点，并插入到app元素中
         render(theVNode, app)
 
-        // 另一种表示，大致了解
-        // let vdom = {
-            // type: 'div',
-            // props: {
-                // id: 'wrapper',
-                // a: 1
-            // },
-            // children: [
-                // {
-                    // type: 'span',
-                    // props: {
-                        // style: {
-                            // color: 'red'
-                        // }
-                    // },
-                    // children: [{
-                        // type: '',
-                        // props: '',
-                        // children: '',
-                        // text: 'hello'
-                    // }]
-                // },
-                // {
-                    // type: '',
-                    // props: '',
-                    // children: [],
-                    // text: 'zzzz'
-                // }
-            // ]
-        // }
+    </script>
+    <script>
+        // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
+        // dom diff作用根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新dom
+        // 规则:当节点类型相同时，去看一下属性是否相同 产生一个属性的补丁包{type: 'ATTRS' ,ttrs:(lass:list-group'}}
+        // 新的dom节点不存在{type:'REMOVE',index:xxx}
+        // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
+        // 文本的变化{type:"TEXT",text:1}
+        let vnode1 = theVNode
+        let vnode2 = h(
+            'div',
+            {
+                id: 'wrapper',
+                a: 2,
+                style: {
+                    color: '#f00'
+                }
+            },
+            h('h1', {
+                id: Math.random()
+            }, 'hello'),
+            'zzzz'
+        )
+        // debugger
+        let patches = diff(vnode1,vnode2)
+        function diff(oTree,nTree){
+            let patches = {}
+            let index = 0
+            // 递归树，比较后的结果放到补丁包
+            walk(oTree,nTree,index,patches)
+            return patches;
+        }
+        function diffAttr(oAttrs,nAttrs){
+            let patch = {}
+            // 判断老属性、新属性关系
+            for(let key in oAttrs){
+                if(oAttrs[key] !== nAttrs[key]){
+                    patch[key] = nAttrs[key] // 有可能undefined
+                }
+            }
+            for(let key in nAttrs){
+                // 若老节点没有新节点的属性
+                if(!oAttrs.hasOwnProperty(key)){
+                    patch[key] = nAttrs[key];
+                }
+            }
+            return patch;
+        }
+        const ATTRS = "ATTRS"
+        // index: 据说是树的层次
+        function walk(oNode,nNode,index,patches){
+            let currentPatch = []
+            if(oNode.type===nNode.type){
+                // 比较属性是否有更改
+                let attrs = diffAttr(oNode.props,nNode.props)
+                // console.log(attrs)
+                if(Object.keys(attrs).length>0){
+                    currentPatch.push({
+                        type:ATTRS,
+                        attrs
+                    })
+                }
+            }
+            if(currentPatch.length>0){ // 若当前元素确实有补丁
+                // 将元素与补丁对应起来，放到大补丁包中
+                patches[index] = currentPatch
+                console.log(patches)
+            }
+        }
     </script>
 </body>
 
