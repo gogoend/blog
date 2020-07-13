@@ -221,13 +221,25 @@
             patches.forEach(patch => {
                 switch (patch.type) {
                     case ATTRS:
+                        for(let key in patch.attrs){
+                            let value = patch.attrs[key]
+                            if(value){
+                                setAttr(node,key,value)
+                            }else{
+                                node.removeAttribute(key)
+                            }
+                        }
                         break;
                     case TEXT:
                         node.textContent = patch.text.text
                         break;
                     case REPLACE:
+                        // node有问题！！
+                        let nNode = (patch.nNode&&patch.nNode.children)?render(patch.nNode,node): document.createTextNode(patch.nNode);
+                        node.parentNode.replaceChild(nNode,node)
                         break;
                     case REMOVE:
+                        node.parentNode.removeChild(node)
                         break;
                     default:
                         break;
@@ -251,7 +263,7 @@
         let vnode1 = theVNode
         let vnode2 = h('ul', { class: 'list' },
             h('li', { class: "item" }, '1'),
-            h('li', { class: "item" }, 'b'),
+            h('div', { class: "item" }, 'z'),
             h('dl', { class: "item" }, '3')
         )
 
