@@ -103,65 +103,41 @@
             return vnode.domElement
         }
     </script>
-    <script>
-        // 一种表示
-        let theVNode = h('ul',{ class:'list'},
-            h('li',{ class:"item"},'a'),
-            h('li',{ class:"item"},'b'),
-            h('li',{ class:"item"},'c')
-        )
 
-        // 将虚拟节点转化为真实DOM节点，并插入到app元素中
-        render(theVNode, app)
-
-    </script>
     <script>
-        const ATTRS = "ATTRS",TEXT = 'TEXT', REMOVE='REMOVE',REPLACE='REPLACE';
+        const ATTRS = "ATTRS", TEXT = 'TEXT', REMOVE = 'REMOVE', REPLACE = 'REPLACE';
         let Index = 0
-        // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
-        // dom diff作用根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新dom
-        // 规则:当节点类型相同时，去看一下属性是否相同 产生一个属性的补丁包{type: 'ATTRS' ,ttrs:(lass:list-group'}}
-        // 新的dom节点不存在{type:'REMOVE',index:xxx}
-        // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
-        // 文本的变化{type:"TEXT",text:1}
-        let vnode1 = theVNode
-        let vnode2 = h('ul',{ class:'list'},
-            h('li',{ class:"item"},'1'),
-            h('li',{ class:"item"},'b'),
-            h('dl',{ class:"item"},'3')
-        )
-        // debugger
-        let patches = diff(vnode1,vnode2)
-        function diff(oTree,nTree){
+
+        function diff(oTree, nTree) {
             let patches = {}
             let index = 0
             // 递归树，比较后的结果放到补丁包
-            walk(oTree,nTree,index,patches)
+            walk(oTree, nTree, index, patches)
             return patches;
         }
         // 比较属性
-        function diffAttr(oAttrs,nAttrs){
+        function diffAttr(oAttrs, nAttrs) {
             let patch = {}
             // 判断老属性、新属性关系
-            for(let key in oAttrs){
-                if(oAttrs[key] !== nAttrs[key]){
+            for (let key in oAttrs) {
+                if (oAttrs[key] !== nAttrs[key]) {
                     patch[key] = nAttrs[key] // 有可能undefined
                 }
             }
-            for(let key in nAttrs){
+            for (let key in nAttrs) {
                 // 若老节点没有新节点的属性
-                if(!oAttrs.hasOwnProperty(key)){
+                if (!oAttrs.hasOwnProperty(key)) {
                     patch[key] = nAttrs[key];
                 }
             }
             return patch;
         }
-        function diffChildren(oChildren,nChildren/*,index*/,patches){
+        function diffChildren(oChildren, nChildren/*,index*/, patches) {
             // 比较老的第一个与新的第一个
-            oChildren.forEach((child,idx)=>{
+            oChildren.forEach((child, idx) => {
                 // 索引不应为index了
                 // index每次传给walk时，index是递增的，所有的人都基于一个序号来实现
-                walk(child,nChildren[idx],++Index,patches); // 原先此处是本地变量index，但此处使用index有Bug，因此需要在全局维护一个
+                walk(child, nChildren[idx], ++Index, patches); // 原先此处是本地变量index，但此处使用index有Bug，因此需要在全局维护一个
             })
         }
         // 此处卡壳，不使用此方法以及一直报无法调用forEach的原因：
@@ -171,55 +147,84 @@
         //     return Object.prototype.toString.call(node) === '[object String]'
         // }
         // ---------随便写的判断---------
-        function hasNoChild(node){
-            return node.children===undefined
+        function hasNoChild(node) {
+            return node.children === undefined
         }
         // -----------------------------
         // index: 据说是树的层次
-        function walk(oNode,nNode,index,patches){
+        function walk(oNode, nNode, index, patches) {
             let currentPatch = [] // 每个元素都有一个补丁对象
 
             // 判断老节点在新节点中被删除
-            if(!nNode){
+            if (!nNode) {
                 currentPatch.push({
-                    type:REMOVE,index
+                    type: REMOVE, index
                 })
             }
             // else if(isString(oNode) && isString(nNode)){ // 判断文本是否一致
-            else if(hasNoChild(oNode) && hasNoChild(nNode)){ // 判断文本是否一致
-                if(oNode.text !== nNode.text){
+            else if (hasNoChild(oNode) && hasNoChild(nNode)) { // 判断文本是否一致
+                if (oNode.text !== nNode.text) {
                     currentPatch.push({
-                        type:TEXT,
-                        text:nNode
+                        type: TEXT,
+                        text: nNode
                     })
                 }
             }
-            else if(oNode.type===nNode.type){
+            else if (oNode.type === nNode.type) {
                 // 比较属性是否有更改
-                let attrs = diffAttr(oNode.props,nNode.props)
+                let attrs = diffAttr(oNode.props, nNode.props)
                 // console.log(attrs)
-                if(Object.keys(attrs).length>0){
+                if (Object.keys(attrs).length > 0) {
                     currentPatch.push({
-                        type:ATTRS,
+                        type: ATTRS,
                         attrs
                     })
                 }
                 // 若有子节点 遍历子节点
-                diffChildren(oNode.children,nNode.children,/*index,*/patches)
-            }else{
+                diffChildren(oNode.children, nNode.children,/*index,*/patches)
+            } else {
                 // 以上变化之外的变化 - 节点被替换
                 currentPatch.push({
-                    type:REPLACE,
+                    type: REPLACE,
                     nNode
                 })
             }
-            if(currentPatch.length>0){ // 若当前元素确实有补丁
+            if (currentPatch.length > 0) { // 若当前元素确实有补丁
                 // 将元素与补丁对应起来，放到大补丁包中
                 patches[index] = currentPatch
                 console.log(patches)
             }
         }
     </script>
+
+
+<script>
+    let theVNode = h('ul', { class: 'list' },
+        h('li', { class: "item" }, 'a'),
+        h('li', { class: "item" }, 'b'),
+        h('li', { class: "item" }, 'c')
+    )
+    // 一种表示
+    // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
+    // dom diff作用根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新dom
+    // 规则:当节点类型相同时，去看一下属性是否相同 产生一个属性的补丁包{type: 'ATTRS' ,ttrs:(lass:list-group'}}
+    // 新的dom节点不存在{type:'REMOVE',index:xxx}
+    // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
+    // 文本的变化{type:"TEXT",text:1}
+    let vnode1 = theVNode
+    let vnode2 = h('ul', { class: 'list' },
+        h('li', { class: "item" }, '1'),
+        h('li', { class: "item" }, 'b'),
+        h('dl', { class: "item" }, '3')
+    )
+
+    render(theVNode, app)
+
+
+    // debugger
+    let patches = diff(vnode1, vnode2)
+
+</script>
 </body>
 
 </html>
