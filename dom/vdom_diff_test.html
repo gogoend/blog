@@ -116,7 +116,7 @@
 
     </script>
     <script>
-        const ATTRS = "ATTRS",TEXT = 'TEXT';
+        const ATTRS = "ATTRS",TEXT = 'TEXT', REMOVE='REMOVE',REPLACE='REPLACE';
         let Index = 0
         // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
         // dom diff作用根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新dom
@@ -128,7 +128,7 @@
         let vnode2 = h('ul',{ class:'list'},
             h('li',{ class:"item"},'1'),
             h('li',{ class:"item"},'b'),
-            h('li',{ class:"item"},'3')
+            h('dl',{ class:"item"},'3')
         )
         // debugger
         let patches = diff(vnode1,vnode2)
@@ -156,7 +156,7 @@
             }
             return patch;
         }
-        function diffChildren(oChildren,nChildren,index,patches){
+        function diffChildren(oChildren,nChildren/*,index*/,patches){
             // 比较老的第一个与新的第一个
             oChildren.forEach((child,idx)=>{
                 // 索引不应为index了
@@ -178,8 +178,15 @@
         // index: 据说是树的层次
         function walk(oNode,nNode,index,patches){
             let currentPatch = [] // 每个元素都有一个补丁对象
-            // if(isString(oNode) && isString(nNode)){ // 判断文本是否一致
-            if(hasNoChild(oNode) && hasNoChild(nNode)){ // 判断文本是否一致
+
+            // 判断老节点在新节点中被删除
+            if(!nNode){
+                currentPatch.push({
+                    type:REMOVE,index
+                })
+            }
+            // else if(isString(oNode) && isString(nNode)){ // 判断文本是否一致
+            else if(hasNoChild(oNode) && hasNoChild(nNode)){ // 判断文本是否一致
                 if(oNode.text !== nNode.text){
                     currentPatch.push({
                         type:TEXT,
@@ -198,7 +205,13 @@
                     })
                 }
                 // 若有子节点 遍历子节点
-                diffChildren(oNode.children,nNode.children,index,patches)
+                diffChildren(oNode.children,nNode.children,/*index,*/patches)
+            }else{
+                // 以上变化之外的变化 - 节点被替换
+                currentPatch.push({
+                    type:REPLACE,
+                    nNode
+                })
             }
             if(currentPatch.length>0){ // 若当前元素确实有补丁
                 // 将元素与补丁对应起来，放到大补丁包中
