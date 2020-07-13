@@ -53,6 +53,8 @@
             let ele = createDomElementFromVnode(vnode) // 将vnode转换为真实node
 
             container.appendChild(ele)
+
+            return ele
             // console.log(vnode,container)
         }
         // 后续比对时，根据老的属性和新的属性，重新更新节点
@@ -197,34 +199,72 @@
         }
     </script>
 
+    <script>
+        let allPatches // ?
+        let Index2 = 0 // 默认哪个需要打补丁
+        function patch(node, patches) {
+            console.log(node)
+            allPatches = patches
+            walk2(node)
+            // 给某个元素打补丁
+        }
+        function walk2(node) {
+            let currentPatch = allPatches[Index2++]
+            let childNodes = node.childNodes;
+            childNodes.forEach(child => walk2(child))
 
-<script>
-    let theVNode = h('ul', { class: 'list' },
-        h('li', { class: "item" }, 'a'),
-        h('li', { class: "item" }, 'b'),
-        h('li', { class: "item" }, 'c')
-    )
-    // 一种表示
-    // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
-    // dom diff作用根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新dom
-    // 规则:当节点类型相同时，去看一下属性是否相同 产生一个属性的补丁包{type: 'ATTRS' ,ttrs:(lass:list-group'}}
-    // 新的dom节点不存在{type:'REMOVE',index:xxx}
-    // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
-    // 文本的变化{type:"TEXT",text:1}
-    let vnode1 = theVNode
-    let vnode2 = h('ul', { class: 'list' },
-        h('li', { class: "item" }, '1'),
-        h('li', { class: "item" }, 'b'),
-        h('dl', { class: "item" }, '3')
-    )
+            if (currentPatch) {
+                doPatch(node, currentPatch)
+            }
+        }
+        function doPatch(node, patches) {
+            patches.forEach(patch => {
+                switch (patch.type) {
+                    case ATTRS:
+                        break;
+                    case TEXT:
+                        node.textContent = patch.text.text
+                        break;
+                    case REPLACE:
+                        break;
+                    case REMOVE:
+                        break;
+                    default:
+                        break;
+                }
+            })
+        }
+    </script>
+    <script>
+        let theVNode = h('ul', { class: 'list' },
+            h('li', { class: "item" }, 'a'),
+            h('li', { class: "item" }, 'b'),
+            h('li', { class: "item" }, 'c')
+        )
+        // 一种表示
+        // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
+        // dom diff作用根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新dom
+        // 规则:当节点类型相同时，去看一下属性是否相同 产生一个属性的补丁包{type: 'ATTRS' ,ttrs:(lass:list-group'}}
+        // 新的dom节点不存在{type:'REMOVE',index:xxx}
+        // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
+        // 文本的变化{type:"TEXT",text:1}
+        let vnode1 = theVNode
+        let vnode2 = h('ul', { class: 'list' },
+            h('li', { class: "item" }, '1'),
+            h('li', { class: "item" }, 'b'),
+            h('dl', { class: "item" }, '3')
+        )
 
-    render(theVNode, app)
+        let el = render(theVNode, app)
 
 
-    // debugger
-    let patches = diff(vnode1, vnode2)
+        // debugger
+        let patches = diff(vnode1, vnode2)
 
-</script>
+        // 给元素打补丁，更新视图
+        patch(el, patches)
+
+    </script>
 </body>
 
 </html>
