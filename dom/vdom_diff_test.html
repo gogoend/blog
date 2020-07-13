@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>vdom测试</title>
     <meta name="description" content="https://www.bilibili.com/video/BV1jJ411x7FX" />
+    <meta name="description" content="https://www.bilibili.com/video/BV1UJ411X7tJ" />
 </head>
 
 <body>
@@ -104,22 +105,10 @@
     </script>
     <script>
         // 一种表示
-        let theVNode = h(
-            'div',
-            {
-                id: 'wrapper',
-                a: 1,
-                style: {
-                    color: '#f00'
-                }
-            },
-            h('h1', {
-                id: Math.random()
-            }, 'hello', 'aaa'),
-            h('h2', {
-                id: Math.random()
-            }, 'hello', Math.random().toString(), h('h3', {}, 'hi')),
-            'zzzz'
+        let theVNode = h('ul',{ class:'list'},
+            h('li',{ class:"item"},'a'),
+            h('li',{ class:"item"},'b'),
+            h('li',{ class:"item"},'c')
         )
 
         // 将虚拟节点转化为真实DOM节点，并插入到app元素中
@@ -127,7 +116,8 @@
 
     </script>
     <script>
-        const ATTRS = "ATTRS"
+        const ATTRS = "ATTRS",TEXT = 'TEXT';
+        let Index = 0
         // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
         // dom diff作用根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新dom
         // 规则:当节点类型相同时，去看一下属性是否相同 产生一个属性的补丁包{type: 'ATTRS' ,ttrs:(lass:list-group'}}
@@ -135,19 +125,10 @@
         // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
         // 文本的变化{type:"TEXT",text:1}
         let vnode1 = theVNode
-        let vnode2 = h(
-            'div',
-            {
-                id: 'wrapper',
-                a: 2,
-                style: {
-                    color: '#f00'
-                }
-            },
-            h('h1', {
-                id: Math.random()
-            }, 'hello'),
-            'zzzz'
+        let vnode2 = h('ul',{ class:'list'},
+            h('li',{ class:"item"},'1'),
+            h('li',{ class:"item"},'b'),
+            h('li',{ class:"item"},'3')
         )
         // debugger
         let patches = diff(vnode1,vnode2)
@@ -179,13 +160,34 @@
             // 比较老的第一个与新的第一个
             oChildren.forEach((child,idx)=>{
                 // 索引不应为index了
-                walk(child,nChildren[idx],++index,patches);
+                // index每次传给walk时，index是递增的，所有的人都基于一个序号来实现
+                walk(child,nChildren[idx],++Index,patches); // 原先此处是本地变量index，但此处使用index有Bug，因此需要在全局维护一个
             })
         }
+        // 此处卡壳，不使用此方法以及一直报无法调用forEach的原因：
+        // 这里判断有问题，和前一个讲解vdom的渲染视频不同，这个讲解diff的视频里文本节点并没有包裹在虚拟节点对象中，而是单独存在的
+        // 按照下面这个方法判断前一视频中讲解的文本节点- 虚拟节点对象，无法得到[object String]
+        // function isString(node){
+        //     return Object.prototype.toString.call(node) === '[object String]'
+        // }
+        // ---------随便写的判断---------
+        function hasNoChild(node){
+            return node.children===undefined
+        }
+        // -----------------------------
         // index: 据说是树的层次
         function walk(oNode,nNode,index,patches){
             let currentPatch = [] // 每个元素都有一个补丁对象
-            if(oNode.type===nNode.type){
+            // if(isString(oNode) && isString(nNode)){ // 判断文本是否一致
+            if(hasNoChild(oNode) && hasNoChild(nNode)){ // 判断文本是否一致
+                if(oNode.text !== nNode.text){
+                    currentPatch.push({
+                        type:TEXT,
+                        text:nNode
+                    })
+                }
+            }
+            else if(oNode.type===nNode.type){
                 // 比较属性是否有更改
                 let attrs = diffAttr(oNode.props,nNode.props)
                 // console.log(attrs)
@@ -196,7 +198,7 @@
                     })
                 }
                 // 若有子节点 遍历子节点
-                diffChildren(oNode.diffChildren,nNode.children,index,patches)
+                diffChildren(oNode.children,nNode.children,index,patches)
             }
             if(currentPatch.length>0){ // 若当前元素确实有补丁
                 // 将元素与补丁对应起来，放到大补丁包中
