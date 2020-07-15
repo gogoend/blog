@@ -11,6 +11,15 @@
         function baseLogInfo(name,gender,age){
             console.log(`我叫${name}，性别${gender}，年龄${age}。`)
         }
+
+        // 柯里化改写1
+        function curryLogInfo1(name){
+            return function(gender){
+                return function(age){
+                    console.log(`我叫${name}，性别${gender}，年龄${age}。`)
+                }
+            }
+        }
     </script>
 </body>
 </html>
