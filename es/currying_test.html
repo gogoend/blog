@@ -20,6 +20,25 @@
                 }
             }
         }
+
+        // 柯里化封装通用方法
+        function curry(fn){
+            // 记录fn的参数个数
+            let len = fn.length
+            return function temp(){
+                // 收集传入的参数
+                let args = [ ...arguments ];
+                if(args.length>=len){
+                    // 如果参数接收完毕
+                    return fn(...args)
+                }else{
+                    // 如果参数没有接收完全
+                     return function(){
+                        return temp(...args, ...arguments)
+                     }
+                }
+            }
+        }
     </script>
 </body>
 </html>
