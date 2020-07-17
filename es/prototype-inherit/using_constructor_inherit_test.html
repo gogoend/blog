@@ -1,0 +1,23 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>js 继承 - 借用构造函数继承</title>
+</head>
+
+<body>
+    <script src="./parent_proto.js"></script>
+
+    <script>
+        // 此处从父类继承
+        function Trump(firstName = '',...args){
+            EventDoer.call(this,...args)
+            this.firstName = firstName
+        }
+
+        // 此处实例化子类
+        let donaldTrump = new Trump('donald')
+    </script>
+</body>
+
+</html>

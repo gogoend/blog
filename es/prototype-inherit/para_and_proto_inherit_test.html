@@ -1,0 +1,36 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>js 继承 - 寄生组合式继承</title>
+</head>
+
+<body>
+    <script src="./parent_proto.js"></script>
+
+    <script>
+        function wrapper(o){
+            function F(){}
+            F.prototype = o;
+            return new F()
+        }
+
+        // 组合 - 解决组合式继承需要将调用父类构造函数调用两次的问题
+        function Trump(firstName,...args){
+            EventDoer.call(this,...args) // 继承父类构造函数的属性
+            this.firstName = firstName
+        }
+
+        // 拿到父类实例，从父类继承
+        // 将这个父类的prototype传入到wrapper中，让wrapper返回一个prototype为这个父类实例的类
+        let wrappedSuper = wrapper(EventDoer.prototype)
+        Trump.prototype = wrappedSuper
+        // 将wrappedSuper的构造函数指向Trump
+        wrappedSuper.constructor = Trump
+
+        // 此处实例化子类
+        let donaldTrump = new Trump('donald',1,2,3,4,5)
+    </script>
+</body>
+
+</html>
