@@ -14,16 +14,18 @@
             F.prototype = o;
             return new F()
         }
-        // 套壳传参
-        function subWrapper(o){
-            let sub = wrapper(o)
-            // 在此编写代码，为sub增加属性和方法
-            return sub
+        // 用于传参
+        function donaldWrapper(o, firstName = '', ...args){
+            let subInstance = wrapper(o) // 通过父类实例产生一个子类实例
+            // 为subInstance增加属性和方法
+            subInstance.firstName = firstName
+            subInstance.args = args
+            return subInstance
         }
         // 拿到父类实例
         let superInstance = new EventDoer()
         // 此处从父类继承
-        let donaldTrump = subWrapper(superInstance)
+        let donaldTrump = donaldWrapper(superInstance, 'donald', 1,2,3,4,5)
     </script>
 </body>
 

@@ -11,13 +11,13 @@
     <script>
         // 此处从父类继承
         function Trump(firstName = '',...args){
-            EventDoer.call(this,...args)
+            EventDoer.call(this,...args) // 获得来自父类的属性
             this.firstName = firstName
         }
-        Trump.prototype = new EventDoer();
+        Trump.prototype = new EventDoer(); // 获得来自父类的方法
 
         // 此处实例化子类
-        let donaldTrump = new Trump('donald')
+        let donaldTrump = new Trump('donald',1,2,3,4,5)
     </script>
 </body>
 
