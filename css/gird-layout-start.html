@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <title>有关Grid布局的一些尝试</title>
 <style>
+:root{
+	--bg:linear-gradient(  -30deg,  rgb(0, 182, 201) 0%,  rgb(30,156,215) 39.4%,  rgb(0,113,188) 72.16%,  rgb(0,91,151) 100%  );
+}
 html, body {
 	margin: 0;
 	padding: 0;
@@ -18,16 +21,17 @@ body {
 	display: grid;
 	box-sizing: border-box;
 	padding: 30px 0;
-	grid-template-areas: 'cell1 cell3' 'cell1 cell4' 'cell2 cell5';
-	grid-template-columns: 50% 50%;
-	grid-template-rows: 25% 25% 50%;
+	grid-template-areas:
+	'cell1 cell3'
+	'cell1 cell4'
+	'cell2 cell5';
 }
 .grid-cell {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	background-color: rgb(0,91,151);
-	background-image: linear-gradient(  -30deg,  rgb(46,49,146) 0%,  rgb(30,156,215) 39.4%,  rgb(0,113,188) 72.16%,  rgb(0,91,151) 100%  );
+	background-image: var(--bg);
 	margin: 15px 25px;
 	border-radius: 40px;
 	color: #fff;
