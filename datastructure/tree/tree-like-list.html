@@ -10,24 +10,20 @@
 <body>
     <div class="tree-structure"></div>
     <script>
-        function domBuilder(){
+        function domBuilder() {
 
         }
-        function traverseTree(tree,el){
-            if(tree){
-                if(!el){
-                    el = document.createElement('ul')
-                    return el
-                }
-                let a = tree.map(item=>{
+        function traverseTree(tree) {
+            if (tree) {
+                el = document.createElement('ul')
+                let a = tree.map(item => {
                     console.log(item)
                     el.appendChild(document.createElement('li'))
-                    if(item && typeof item==='object'){
-                        traverseTree(item.children,el)
+                    if (item && typeof item === 'object') {
+                        traverseTree(item.children, el)
                     }
                 })
             }
-            console.log(el)
         }
         let tree = [{
             a: 'apple',
