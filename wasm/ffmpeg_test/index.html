@@ -1,0 +1,26 @@
+<!--
+ * @Author: gogoend
+ * @Date: 2020-07-25 00:32:12
+ * @LastEditors: gogoend
+ * @LastEditTime: 2020-07-25 02:52:02
+ * @FilePath: \demo\wasm\ffmpeg_test\index.html
+ * @Description: 
+--> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFMPEG-WASM测试</title>
+    <script src="./ffmpeg.js"></script>
+</head>
+<body>
+    <input type="file" id="file"/>
+    <script>
+        Module().then(module=>{
+            window.theModule = module
+            window.ffmpeg = module._ffmpeg
+        })
+    </script>
+</body>
+</html>
