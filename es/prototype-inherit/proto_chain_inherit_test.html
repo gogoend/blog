@@ -1,0 +1,23 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>js 继承 - 原型链继承</title>
+</head>
+
+<body>
+    <script src="./parent_proto.js"></script>
+
+    <script>
+        // 此处从父类继承
+        function Trump(firstName = '',...args){
+            this.firstName = firstName
+        }
+        Trump.prototype = new EventDoer();
+
+        // 此处实例化子类
+        let donaldTrump = new Trump('donald',1,2,3,4,5)
+    </script>
+</body>
+
+</html>

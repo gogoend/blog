@@ -1,0 +1,28 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>js 继承 - 原型式继承</title>
+</head>
+
+<body>
+    <script src="./parent_proto.js"></script>
+
+    <script>
+        function wrapper(o){
+            function F(){}
+            F.prototype = o;
+            return new F()
+        }
+        // 拿到父类实例
+        let superInstance = new EventDoer()
+        // 此处从父类继承
+        // 将这个父类实例传入到wrapper中，让wrapper返回一个prototype为这个父类实例的类
+        let donaldTrump = wrapper(superInstance)
+
+        // 此处实例化子类
+        // let donaldTrump = new Trump('donald')
+    </script>
+</body>
+
+</html>

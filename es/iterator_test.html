@@ -1,11 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>迭代器测试</title>
 </head>
+
 <body>
-    <!-- TODO -->
+    <script>
+        let o = {
+            a: 1,
+            b: 2,
+            c: 3,
+            [Symbol.iterator]: function () {
+                let self = this;
+                let nextIndex = 0;
+                return {
+                    next: function () {
+                        let keys = Object.keys(self)
+                        return nextIndex < keys.length ?
+                            { value: keys[nextIndex++], done: false }
+                            : { value: undefined, done: true }
+                    }
+                };
+            }
+        }
+        for (let key of o) {
+            console.log(key)
+        }
+        // Uncaught TypeError: o is not iterable
+    </script>
 </body>
+
 </html>
