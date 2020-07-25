@@ -2,7 +2,7 @@
  * @Author: gogoend
  * @Date: 2020-07-25 22:27:43
  * @LastEditors: gogoend
- * @LastEditTime: 2020-07-25 22:50:50
+ * @LastEditTime: 2020-07-26 00:43:33
  * @FilePath: \demo\datastructure\tree\3-level-cascade.html
  * @Description: 
 -->
@@ -31,20 +31,26 @@
                 }
             })
         }
-        
-        function processDistinct(data){
+
+        function processDistinct(root) {
+            console.log(root)
             let level = 0
-            function innerRecurse(array){
-                if(!array.length) return
-                array.forEach(item=>{
-                    item.level = level++
-                    if(item.children){
-                        innerRecurse(item.children)
-                    }
-                })
+            let queue = [];
+            let next = root[0];  // 根节点到目标节点之间的深度
+            //遍历队列
+            while (next) {
+                ++level
+                if(next.children&&next.children.length){
+                    next.children.forEach(element => {
+                        element.level = level
+                        queue.push(element)
+                        debugger
+                        console.log(element)
+                    });
+                }
+                next = queue.shift()
+                queue.length=0
             }
-            innerRecurse(data)
-            console.log(data)
         }
         getJSON(processDistinct)
 
