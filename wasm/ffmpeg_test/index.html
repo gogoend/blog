@@ -2,25 +2,90 @@
  * @Author: gogoend
  * @Date: 2020-07-25 00:32:12
  * @LastEditors: gogoend
- * @LastEditTime: 2020-07-25 02:52:02
+ * @LastEditTime: 2020-07-25 11:25:45
  * @FilePath: \demo\wasm\ffmpeg_test\index.html
  * @Description: 
---> 
+-->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FFMPEG-WASM测试</title>
+    <script src="../../vue/vue.js"></script>
     <script src="./ffmpeg.js"></script>
 </head>
+
 <body>
-    <input type="file" id="file"/>
+    <div id="app">
+        <input @change="handleFileChange" type="file" id="file" />
+        <button @click="transcode">转码</button><button @click="saveTranscodedFile">保存转码后的文件</button>
+
+        <dialog></dialog>
+    </div>
+
     <script>
-        Module().then(module=>{
-            window.theModule = module
-            window.ffmpeg = module._ffmpeg
+        window.rawPrompt = window.prompt
+        window.prompt = function () { }
+        function string2pointer(Module, s) {
+            const ptr = Module._malloc((s.length + 1) * Uint8Array.BYTES_PER_ELEMENT);
+            for (let i = 0; i < s.length; i += 1) {
+                Module.setValue(ptr + i, s.charCodeAt(i), 'i8');
+            }
+            Module.setValue(ptr + s.length, 0, 'i8');
+            return ptr;
+        }
+        function stringList2pointer(Module, strList) {
+            const listPtr = Module._malloc(strList.length * Uint32Array.BYTES_PER_ELEMENT);
+
+            strList.forEach((s, idx) => {
+                const strPtr = string2pointer(Module, s);
+                Module.setValue(listPtr + (4 * idx), strPtr, 'i32');
+            });
+
+            return listPtr;
+        }
+        let app = new Vue({
+            el: '#app',
+            data: {
+                selectedFile: null,
+            },
+            async created() {
+                let module = await Module()
+                window.theModule = module
+                window.ffmpeg = module.cwrap('ffmpeg', 'number', ['number', 'number']);
+                // ffmpeg()
+            },
+            methods: {
+                async handleFileChange(e) {
+                    if (!e.currentTarget.files.length) {
+                        return
+                    }
+                    this.selectedFile = e.currentTarget.files[0]
+                    let data = new Uint8Array(await this.selectedFile.arrayBuffer())
+                    console.log(data)
+                    theModule.FS.writeFile('temp.mp4', data)
+                },
+                async transcode() {
+                    const args = ['./ffmpeg', '-i', 'temp.mp4', 'temp2.mp4'];
+                    ffmpeg(args.length, stringList2pointer(theModule, args))
+                },
+                async saveTranscodedFile() {
+                    let outPutFile = theModule.FS.readFile('temp2.mp4')
+                    let fileBlob = new Blob(
+                        [outPutFile.buffer],
+                        {
+                            type: 'application/octet-stream'
+                        }
+                    )
+                    const fileBlobUrl = window.URL.createObjectURL(fileBlob)
+                    console.log(fileBlobUrl)
+                }
+            }
         })
+
     </script>
 </body>
+
 </html>
