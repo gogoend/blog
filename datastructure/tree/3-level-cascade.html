@@ -1,0 +1,54 @@
+<!--
+ * @Author: gogoend
+ * @Date: 2020-07-25 22:27:43
+ * @LastEditors: gogoend
+ * @LastEditTime: 2020-07-25 22:50:50
+ * @FilePath: \demo\datastructure\tree\3-level-cascade.html
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省市县三级数据测试</title>
+</head>
+
+<body>
+    <script async="true">
+        async function getJSON(cb) {
+            return new Promise((resolve, reject) => {
+                let xhr = new XMLHttpRequest()
+                xhr.open('GET', '../../_res/china-mainland-distinct-level.json')
+                xhr.send()
+                xhr.onreadystatechange = (e) => {
+                    if (xhr.status === 200 && xhr.readyState === 4) {
+                        let res = JSON.parse(xhr.response)
+                        resolve(res)
+                        cb(res)
+                    }
+                }
+            })
+        }
+        
+        function processDistinct(data){
+            let level = 0
+            function innerRecurse(array){
+                if(!array.length) return
+                array.forEach(item=>{
+                    item.level = level++
+                    if(item.children){
+                        innerRecurse(item.children)
+                    }
+                })
+            }
+            innerRecurse(data)
+            console.log(data)
+        }
+        getJSON(processDistinct)
+
+    </script>
+</body>
+
+</html>
