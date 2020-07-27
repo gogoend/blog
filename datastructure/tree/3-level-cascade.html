@@ -33,24 +33,29 @@
         }
 
         function processDistinct(root) {
+            if(!root) return{}
             console.log(root)
-            let level = 0
-            let queue = [];
-            let next = root[0];  // 根节点到目标节点之间的深度
+            let ans = []
+            let queue = [...root];
+            let levelCount = -1
             //遍历队列
-            while (next) {
-                ++level
-                if(next.children&&next.children.length){
-                    next.children.forEach(element => {
-                        element.level = level
-                        queue.push(element)
-                        debugger
-                        console.log(element)
-                    });
+            while(queue.length){
+                let level= []
+                let len = queue.length;
+                levelCount+=1
+                console.log(queue,levelCount)
+                for(let i=0;i<len;i++){
+                    let current = queue.shift();
+                    current.level = levelCount
+                    level.push(current)
+                    console.log(level)
+                    if(current.children && current.children.length>0){
+                        queue.push(...current.children)
+                    }
                 }
-                next = queue.shift()
-                queue.length=0
+                ans.push(level)
             }
+            return ans
         }
         getJSON(processDistinct)
 
