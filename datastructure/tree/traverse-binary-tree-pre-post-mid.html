@@ -1,0 +1,70 @@
+<!--
+ * @Author: gogoend
+ * @Date: 2020-07-27 19:32:48
+ * @LastEditors: gogoend
+ * @LastEditTime: 2020-07-27 20:03:35
+ * @FilePath: \demo\datastructure\tree\traverse-binary-tree-pre-post-mid.html
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二叉树先序/中序/后序遍历</title>
+</head>
+
+<body>
+    <script>
+        let tree = [{
+            key: 'A',
+            children: [
+                {
+                    key: 'B',
+                    children: [
+                        {
+                            key: 'D',
+                            children: [
+                                { key: 'G' },
+                                { key: 'H' }
+                            ]
+                        },
+                        null
+                    ]
+                },
+                {
+                    key: 'C',
+                    children: [
+                        {
+                            key: 'E',
+                            children: [
+                                null,
+                                { key: 'I' }
+                            ]
+                        },
+                        { key: 'F' }
+                    ]
+                },
+            ]
+        }]
+        function pre(biTree) {
+            if (!biTree) return
+            console.log(biTree.key)
+            if (biTree.children) {
+                biTree.children[0] ? pre(biTree.children[0]) : void 0
+                biTree.children[1] ? pre(biTree.children[1]) : void 0
+            }
+        }
+        function post(biTree) {
+            if (!biTree) return
+            console.log(biTree.key)
+            if (biTree.children) {
+                biTree.children[1] ? post(biTree.children[1]) : void 0
+                biTree.children[0] ? post(biTree.children[0]) : void 0
+            }
+        }
+    </script>
+</body>
+
+</html>
