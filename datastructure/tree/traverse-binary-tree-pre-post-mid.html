@@ -17,53 +17,55 @@
 
 <body>
     <script>
-        let tree = [{
-            key: 'A',
+let tree = {
+    key: 'A',
+    children: [
+        {
+            key: 'B',
             children: [
                 {
-                    key: 'B',
+                    key: 'D',
                     children: [
-                        {
-                            key: 'D',
-                            children: [
-                                { key: 'G' },
-                                { key: 'H' }
-                            ]
-                        },
-                        null
+                        { key: 'G' },
+                        { key: 'H' }
                     ]
                 },
-                {
-                    key: 'C',
-                    children: [
-                        {
-                            key: 'E',
-                            children: [
-                                null,
-                                { key: 'I' }
-                            ]
-                        },
-                        { key: 'F' }
-                    ]
-                },
+                null
             ]
-        }]
-        function pre(biTree) {
-            if (!biTree) return
-            console.log(biTree.key)
-            if (biTree.children) {
-                biTree.children[0] ? pre(biTree.children[0]) : void 0
-                biTree.children[1] ? pre(biTree.children[1]) : void 0
-            }
-        }
-        function post(biTree) {
-            if (!biTree) return
-            console.log(biTree.key)
-            if (biTree.children) {
-                biTree.children[1] ? post(biTree.children[1]) : void 0
-                biTree.children[0] ? post(biTree.children[0]) : void 0
-            }
-        }
+        },
+        {
+            key: 'C',
+            children: [
+                {
+                    key: 'E',
+                    children: [
+                        null,
+                        { key: 'I' }
+                    ]
+                },
+                { key: 'F' }
+            ]
+        },
+    ]
+}
+function preOrderTraverse(biTree) {
+    if (!biTree) return
+    console.log(biTree.key)
+    biTree.children && preOrderTraverse(biTree.children[0])
+    biTree.children && preOrderTraverse(biTree.children[1])
+}
+function inOrderTraverse(biTree){
+    if (!biTree) return
+    biTree.children && inOrderTraverse(biTree.children[0])
+    console.log(biTree.key)
+    biTree.children && inOrderTraverse(biTree.children[1])
+}
+function postOrderTraverse(biTree) {
+    if (!biTree) return
+    biTree.children && postOrderTraverse(biTree.children[0])
+    biTree.children && postOrderTraverse(biTree.children[1])
+    console.log(biTree.key)
+}
     </script>
 </body>
 
