@@ -1,0 +1,84 @@
+<!--
+ * @Author: gogoend
+ * @Date: 2020-08-05 21:07:36
+ * @LastEditors: gogoend
+ * @LastEditTime: 2020-08-05 21:33:16
+ * @FilePath: \demo\vue\list-edit.html
+ * @Description: 
+-->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Vue.js - 列表编辑测试</title>
+</head>
+
+<body>
+    <div id="app">
+        <ul>
+            <li v-for="item in formItems" :key="item.id">
+                <list-item :itemData="item" />
+            </li>
+        </ul>
+    </div>
+    <script type='text/x-template' id='list-item-component'>
+        <section>
+            <form>
+                <label>
+                    姓名<input />
+                </label>
+                <label>
+                    性别<input />
+                </label>
+                <button>保存</button>
+                <button>删除</button>
+            </form>
+        </section>
+    </script>
+    <script src="./vue.js"></script>
+    <script>
+        Vue.component('ListItem', {
+            data() {
+                return {
+                    formData: {}
+                }
+            },
+            props: {
+                itemData: {
+                    default: () => ({}),
+                    type: Object
+                }
+            },
+            template: '#list-item-component',
+            mounted() {
+                this.formData = JSON.parse(JSON.stringify(this.itemData))
+            }
+        })
+    </script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                currentItem: {},
+                formItems: [
+                    {
+                        id: 1,
+                        name: 'Bob',
+                        gender: 0
+                    },
+                    {
+                        id: 2,
+                        name: 'Sherry',
+                        gender: 1
+                    }, {
+                        id: 3,
+                        name: 'Dick',
+                        gender: 0
+                    },
+                ]
+            }
+        });
+    </script>
+</body>
+
+</html>
