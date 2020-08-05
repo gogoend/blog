@@ -18,6 +18,11 @@
         <button @click="addFormItem">添加</button>
         <ul>
             <li v-for="item in formItems" :key="item.id">
+                <input type="radio" :value="item.id" v-model="currentFormItemId" /><label>{{item.name}}</label>
+            </li>
+        </ul>
+        <ul>
+            <li v-for="item in formItems" :key="item.id" v-show="item.id === currentFormItemId">
                 <list-item :item-data="item" />
             </li>
         </ul>
@@ -62,7 +67,7 @@
         var app = new Vue({
             el: '#app',
             data: {
-                currentItem: {},
+                currentFormItemId: null,
                 formItems: [
                     {
                         id: 1,
