@@ -38,8 +38,8 @@
                     <input v-model="formData.gender" :value="0" name="gender" type="radio" /><label>男</label>
                     <input v-model="formData.gender" :value="1" name="gender" type="radio"/><label>女</label>
                 </div>
-                <button type="button">保存</button>
-                <button type="button" @click="$parent.removeFormItemById(formData.id)">删除</button>
+                <button type="button" @click="$parent.saveFormItem(formData)">保存</button>
+                <button type="button" @click="$parent.removeFormItemById(formData)">删除</button>
             </form>
         </section>
     </script>
@@ -94,10 +94,20 @@
                         gender: null
                     })
                 },
-                removeFormItemById(itemId) {
+                removeFormItemById(formData) {
                     for (var i = 0; i < this.formItems.length; i++) {
-                        if (this.formItems[i].id == itemId) {
+                        if (this.formItems[i].id == formData.id) {
                             this.formItems.splice(i, 1);
+                            break;
+                        }
+                    }
+                },
+                saveFormItem(formData){
+                    for (var i = 0; i < this.formItems.length; i++) {
+                        if (this.formItems[i].id == formData.id) {
+                            for(let key in formData){
+                                this.formItems[i][key] = formData[key];
+                            }
                             break;
                         }
                     }
