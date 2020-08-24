@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>有关Grid布局的一些尝试</title>
+	<title>Grid布局 - fr单位</title>
 	<style>
 		:root {
 			--bg: linear-gradient(-30deg, rgb(0, 182, 201) 0%, rgb(30, 156, 215) 39.4%, rgb(0, 113, 188) 72.16%, rgb(0, 91, 151) 100%);
@@ -25,12 +25,13 @@
 			height: 100%;
 			display: grid;
 			box-sizing: border-box;
-			padding: 30px 0;
-			grid-template: 25% 25% 50% / 50% 50%;
 			grid-template-areas:
-				'cell1 cell3'
-				'cell1 cell4'
-				'cell2 cell5';
+				'cell1 cell3 cell6'
+				'cell1 cell4 cell7'
+				'cell2 cell5 cell7'
+				'cell9 cell8 cell8';
+			grid-template-rows: 100px 1fr 2fr 3fr;
+			grid-template-columns: 100px minmax(1px, 1fr) 2fr;
 		}
 
 		.grid-cell {
@@ -39,7 +40,6 @@
 			justify-content: center;
 			background-color: rgb(0, 91, 151);
 			background-image: var(--bg);
-			margin: 15px 25px;
 			border-radius: 40px;
 			color: #fff;
 			text-align: center;
@@ -54,7 +54,13 @@
 		<section class="grid-cell" style="grid-area:cell2">2</section>
 		<section class="grid-cell" style="grid-area:cell3">3</section>
 		<section class="grid-cell" style="grid-area:cell4">4</section>
-		<section class="grid-cell" style="grid-area:cell5">5</section>
+		<section class="grid-cell" style="grid-area:cell8">8</section>
+		<section class="grid-cell" style="grid-area:cell9">9</section>
+		
+		<section class="grid-cell">10</section>
+		<section class="grid-cell">11</section>
+		<section class="grid-cell">12</section>
+		<section class="grid-cell">13</section>
 	</div>
 </body>
 

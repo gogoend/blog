@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Grid布局 - fr单位</title>
+	<style>
+		:root {
+			--bg: linear-gradient(-30deg, rgb(0, 182, 201) 0%, rgb(30, 156, 215) 39.4%, rgb(0, 113, 188) 72.16%, rgb(0, 91, 151) 100%);
+		}
+
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			width: 100vw;
+			height: 100vh;
+		}
+
+		body {
+			background-color: #3d3d3d
+		}
+
+		.grid-wrap {
+			height: 100%;
+			display: grid;
+			box-sizing: border-box;
+			grid-template-rows: 100px 1fr 2fr 3fr;
+			grid-template-columns: 100px minmax(1px, 1fr) 2fr;
+		}
+
+		.grid-cell {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: rgb(0, 91, 151);
+			background-image: var(--bg);
+			border-radius: 40px;
+			color: #fff;
+			text-align: center;
+			font-size: 5em
+		}
+	</style>
+</head>
+
+<body>
+	<div class="grid-wrap">
+		<section class="grid-cell">1</section>
+		<section class="grid-cell">2</section>
+		<section class="grid-cell">3</section>
+		<section class="grid-cell">4</section>
+		<section class="grid-cell">5</section>
+		<section class="grid-cell">6</section>
+		<section class="grid-cell">7</section>
+		<section class="grid-cell">8</section>
+		<section class="grid-cell">9</section>
+		<section class="grid-cell">10</section>
+		<section class="grid-cell">11</section>
+		<section class="grid-cell">12</section>
+		<section class="grid-cell">13</section>
+		<section class="grid-cell">14</section>
+		<section class="grid-cell">15</section>
+		<section class="grid-cell">16</section>
+		<section class="grid-cell">17</section>
+		<section class="grid-cell">18</section>
+		<section class="grid-cell">19</section>
+		<section class="grid-cell">20</section>
+		<section class="grid-cell">21</section>
+		<section class="grid-cell">22</section>
+		<section class="grid-cell">23</section>
+		<section class="grid-cell">24</section>
+		<section class="grid-cell">25</section>
+		<section class="grid-cell">26</section>
+		<section class="grid-cell">27</section>
+		<section class="grid-cell">28</section>
+		<section class="grid-cell">29</section>
+		<section class="grid-cell">30</section>
+	</div>
+</body>
+
+</html>
