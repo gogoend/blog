@@ -80,10 +80,4 @@ Object.assign(MyPromise.prototype,{
     }
 })
 
-
-window.MyPromise = MyPromise
-let thePromise = new MyPromise(
-    function(resolve,reject){setTimeout(()=>resolve('some result'),4000)}
-).then((res)=>{
-    console.log(res)
-})
+export default MyPromise
