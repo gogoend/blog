@@ -3,6 +3,46 @@ const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
 
+
+function resolvePromise(promise2,x,resolve,reject){
+    if(promise2 === x){
+        return reject(new TypeError('circular call.'))
+    }
+    let called = false
+    if(x instanceof MyPromise){
+        if(x.status === PENDING){
+            x.then(y=>{
+                resolvePromise(promise2,y,resolve,reject)
+            },reason=>{
+                reject(reason)
+            })
+        }
+    } else if (x!==null && ((typeof x === 'object')|| typeof x === 'function')){
+        try{
+            let then = x.then
+            if(typeof then ==='function'){
+                then.call(x,y=>{
+                    if(called) return
+                    called = true
+                    resolvePromise(promise2,y,resolve,reject)
+                },reason=>{
+                    if(called) return
+                    called = true
+                    reject(reason)
+                })
+            } else {
+                resolve(x)
+            }
+        } catch(err){
+            if(called) return
+            called = true
+            reject(err)
+        }
+    }else{
+        resolve(x)
+    }
+} 
+
 function MyPromise(func) {
     this.status = PENDING
     this.val = undefined
@@ -64,19 +104,21 @@ Object.assign(MyPromise.prototype,{
 
         let promise2 = new MyPromise((resolve,reject)=>{
             if(status===PENDING){
-                fulfilledCbs.push(()=>{
+                fulfilledCbs.push((val)=>{
                     setTimeout(()=>{
                         try{
-                            onFulfilled(this.val)
-                        }catch{
-                            reject(e)
+                            let x = onFulfilled(val)
+                            resolvePromise(newPromise, x, resolve, reject)
+                        }catch(err){
+                            reject(err)
                         }
                     },0)
                 })
-                rejectedCbs.push(()=>{
+                rejectedCbs.push((val)=>{
                     setTimeout(()=>{
                         try{
-                            onRejected(this.val)
+                            let x = onRejected(val)
+                            resolvePromise(newPromise, x, resolve, reject)
                         }catch(err){
                             reject(err)
                         }
@@ -85,9 +127,10 @@ Object.assign(MyPromise.prototype,{
             }
 
             if(status===FULFILLED){
-                setTimeout(()=>{
+                setTimeout((val)=>{
                     try {
-                        onFulfilled(this.val)
+                        let x = onFulfilled(val)
+                        resolvePromise(newPromise, x, resolve, reject)
                     }catch(err){
                         reject(err)
                     }
@@ -95,9 +138,10 @@ Object.assign(MyPromise.prototype,{
             }
 
             if(status===REJECTED){
-                setTimeout(()=>{
+                setTimeout((val)=>{
                     try {
-                        onRejected(this.val)
+                        let x = onRejected(val)
+                        resolvePromise(newPromise, x, resolve, reject)
                     }catch(err){
                         reject(err)
                     }
