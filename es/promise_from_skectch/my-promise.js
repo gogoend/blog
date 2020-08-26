@@ -57,23 +57,55 @@ function MyPromise(func) {
 Object.assign(MyPromise.prototype,{
     then:function(onFulfilled,onRejected){
         let _this = this
-        let { status,fulfilledCbs,rejectedCbs,val}=this
-        if(status===PENDING){
-            fulfilledCbs.push(()=>{
-                onFulfilled(this.val)
-            })
-            rejectedCbs.push(()=>{
-                onRejected(this.val)
-            })
-        }
+        let { status,fulfilledCbs,rejectedCbs}=this
 
-        if(status===FULFILLED){
-            onFulfilled(val)
-        }
+        onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : v => v
+        onRejected = typeof onRejected === 'function' ? onRejected : err => {throw(err)}
 
-        if(status===REJECTED){
-            onRejected(val)
-        }
+        let promise2 = new MyPromise((resolve,reject)=>{
+            if(status===PENDING){
+                fulfilledCbs.push(()=>{
+                    setTimeout(()=>{
+                        try{
+                            onFulfilled(this.val)
+                        }catch{
+                            reject(e)
+                        }
+                    },0)
+                })
+                rejectedCbs.push(()=>{
+                    setTimeout(()=>{
+                        try{
+                            onRejected(this.val)
+                        }catch(err){
+                            reject(err)
+                        }
+                    },0)
+                })
+            }
+
+            if(status===FULFILLED){
+                setTimeout(()=>{
+                    try {
+                        onFulfilled(this.val)
+                    }catch(err){
+                        reject(err)
+                    }
+                },0)
+            }
+
+            if(status===REJECTED){
+                setTimeout(()=>{
+                    try {
+                        onRejected(this.val)
+                    }catch(err){
+                        reject(err)
+                    }
+                },0)
+            }
+        })
+
+        return promise2
 
     }
 })
