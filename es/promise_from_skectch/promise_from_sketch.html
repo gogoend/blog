@@ -12,9 +12,18 @@
         import MyPromise from './my-promise.js'
         window.MyPromise = MyPromise
         window.thePromise = new MyPromise(
-            function(resolve,reject){setTimeout(()=>resolve('some result'),4000)}
+            function (resolve, reject) {
+                setTimeout(
+                    () => resolve(
+                        new MyPromise(
+                            (a) => a(666)
+                        )
+                    ),
+                    4000
+                )
+            }
         )
-        thePromise.then((res)=>{
+        thePromise.then((res) => {
             console.log(res)
         })
     </script>
