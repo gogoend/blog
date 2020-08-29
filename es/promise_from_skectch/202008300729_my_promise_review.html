@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let Opromise = window.Promise
+        let PENDING= 'pending',FULFILLED = 'fulfilled',REJECTED = 'rejected'
+        Promise = function (func){
+            this.val = undefined
+            this.status = PENDING
+
+            this.fulfilledCbs = []
+            this.rejectedCbs = []
+            let resolve,_resolve = function(val){
+                if(this.status===PENDING){
+                    this.val = val
+                    this.status = FULFILLED
+                    this.fulfilledCbs.forEach(fun => {
+                        fun(val)
+                    });
+                }
+            }
+            let reject,_reject = function(val){
+                if(this.status === REJECTED){
+                    this.reason = reason
+                    this.status = REJECTED
+                    this.rejectedCbs.forEach(fun => {
+                        fun(reason)
+                    });
+                }
+            }
+            resolve = _resolve.bind(this)
+            reject = _reject.bind(this)
+
+            // 以上仅仅是定义，此处才是调用
+            try{
+                func(resolve,reject)
+            } catch(err) {
+                reject(err)
+            }
+        }
+        Promise.prototype = {
+            // then应当返回Promise实例
+            then:function(onFulfilledCb,onRejectedCb){
+                let status = this.status
+                if(status===PENDING){
+                    this.fulfilledCbs.push(onFulfilledCb)
+                    this.rejectedCbs.push(onRejectedCb)
+                }
+                if(status===FULFILLED){
+                    onFulfilledCb(this.val)
+                }
+                if(status===REJECTED){
+                    onRejectedCb(this.reason)
+                }
+            }
+        }
+    </script>
+</body>
+</html>
