@@ -48,7 +48,15 @@
                 }
             }
 
-            executor(resovle, reject)
+            try{
+                executor(resovle, reject)
+            }catch(err){
+                reject(err)
+            }
+        }
+
+        Promise.prototype.then = function(){
+            var _this = this
         }
 
     </script>
