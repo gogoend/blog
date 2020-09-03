@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise 重写测试</title>
+</head>
+
+<body>
+    <script>
+        var Opromise = window.Promise
+        var PENDING = 'pending', FULFILLED = 'fulfilled', REJECTED = 'rejected'
+
+        function beforeResolve(promise2, x, resolve, reject) {
+
+        }
+
+        Promise = function (executor) {
+            var _this = this
+
+            this.status = PENDING
+            this.val = undefined
+            this.reason = undefined
+            this.onFulFilledCbs = []
+            this.onRejectedCbs = []
+
+            var resolve = function (val) {
+                if(_this.status === PENDING){
+                    _this.status = FULFILLED
+                    _this.val = val
+                    setTimeout(function () {
+                        for (var i = 0; i < _this.onFulFilledCbs.length; i++) {
+                            _this.onFulFilledCbs[i].call(_this, val)
+                        }
+                    }, 0)
+                }
+            }
+            var reject = function (reason) {
+                if(_this.status === PENDING){
+                    _this.status = REJECTED
+                    _this.reason = reason
+                    setTimeout(function(){
+                        for(var i=0;i<_this.onRejectedCbs.length;i++){
+                            _this.onRejectedCbs[i].call(_this, val)
+                        }
+                    },0)
+                }
+            }
+
+            executor(resovle, reject)
+        }
+
+    </script>
+</body>
+
+</html>
