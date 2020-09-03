@@ -55,8 +55,64 @@
             }
         }
 
-        Promise.prototype.then = function(){
+        Promise.prototype.then = function(onFulFilled,onRejected){
             var _this = this
+
+            var status = _this.status
+
+            let promise2 = new Promise(function(resolve,reject){
+                if(status === PENDING){
+                    _this.onFulFilledCbs.push(
+                        function(val){
+                            setTimeout(function(){
+                                try{
+                                    var x = onFulFilled(val)
+                                    beforeResolve(promise2,x,resolve,reject)
+                                } catch(err) {
+                                    reject(err)
+                                }
+                            },0)
+                        }
+                    )
+                    _this.onRejectedCbs.push(
+                        function(val){
+                            setTimeout(function(){
+                                try{
+                                    var x = onRejected(val)
+                                    beforeResolve(promise2,x,resolve,reject)
+                                } catch(err) {
+                                    reject(err)
+                                }
+                            },0)
+                        }
+                    )
+                }
+                if(status === FULFILLED){
+                    setTimeout(
+                        function(val){
+                            try{
+                                var x = onFulFilled(val)
+                                beforeResolve(promise2,x,resolve,reject)
+                            } catch(err) {
+                                reject(err)
+                            }
+                        },0
+                    )
+                }
+                if(status === REJECTED){
+                    setTimeout(
+                        function(reason){
+                            try{
+                                var x = onRejected(reason)
+                                beforeResolve(promise2,x,resolve,reject)
+                            } catch(err) {
+                                reject(err)
+                            }
+                        },0
+                    )
+                }
+            })
+            return promise2
         }
 
     </script>
