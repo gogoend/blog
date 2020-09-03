@@ -12,6 +12,7 @@
         var Opromise = window.Promise
         var PENDING = 'pending', FULFILLED = 'fulfilled', REJECTED = 'rejected'
 
+        // 本版本 24 个用例未通过
         function beforeResolve(promise2, x, resolve, reject) {
             if(promise2 === x){
                 reject(new TypeError('发生循环调用'))
@@ -30,15 +31,23 @@
                 try {
                     var then = x.then
                     if( typeof then === 'function'){
-                        if( called ) return
-                        called = true
+                        // TODO: !!! called 的更改是在then回调函数中进行的
+                        // if( called ) return
+                        // called = true
                         then.call(
                             x,
                             function(y){
+                                if( called ) return
+                                called = true
                                 beforeResolve(promise2, y, resolve, reject)
                             },
-                            resolve,
-                            reject
+                            // resolve,
+                            // reject
+                            function(reason){
+                                if( called ) return
+                                called = true
+                                reject(reason)
+                            }
                         )
                     } else {
                         if( called ) return
@@ -51,7 +60,7 @@
                     reject(err)
                 }
             } else {
-                resovle(x)
+                resolve(x)
             }
         }
 
@@ -65,30 +74,37 @@
             this.onRejectedCbs = []
 
             var resolve = function (val) {
-                if(_this.status === PENDING){
-                    _this.status = FULFILLED
-                    _this.val = val
-                    setTimeout(function () {
-                        for (var i = 0; i < _this.onFulFilledCbs.length; i++) {
-                            _this.onFulFilledCbs[i].call(_this, val)
-                        }
-                    }, 0)
+                // TODO: !!! 在resolve时，若发现值为 Promise 实例，则需要调用它的then方法 —— 这里相当于进行链式调用
+                if(val instanceof Promise){
+                    return val.then(resolve,reject)
                 }
+                
+                setTimeout(function () {
+                    if(_this.status === PENDING){
+                        _this.status = FULFILLED
+                        _this.val = val
+                            for (var i = 0; i < _this.onFulFilledCbs.length; i++) {
+                                _this.onFulFilledCbs[i].call(_this, val)
+                            }
+                        }
+                    }, 
+                0)
             }
             var reject = function (reason) {
-                if(_this.status === PENDING){
-                    _this.status = REJECTED
-                    _this.reason = reason
-                    setTimeout(function(){
-                        for(var i=0;i<_this.onRejectedCbs.length;i++){
-                            _this.onRejectedCbs[i].call(_this, val)
+                setTimeout(function(){
+                    if(_this.status === PENDING){
+                        _this.status = REJECTED
+                        _this.reason = reason
+                            for(var i=0;i<_this.onRejectedCbs.length;i++){
+                                _this.onRejectedCbs[i].call(_this, reason)
+                            }
                         }
-                    },0)
-                }
+                    },
+                0)
             }
 
             try{
-                executor(resovle, reject)
+                executor(resolve, reject)
             }catch(err){
                 reject(err)
             }
@@ -99,7 +115,12 @@
 
             var status = _this.status
 
-            let promise2 = new Promise(function(resolve,reject){
+            // TODO: !!!注意判断then中两个参数的类型
+            onFulFilled = typeof onFulFilled === 'function' ? onFulFilled : function(v){ return v }
+            onRejected = typeof onRejected === 'function' ? onRejected : function(err){ throw err }
+
+            // TODO：!!!使用 Promise ，使得下次循环时可以取到已定义好的promise2
+            var promise2 = new Promise(function(resolve,reject){
                 if(status === PENDING){
                     _this.onFulFilledCbs.push(
                         function(val){
