@@ -13,7 +13,46 @@
         var PENDING = 'pending', FULFILLED = 'fulfilled', REJECTED = 'rejected'
 
         function beforeResolve(promise2, x, resolve, reject) {
-
+            if(promise2 === x){
+                reject(new TypeError('发生循环调用'))
+            }
+            if(x instanceof Promise){
+                x.then(
+                    function(y){
+                        beforeResolve(promise2, y, resolve, reject)
+                    },
+                    function(reason){
+                        reject(reason)
+                    }
+                )
+            } else if( x !==null && ( typeof x === 'object' || typeof x === 'function' )){
+                var called = false
+                try {
+                    var then = x.then
+                    if( typeof then === 'function'){
+                        if( called ) return
+                        called = true
+                        then.call(
+                            x,
+                            function(y){
+                                beforeResolve(promise2, y, resolve, reject)
+                            },
+                            resolve,
+                            reject
+                        )
+                    } else {
+                        if( called ) return
+                        called = true
+                        resolve(x)
+                    }
+                } catch(err) {
+                    if ( called ) return
+                    called = true
+                    reject(err)
+                }
+            } else {
+                resovle(x)
+            }
         }
 
         Promise = function (executor) {
