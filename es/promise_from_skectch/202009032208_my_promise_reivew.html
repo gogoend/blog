@@ -12,7 +12,7 @@
         var Opromise = window.Promise
         var PENDING = 'pending', FULFILLED = 'fulfilled', REJECTED = 'rejected'
 
-        // 本版本 3 个用例未通过
+        // 本版本用例全部通过
         function beforeResolve(promise2, x, resolve, reject) {
             if(promise2 === x){
                 reject(new TypeError('发生循环调用'))
@@ -79,8 +79,8 @@
                 if(val instanceof Promise){
                     return val.then(resolve,reject)
                 }
-                
-                setTimeout(function () {
+                // TODO: !!! 此处代码立即执行，不需要setTimeout！
+                // setTimeout(function () {
                     if(_this.status === PENDING){
                         _this.status = FULFILLED
                         _this.val = val
@@ -88,11 +88,11 @@
                             _this.onFulFilledCbs[i].call(_this, val)
                         }
                     }
-                }, 
-                0)
+                // }, 
+                // 0)
             }
             var reject = function (reason) {
-                setTimeout(function(){
+                // setTimeout(function(){
                     if(_this.status === PENDING){
                         _this.status = REJECTED
                         _this.reason = reason
@@ -100,8 +100,8 @@
                             _this.onRejectedCbs[i].call(_this, reason)
                         }
                     }
-                },
-                0)
+                // },
+                // 0)
             }
 
             try{
