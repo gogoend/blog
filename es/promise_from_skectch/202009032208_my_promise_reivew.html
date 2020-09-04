@@ -12,7 +12,7 @@
         var Opromise = window.Promise
         var PENDING = 'pending', FULFILLED = 'fulfilled', REJECTED = 'rejected'
 
-        // 本版本 24 个用例未通过
+        // 本版本 3 个用例未通过
         function beforeResolve(promise2, x, resolve, reject) {
             if(promise2 === x){
                 reject(new TypeError('发生循环调用'))
@@ -26,7 +26,8 @@
                         reject(reason)
                     }
                 )
-            } else if( x !==null && ( typeof x === 'object' || typeof x === 'function' )){
+            // 判断的括号改了位置
+            } else if( ( x !==null && typeof x === 'object') || typeof x === 'function' ){
                 var called = false
                 try {
                     var then = x.then
@@ -83,11 +84,11 @@
                     if(_this.status === PENDING){
                         _this.status = FULFILLED
                         _this.val = val
-                            for (var i = 0; i < _this.onFulFilledCbs.length; i++) {
-                                _this.onFulFilledCbs[i].call(_this, val)
-                            }
+                        for (var i = 0; i < _this.onFulFilledCbs.length; i++) {
+                            _this.onFulFilledCbs[i].call(_this, val)
                         }
-                    }, 
+                    }
+                }, 
                 0)
             }
             var reject = function (reason) {
@@ -95,11 +96,11 @@
                     if(_this.status === PENDING){
                         _this.status = REJECTED
                         _this.reason = reason
-                            for(var i=0;i<_this.onRejectedCbs.length;i++){
-                                _this.onRejectedCbs[i].call(_this, reason)
-                            }
+                        for(var i=0;i<_this.onRejectedCbs.length;i++){
+                            _this.onRejectedCbs[i].call(_this, reason)
                         }
-                    },
+                    }
+                },
                 0)
             }
 
@@ -123,10 +124,11 @@
             var promise2 = new Promise(function(resolve,reject){
                 if(status === PENDING){
                     _this.onFulFilledCbs.push(
-                        function(val){
+                        function( /* val */){
                             setTimeout(function(){
                                 try{
-                                    var x = onFulFilled(val)
+                                    // TODO: !!! 此处必须从_this中那值，并非从函数中的参数取值
+                                    var x = onFulFilled(_this.val)
                                     beforeResolve(promise2,x,resolve,reject)
                                 } catch(err) {
                                     reject(err)
@@ -135,10 +137,10 @@
                         }
                     )
                     _this.onRejectedCbs.push(
-                        function(val){
+                        function( /* reason */){
                             setTimeout(function(){
                                 try{
-                                    var x = onRejected(val)
+                                    var x = onRejected(_this.reason)
                                     beforeResolve(promise2,x,resolve,reject)
                                 } catch(err) {
                                     reject(err)
@@ -149,9 +151,9 @@
                 }
                 if(status === FULFILLED){
                     setTimeout(
-                        function(val){
+                        function( /* val */){
                             try{
-                                var x = onFulFilled(val)
+                                var x = onFulFilled(_this.val)
                                 beforeResolve(promise2,x,resolve,reject)
                             } catch(err) {
                                 reject(err)
@@ -161,9 +163,9 @@
                 }
                 if(status === REJECTED){
                     setTimeout(
-                        function(reason){
+                        function( /* reason */){
                             try{
-                                var x = onRejected(reason)
+                                var x = onRejected(_this.reason)
                                 beforeResolve(promise2,x,resolve,reject)
                             } catch(err) {
                                 reject(err)
