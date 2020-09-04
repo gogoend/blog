@@ -2,7 +2,7 @@
  * @Author: gogoend
  * @Date: 2020-08-10 22:51:03
  * @LastEditors: gogoend
- * @LastEditTime: 2020-08-10 23:35:29
+ * @LastEditTime: 2020-08-11 09:57:37
  * @FilePath: \demo\vue\customizefd_directive_test.html
  * @Description: 
 -->
@@ -16,7 +16,8 @@
 <body>
     <div id="app">
         <div>
-            <section tabindex="0" v-test:foo.a.b.c="someValue" />
+            <section v-test:foo.a.b.c="someValue" tabindex="0"></section>
+            <input type="text" v-model="someValue"/>
         </div>
     </div>
 
@@ -42,6 +43,15 @@
                             'argument: ' + s(binding.arg) + '<br>' +
                             'modifiers: ' + s(binding.modifiers) + '<br>' +
                             'vnode keys: ' + Object.keys(vnode).join(', ')
+                    },
+                    update(el, binding, vnode, oldVnode){
+                        console.log('update',...arguments)
+                    },
+                    componentUpdated(el, binding, vnode, oldVnode){
+                        console.log('componentUpdated',...arguments)
+                    },
+                    unbind(el, binding, vnode){
+                        console.log('unbind',...arguments)
                     }
                 }
             }
