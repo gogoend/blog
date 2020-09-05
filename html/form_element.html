@@ -1,24 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form测试</title>
+    <script src="../vue/vue.js"></script>
 </head>
+
 <body>
-    <form>
-        <fieldset>
-            <legend>表单1</legend>
-            <label>f1字段</label><input name="f1"/><br />
-            <label>f2字段</label><input name="f2"/><br />
-            <label>f3字段</label><input name="f3" value="f3_1" type="checkbox"/><input name="f3" value="f3_2" type="checkbox"/>
-        </fieldset>
-        <fieldset>
-            <legend>表单2</legend>
-            <label>f4字段</label><input name="f4"/><br />
-            <label>f5字段</label><input name="f5" type="file"/><br />
-            <label>f6字段</label><input name="f6" value="f6_1" type="checkbox"/><input name="f6" value="f6_2" type="checkbox"/>
-        </fieldset>
-    </form>
+    <div id="app">
+        <form
+            ref="form"
+            id="form"
+            v-on:submit="post"
+            >
+            <!-- action="../network/show_post_data.php"
+	        method="post"
+	        enctype="application/x-www-form-urlencoded"
+	        novalidate="novalidate"
+	        autocomplete="off" -->
+            <fieldset>
+                <legend>文本输入类</legend>
+                <label>f1字段</label><input name="f1" /><br />
+                <label>f12字段</label><textarea name="f12"></textarea><br />
+                <label>f13字段</label><input name="f13" type="password" /><br />
+                <label>f6字段</label><input name="f6" type="number" /><br />
+                <label>f8字段</label><input name="f8" type="email" /><br />
+            </fieldset>
+            <fieldset>
+                <legend>日期/时间选择类</legend>
+                <label>f16字段</label><input name="f16" type="month" /><br />
+                <label>f19字段</label><input name="f19" type="week" /><br />
+                <label>f17字段</label><input name="f17" type="date" /><br />
+                <label>f18字段</label><input name="f18" type="time" /><br />
+                <label>f9字段</label><input name="f9" type="datetime-local" /><br />
+            <fieldset></fieldset>
+            <fieldset>
+                <legend>其他选择类</legend>
+                <label>f7字段</label><input name="f7" type="color" /><br />
+                <label>f2字段</label><input name="f2" type="range" /><br />
+                <label>f3字段</label><input name="f3" value="f3_1" type="checkbox" /><input name="f3" value="f3_2" type="checkbox" /><br />
+                <label>f4字段</label><input name="f4" value="f4_1" type="radio" /><input name="f4" value="f4_2" type="radio" /><br />
+                <label>f5字段</label><input name="f5" type="file" /><br />
+                <label>f15字段</label>
+                <select name="f15" multiple>
+                    <optgroup label="选项1-2">
+                        <option value="1">选项1</option>
+                        <option value="2">选项2</option>
+                    </optgroup>
+                    <optgroup label="选项3-5">
+                        <option value="3">选项3</option>
+                        <option value="4">选项4</option>
+                        <option value="5">选项5</option>
+                    </optgroup>
+                </select><br />
+                <label>f20字段</label>
+                <input name="f20" list="f15"/>
+                <datalist id="f20">
+                    <option value="1">选项1</option>
+                    <option value="2">选项2</option>
+                </datalist>
+            </fieldset>
+            <fieldset>
+                <legend>其他类</legend>
+                <label>f10字段</label><input name="f10" type="hidden" value="f10" />
+            </fieldset>
+            <fieldset>
+                <legend>按钮类</legend>
+                <label>f11字段</label><input name="f11" value="f11" type="submit" />
+                <label>f19字段</label><input name="f19" value="f19" type="button" />
+                <label>f14字段</label><input name="f14" value="f14" type="image" />
+            </fieldset>
+        </form>
+    </div>
+
+    <script>
+        let app = new Vue({
+            el: '#app',
+            methods: {
+                post(e) {
+                    e.preventDefault()
+                    let form = this.$refs['form']
+                    let formData = new FormData(form)
+                    // debugger
+                    let xhr = new XMLHttpRequest()
+                    xhr.open('POST', '../network/show_post_data.php')
+                    // 浏览器自动判断
+                    // xhr.setRequestHeader("Content-Type", "multipart/form-data");
+                    xhr.send(formData)
+                }
+            }
+        })
+    </script>
 </body>
+
 </html>
