@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form测试</title>
+    <script src="../vue/vue.js"></script>
+</head>
+
+<body>
+    <form 
+        id="form"
+        ref="form"
+        v-on:submit="post"
+    >
+            <div>表单1</div>
+            <label>f1字段</label><input name="f1" v-model="f1" /><br />
+            <label>f2字段</label><input name="f2" type="file" value="" @change="(e)=>{f2 = e.target.files[0]}"/><br />
+            <label>f3字段</label><input name="f3" type="hidden" :value="f3" /><br />
+            <label>f4字段</label><input name="f4" v-model="f4"/><br />
+        <button type="submit">提交</button>
+    </form>
+    <script>
+        let app = new Vue({
+            el: '#form',
+            data:{
+                f1:'', f2:'', f3:'f3f3f3', f4:''
+            },
+            methods: {
+                post(e) {
+                    e.preventDefault()
+                    let form = this.$refs.form
+                    let formData = new FormData(form)
+                    let xhr = new XMLHttpRequest()
+                    xhr.open('POST', '../network/show_post_data.php')
+                    xhr.send(formData)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

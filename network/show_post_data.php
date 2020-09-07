@@ -5,39 +5,39 @@
 
 <body>
 	<p>$_REQUEST：</p>
-	<article>
+	<pre>
 		<?php
 		var_dump( $_REQUEST )
 		?>
-	</article>
+	</pre>
 
 	<p>$_GET：</p>
-	<article>
+	<pre>
 		<?php
 		var_dump( $_GET )
 		?>
-	</article>
+	</pre>
 
 	<p>$_POST：</p>
-	<article>
+	<pre>
 		<?php
 		var_dump( $_POST )
 		?>
-	</article>
+	</pre>
 	
 	<p>$_FILES：</p>
-	<article>
+	<pre>
 		<?php
 		var_dump( $_FILES )
 		?>
-	</article>
+	</pre>
 	
 	<p>json_decode(file_get_contents('php://input'))：</p>
-	<article>
+	<pre>
 		<?php
 		var_dump( json_decode(file_get_contents('php://input')) )
 		?>
-	</article>
+	</pre>
 	
 </body>
 
