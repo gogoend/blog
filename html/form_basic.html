@@ -10,23 +10,13 @@
 <body>
     <form 
         action="../network/show_post_data.php" 
-        method="get" 
-        enctype="multipart/form-data"
+        method="POST" 
     >
-        <fieldset>
-            <legend>表单1</legend>
+            <div>表单1</div>
             <label>f1字段</label><input name="f1" /><br />
-            <label>f2字段</label><input name="f2" /><br />
-            <label>f3字段</label><input name="f3" value="f3_1" type="checkbox" /><input name="f3" value="f3_2"
-                type="checkbox" />
-        </fieldset>
-        <fieldset>
-            <legend>表单2</legend>
+            <label>f2字段</label><input name="f2" type="file" multiple /><br />
+            <label>f3字段</label><input name="f3" type="hidden" value="f3" /><br />
             <label>f4字段</label><input name="f4" /><br />
-            <label>f5字段</label><input name="f5" type="file" /><br />
-            <label>f6字段</label><input name="f6" value="f6_1" type="checkbox" /><input name="f6" value="f6_2"
-                type="checkbox" />
-        </fieldset>
         <button type="submit">提交</button>
     </form>
 </body>
