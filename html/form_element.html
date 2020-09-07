@@ -22,28 +22,34 @@
 	        autocomplete="off" -->
             <fieldset>
                 <legend>文本输入类</legend>
-                <label>f1字段</label><input name="f1" /><br />
-                <label>f12字段</label><textarea name="f12"></textarea><br />
-                <label>f13字段</label><input name="f13" type="password" /><br />
-                <label>f6字段</label><input name="f6" type="number" /><br />
-                <label>f8字段</label><input name="f8" type="email" /><br />
+                <label>f1字段（文本）</label><input name="f1" /><br />
+                <label>f12字段（文本域）</label><textarea name="f12"></textarea><br />
+                <label>f13字段（密码）</label><input name="f13" type="password" /><br />
+                <label>f6字段（数值）</label><input name="f6" type="number" /><br />
+                <label>f8字段（邮箱）</label><input name="f8" type="email" /><br />
+                <label>f20字段（输入框-可使用由datalist给定的选项列表）</label>
+                <input name="f20" list="f20"/>
+                <datalist id="f20">
+                    <option value="1">选项1</option>
+                    <option value="2">选项2</option>
+                </datalist>
             </fieldset>
             <fieldset>
                 <legend>日期/时间选择类</legend>
-                <label>f16字段</label><input name="f16" type="month" /><br />
-                <label>f19字段</label><input name="f19" type="week" /><br />
-                <label>f17字段</label><input name="f17" type="date" /><br />
-                <label>f18字段</label><input name="f18" type="time" /><br />
-                <label>f9字段</label><input name="f9" type="datetime-local" /><br />
-            <fieldset></fieldset>
+                <label>f16字段（月份）</label><input name="f16" type="month" /><br />
+                <label>f19字段（周）</label><input name="f19" type="week" /><br />
+                <label>f17字段（日期）</label><input name="f17" type="date" /><br />
+                <label>f18字段（时间）</label><input name="f18" type="time" /><br />
+                <label>f9字段（日期时间）</label><input name="f9" type="datetime-local" /><br />
+            </fieldset>
             <fieldset>
-                <legend>其他选择类</legend>
-                <label>f7字段</label><input name="f7" type="color" /><br />
-                <label>f2字段</label><input name="f2" type="range" /><br />
-                <label>f3字段</label><input name="f3" value="f3_1" type="checkbox" /><input name="f3" value="f3_2" type="checkbox" /><br />
-                <label>f4字段</label><input name="f4" value="f4_1" type="radio" /><input name="f4" value="f4_2" type="radio" /><br />
-                <label>f5字段</label><input name="f5" type="file" /><br />
-                <label>f15字段</label>
+                <legend>项目选择类</legend>
+                <label>f7字段（颜色）</label><input name="f7" type="color" list /><br />
+                <label>f2字段（范围）</label><input name="f2" type="range" /><br />
+                <label>f3字段（复选框）</label><input name="f3" value="f3_1" type="checkbox" /><input name="f3" value="f3_2" type="checkbox" /><br />
+                <label>f4字段（单选框）</label><input name="f4" value="f4_1" type="radio" /><input name="f4" value="f4_2" type="radio" /><br />
+                <label>f5字段（文件）</label><input name="f5" type="file" /><br />
+                <label>f15字段（选择器-多选）</label>
                 <select name="f15" multiple>
                     <optgroup label="选项1-2">
                         <option value="1">选项1</option>
@@ -55,22 +61,29 @@
                         <option value="5">选项5</option>
                     </optgroup>
                 </select><br />
-                <label>f20字段</label>
-                <input name="f20" list="f15"/>
-                <datalist id="f20">
-                    <option value="1">选项1</option>
-                    <option value="2">选项2</option>
-                </datalist>
+                <label>f21字段（选择器-单选）</label>
+                <select id="f21" name="f21">
+                    <optgroup label="选项1-2">
+                        <option value="1">选项1</option>
+                        <option value="2">选项2</option>
+                    </optgroup>
+                    <optgroup label="选项3-5">
+                        <option value="3">选项3</option>
+                        <option value="4">选项4</option>
+                        <option value="5">选项5</option>
+                    </optgroup>
+                </select>
             </fieldset>
             <fieldset>
                 <legend>其他类</legend>
-                <label>f10字段</label><input name="f10" type="hidden" value="f10" />
+                <label>f10字段（隐藏项）</label><input name="f10" type="hidden" value="f10" />
             </fieldset>
             <fieldset>
                 <legend>按钮类</legend>
-                <label>f11字段</label><input name="f11" value="f11" type="submit" />
-                <label>f19字段</label><input name="f19" value="f19" type="button" />
-                <label>f14字段</label><input name="f14" value="f14" type="image" />
+                <label>f11字段（提交按钮）</label><input name="f11" value="f11" type="submit" />
+                <label>f19字段（普通按钮）</label><input name="f19" value="f19" type="button" />
+                <label>f22字段（重置按钮）</label><input name="f22" value="f22" type="reset" />
+                <label>f14字段（图像按钮）</label><input name="f14" value="f14" type="image" />
             </fieldset>
         </form>
     </div>
