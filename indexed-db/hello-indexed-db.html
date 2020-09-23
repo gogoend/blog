@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndexedDB 测试 hello world</title>
+</head>
+
+<body>
+    <script>
+
+        let myData = [{
+            uid: 100,
+            name: 'Amy'
+        }, {
+            uid: 101,
+            name: 'Babala'
+        }, {
+            uid: 102,
+            name: 'Cristina'
+        }, {
+            uid: 103,
+            name: 'Daisy'
+        }, {
+            uid: 104,
+            name: 'Ella'
+        }]
+
+        let dbName = "hello"
+        let dbReq = indexedDB.open(dbName)
+
+        // let db, objectStore
+        dbReq.addEventListener('error', function (e) {
+            console.log(e)
+        })
+        dbReq.addEventListener('upgradeneeded', function (e) {
+            let db = e.target.result;
+            let objectStore = db.createObjectStore('helloDB', { keyPath: "id", autoIncrement: true })
+
+            objectStore.createIndex("uid", "uid", { unique: true });
+
+            myData.forEach((item) => {
+                objectStore.add(item)
+            })
+        })
+    </script>
+</body>
+
+</html>
