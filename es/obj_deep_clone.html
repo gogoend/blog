@@ -9,7 +9,8 @@
 <body>
     <script>
         let arr1 = [15, 16]
-        let obj = {
+        // arr1.push(arr1)
+        var obj = {
             a: 1,
             b: 2,
             c: {
@@ -22,7 +23,7 @@
                             {
                                 h: 17,
                                 i: [
-                                    18, 19
+                                    18, new Date
                                 ]
                             }
                         ],
@@ -36,10 +37,10 @@
                     }
                 }
             },
-            n: 23,
+            n: new Date,
             o: [24, 25, 26],
             p: [27, 28, 29,
-                [30, 31, 32, 33]],
+                [30, 31, 32, [/[0-9]/], 33]],
             r: null,
             s: undefined,
             t: [NaN, null, undefined, NaN, 0, {
@@ -52,22 +53,21 @@
             z: [undefined, null, function () { }, 40]
         }
 
-        function deepCopy(o, newO) {
-            
+        function deepClone(o) {
+            let newO = o instanceof Array ? [] : {}
             for (let key in o) {
-                if (o[key] instanceof Object) {
-                    let tempO = o.constructor === Array ? [] : {}
-
-                    deepCopy(o[key], tempO)
-                    newO[key] = tempO
+                if (o[key] instanceof Date || o[key] instanceof RegExp) {
+                    newO[key] = new o[key].__proto__.constructor(o[key])
+                } else if (o[key] instanceof Object) {
+                    newO[key] = deepClone(o[key])
                 } else {
                     newO[key] = o[key]
                 }
             }
+            return newO
         }
 
-        let newObj = {}
-        let zzz = deepCopy(obj, newObj)
+        var zzz = deepClone(obj)
     </script>
 </body>
 
