@@ -9,10 +9,10 @@
 <body>
     <script>
         let arr1 = [15, 16]
-        // arr1.push(arr1)
+        arr1.push(arr1)
         var obj = {
             a: 1,
-            b: 2,
+            b: [2,arr1],
             c: {
                 d: 4,
                 e: {
@@ -23,7 +23,7 @@
                             {
                                 h: 17,
                                 i: [
-                                    18, new Date
+                                    18, new Date,arr1
                                 ]
                             }
                         ],
@@ -33,12 +33,12 @@
                     ]],
                     k: {
                         l: 21,
-                        m: 22
+                        m: 22,arr1
                     }
                 }
             },
             n: new Date,
-            o: [24, 25, 26],
+            o: [24,arr1, 25, 26],
             p: [27, 28, 29,
                 [30, 31, 32, [/[0-9]/], 33]],
             r: null,
@@ -53,8 +53,15 @@
             z: [undefined, null, function () { }, 40]
         }
 
+        let map = new Map()
         function deepClone(o) {
+            if (map.has(o)) {
+                return map.get(o)
+            }
             let newO = o instanceof Array ? [] : {}
+
+            map.set(o, newO)
+
             for (let key in o) {
                 if (o[key] instanceof Date || o[key] instanceof RegExp) {
                     newO[key] = new o[key].__proto__.constructor(o[key])
