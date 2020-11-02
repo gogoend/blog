@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <audio controls src></audio>
+        <input type="file"/>
+        <script>
+            document.querySelector('input').addEventListener('change',(ev)=>{
+                if(!ev.currentTarget.files[0]){
+                    return
+                }
+                console.log(ev.currentTarget.files[0])
+                document.querySelector('audio').src = URL.createObjectURL(ev.currentTarget.files[0])
+                document.querySelector('audio').play()
+            })
+        </script>
+    </body>
+</html>
