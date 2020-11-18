@@ -1,0 +1,32 @@
+<html>
+
+<head></head>
+
+<body>
+    <p></p>
+    <script>
+        let ws = new WebSocket('wss://echo.websocket.org')
+        let i = 0, timer=null
+        ws.addEventListener('open', (ev) => {
+            console.log(ev, 'opened')
+            timer = setInterval(() => {
+                ws.send('我发了个请求~');
+                i++
+            })
+        })
+
+        ws.addEventListener('message', (ev) => {
+            console.log(ev, 'messaged')
+            if (i >= 100) {
+                clearInterval(timer)
+                ws.close()
+            }
+        })
+
+        ws.addEventListener('close', (ev) => {
+            console.log(ev ,'closed')
+        })
+    </script>
+</body>
+
+</html>
