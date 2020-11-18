@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>let var 测试</title>
+</head>
+
+<body>
+    <div id="varWrap"></div>
+    <div id="letWrap"></div>
+    <script>
+        for (var i = 0; i < 10; i++) {
+            let newValEl = document.createElement('button')
+            newValEl.innerText = i
+            document.getElementById('varWrap').append(newValEl);
+
+            // (function (ii) {
+            //     newValEl.onclick = function () {
+            //         console.log(ii)
+            //     }
+            // })(i)
+            newValEl.onclick = function () {
+                console.log(i)
+            }
+        }
+        for (let i = 0; i < 10; i++) {
+            let newValEl = document.createElement('button')
+            newValEl.innerText = i
+            document.getElementById('letWrap').append(newValEl);
+
+            newValEl.onclick = function () {
+                console.log(i)
+            }
+        }
+    </script>
+</body>
+
+</html>
