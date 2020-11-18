@@ -1,0 +1,51 @@
+<!--
+ * @Author: gogoend
+ * @Date: 2020-07-12 12:07:32
+ * @LastEditors: gogoend
+ * @LastEditTime: 2020-07-12 14:09:40
+ * @FilePath: \demo\dom\file_mulit_upload_fetch.html
+ * @Description: 
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二进制文件下载测试 - XHR</title>
+</head>
+
+<body>
+    <div>
+        <button onclick="saveFile('../_res/a-pptx-file.pptx')">下载文件</button>
+    </div>
+    <script>
+        function downloadFile(url){
+            return new Promise((resolve,reject)=>{
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET',url)
+                // xhr.responseType = "blob";
+                xhr.responseType = "arraybuffer";
+                xhr.send()
+
+                xhr.addEventListener('readystatechange',()=>{
+                    if(xhr.readyState===4&&xhr.status===200){
+                        resolve(xhr.response)
+                    }
+                })
+            })
+        }
+
+        async function saveFile(url){
+            let res = await downloadFile(url)
+            debugger
+            let blob = new Blob([res],{
+                type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            })
+
+            console.log(URL.createObjectURL(blob))
+
+        }
+    </script>
+</body>
+
+</html>
