@@ -13,3 +13,7 @@
 [submodule "weather-app-vue-vite"]
 	path = vue/weather-app-vue-vite
 	url = https://github.com/gogoend/weather-app-vue-vite
+
+[submodule "weather-app-vue-vite"]
+	path = websocket/node-ws-server
+	url = https://github.com/gogoend/node-ws-server
