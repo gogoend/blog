@@ -1,7 +1,11 @@
-const http=require('http')
+const http = require('http')
+const url = require('url')
 
 http.createServer((req,res)=>{
-    console.log(req.url)
+    // console.log(req.url)
+    if(req.url !== '/favicon.ico'){
+        console.log(url.parse(req.url,true).query)
+    }
     res.writeHead( 200, {
         'Content-Type':"text/html;charset='utf-8'"
     })
