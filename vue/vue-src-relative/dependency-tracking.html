@@ -1,0 +1,27 @@
+<!-- 依赖追踪 -->
+<script>
+// ----------------
+window.Dep = class Dep {
+    deps = []
+    depend(){
+
+    }
+    notify() {
+
+    }
+}
+
+function autorun (update) {
+    update()
+}
+
+// -----------------
+let dep = new Dep()
+
+autorun(()=>{
+    dep.depend()
+    console.log('已更新')
+})
+
+dep.notify()
+</script>
