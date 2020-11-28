@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>defineProperty 测试</title>
+</head>
+<body>
+    <script>
+        function convert(obj){
+            Object.keys(obj).forEach((key)=>{
+                let internalVal = obj[key] // 闭包存值
+                Object.defineProperty(obj,key,{
+                    get () {
+                        console.log(`getting key "${key}": ${internalVal}`)
+                        return internalVal
+                    },
+                    set (nVal) {
+                        console.log(`setting key "${key}": ${nVal}`)
+                        internalVal = nVal
+                    }
+                })
+            })
+        }
+    </script>
+</body>
+</html>
