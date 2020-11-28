@@ -7,27 +7,33 @@ window.Dep = class Dep {
     }
     depend(){
         if(activeUpdate){
+            this.subscribers.add(activeUpdate)
             // 注册activeUpdate作为订阅者
         }
     }
     notify() {
         // 通知所有订阅者
+        this.subscribers.forEach(sub => sub())
     }
 }
 
 let activeUpdate
-
 function autorun (update) {
     function wrappedUpdate () {
+        // 2. 函数外部定义了一个 activeUpdate 变量，这里临时将函数自身赋值给了这一变量
+        // 回调函数执行结束后变量重新置为 null
+        // 由于在回调函数中调用了Dep实例的 .depend，因此会把 activeUpdate 给加入到Dep实例的 subscribers 中
         activeUpdate = wrappedUpdate
         update()
         activeUpdate = null
     }
+    wrappedUpdate()
 }
 
 // -----------------
 let dep = new Dep()
 
+// 1. 调用autorun方法，注意其回调函数中调用了Dep实例的.depend 方法
 autorun(()=>{
     dep.depend()
     console.log('已更新')
