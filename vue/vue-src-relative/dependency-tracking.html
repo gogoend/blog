@@ -2,17 +2,27 @@
 <script>
 // ----------------
 window.Dep = class Dep {
-    deps = []
+    constructor () {
+        this.subscribers = new Set()
+    }
     depend(){
-
+        if(activeUpdate){
+            // 注册activeUpdate作为订阅者
+        }
     }
     notify() {
-
+        // 通知所有订阅者
     }
 }
 
+let activeUpdate
+
 function autorun (update) {
-    update()
+    function wrappedUpdate () {
+        activeUpdate = wrappedUpdate
+        update()
+        activeUpdate = null
+    }
 }
 
 // -----------------
