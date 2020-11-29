@@ -12,24 +12,16 @@
     </div>
     <script src="../vue.js"></script>
     <script>
-        class Store {
-            constructor({ state, mutations }) {
-                this.state = state;
-                this.mutations = mutations;
-            }
-
-            state = {
-            }
-            mutations = {
-            }
-            commit(name,...args) {
-                this.mutations[name].call(null,this.state,...args||[])
-            }
-        }
-
         function createStore({ state, mutations }) {
-            return new Store({
-                state, mutations
+            return new Vue({
+                data: {
+                    state
+                },
+                methods: {
+                    commit(mutationId, ...args){
+                        mutations[mutationId].call(null,this.state,...args||[])
+                    }
+                }
             })
         }
 
