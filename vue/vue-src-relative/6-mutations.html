@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Mutation</title>
+</head>
+
+<body>
+    <div id="app">
+        <counter></counter>
+        <counter></counter>
+    </div>
+    <script src="../vue.js"></script>
+    <script>
+        function createStore({state, mutations}){
+            // TODO
+        }
+
+        let store = createStore({
+            state: {
+                count: 0
+            },
+            mutations: {
+                increase(state) {
+                    state.count++
+                }
+            }
+        })
+
+        const Counter = {
+            render: (h) => h('div', {
+                on: {
+                    mousemove: [
+                        () => store.commit('increase')
+                    ]
+                }
+            }, store.count)
+        }
+        new Vue({
+            el: '#app',
+            components: {
+                Counter
+            }
+        })
+    </script>
+</body>
+
+</html>
