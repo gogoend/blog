@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>组件间共享状态</title>
+</head>
+
+<body>
+    <div id="app">
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+        <counter></counter>
+    </div>
+    <script src="../vue.js"></script>
+    <script>
+
+        let store = new Vue({
+            data: {
+                count: 0
+            },
+            methods: {
+                increase() {
+                    this.count++
+                }
+            }
+        })
+
+        const Counter = {
+            render: (h) => h('div', {
+                on: {
+                    mousemove: [
+                        () => store.increase()
+                    ]
+                }
+            }, store.count)
+        }
+        new Vue({
+            el: '#app',
+            components: {
+                Counter
+            }
+        })
+    </script>
+</body>
+
+</html>
