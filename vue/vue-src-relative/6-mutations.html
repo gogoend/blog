@@ -12,8 +12,25 @@
     </div>
     <script src="../vue.js"></script>
     <script>
-        function createStore({state, mutations}){
-            // TODO
+        class Store {
+            constructor({ state, mutations }) {
+                this.state = state;
+                this.mutations = mutations;
+            }
+
+            state = {
+            }
+            mutations = {
+            }
+            commit(name,...args) {
+                this.mutations[name].call(null,this.state,...args||[])
+            }
+        }
+
+        function createStore({ state, mutations }) {
+            return new Store({
+                state, mutations
+            })
         }
 
         let store = createStore({
@@ -21,8 +38,8 @@
                 count: 0
             },
             mutations: {
-                increase(state) {
-                    state.count++
+                increase(state,count) {
+                    state.count+=(count || 1)
                 }
             }
         })
