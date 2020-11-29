@@ -51,7 +51,7 @@
                         () => store.commit('increase')
                     ]
                 }
-            }, store.count)
+            }, store.state.count)
         }
         new Vue({
             el: '#app',
