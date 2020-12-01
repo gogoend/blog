@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Dialog 测试</title>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script src="./vue.js"></script>
+    <script>
+        let Dialog = Vue.extend({
+            template: `<dialog :open="dialogStatus">{{dialogContent}}</dialog>`,
+            data() {
+                return {
+                    dialogContent: `对话框内容`,
+                    dialogStatus: false
+                }
+            },
+            mounted(){
+                dialogStatus: true
+            }
+        })
+    </script>
+    <script>
+        var app = new Vue({
+            template:`
+                <div>
+                    <button @click="handleOpenDialog">打开对话框</button>
+                    <ul>
+                        <li v-for="item in posts" :key="item.id">{{item.title}}</li>
+                    </ul>
+                </div>`,
+            data: {
+                posts: [
+                    { id: 1, title: 'My journey with Vue' },
+                    { id: 2, title: 'Blogging with Vue' },
+                    { id: 3, title: 'Why Vue is so fun' }
+                ],
+                dialogComponent: null
+            },
+            methods: {
+                handleOpenDialog(){
+                    this.dialogComponent = new Dialog().$mount(document.getElementById('app'))
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
