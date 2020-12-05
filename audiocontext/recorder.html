@@ -29,41 +29,47 @@
             return creator(BUFFER_SIZE, INPUT_CHANNEL_COUNT, OUTPUT_CHANNEL_COUNT)
         }
 
-        let jsNode, mediaNode
-        let leftChannelList = [], rightChannelList = []
-
-        function onAudioProcess(ev) {
+        function onAudioProcess(ev, lChannelList, rChannelList) {
             let audioBuffer = ev.inputBuffer
             let leftChannelData = audioBuffer.getChannelData(0),
                 rightChannelData = audioBuffer.getChannelData(1);
-
-            leftChannelList.push(leftChannelData.slice(0))
-            rightChannelList.push(rightChannelData.slice(0))
+            lChannelList.push(leftChannelData.slice(0))
+            rChannelList.push(rightChannelData.slice(0))
         }
 
-        // 拿到流，输出到扬声器
-        function beginRecord(mediaStream) {
-            let aCtx = new AudioContext
-            mediaNode = aCtx.createMediaStreamSource(mediaStream)
+        class Recorder {
+            jsNode = null
+            mediaNode = null
+            leftChannelList = []
+            rightChannelList = []
+            aCtx = null
+            mediaStream = null
+            constructor(mediaStream) {
+                this.mediaStream = mediaStream
 
-            jsNode = createJSNode(aCtx)
-            jsNode.connect(aCtx.destination)
-            jsNode.onaudioprocess = function (ev) {
-                onAudioProcess(ev)
+                this.aCtx = new AudioContext
+                this.mediaNode = this.aCtx.createMediaStreamSource(mediaStream)
+                this.jsNode = createJSNode(this.aCtx)
+                this.jsNode.connect(this.aCtx.destination)
+                this.mediaNode.connect(this.jsNode)
             }
-            mediaNode.connect(jsNode)
-        }
+            beginRecord(mediaStream) {
+                this.jsNode.onaudioprocess = (ev) => {
+                    onAudioProcess(ev, this.leftChannelList, this.rightChannelList)
+                }
+            }
+            pauseRecord(mediaStream) {
+                this.jsNode.onaudioprocess = null
+                this.mediaStream.getAudioTracks()[0].stop();
 
-        function stopRecord(mediaStream) {
-            // 停止录音
-
-            mediaStream.getAudioTracks()[0].stop();
-            mediaNode.disconnect();
-            jsNode.disconnect();
-            // 停止录音
-            let leftData = mergeArray(leftChannelList),
-                rightData = mergeArray(rightChannelList);
-            console.log(leftData, rightData);
+                let leftData = mergeArray(this.leftChannelList),
+                    rightData = mergeArray(this.rightChannelList);
+                console.log(leftData, rightData);
+            }
+            destory() {
+                this.mediaNode.disconnect();
+                this.jsNode.disconnect();
+            }
         }
 
         (async () => {
@@ -74,13 +80,15 @@
                     volume: 1.0
                 }
             })
+
             console.log(mediaStream)
+            let recorder = new Recorder(mediaStream)
 
             window.rock = () => {
-                beginRecord(mediaStream)
+                recorder.beginRecord()
             }
             window.stop = () => {
-                stopRecord(mediaStream)
+                recorder.pauseRecord()
             }
         })()
     </script>
