@@ -1,0 +1,97 @@
+<html>
+
+<head></head>
+
+<body>
+    <p></p>
+    <script>
+        let ws = new WebSocket('ws://vop.baidu.com/realtime_asr?sn=XXXX-XXXX-XXXX-XXX', 'websocket')
+        // let ws = new WebSocket('ws://localhost:3721/ws')
+
+        ws.addEventListener('open', async (ev) => {
+            await callOnMedia()
+            ws.send(JSON.stringify({
+                "type": "START",
+                "data": {
+                    "appid": 0,
+                    "appkey": "",
+                    "dev_pid": 15372, // 识别模型，比如普通话还是英语，是否要加标点等
+                    "cuid": "cuid-1", // 随便填不影响使用。机器的mac或者其它唯一id，页面上计算UV用。
+                    // 下面是固定参数
+                    "format": "pcm",
+                    "sample": 16000
+                }
+            }));
+        })
+        ws.addEventListener('message', (ev) => {
+            console.log(ev, 'messaged')
+            // ws.close()
+        })
+        ws.addEventListener('close', (ev) => {
+            console.log(ev, 'closed')
+        });
+
+        async function callOnMedia() {
+            let mediaStream = await window.navigator.mediaDevices.getUserMedia({
+                audio: {
+                    sampleRate: 16000,
+                    channelCount: 1,
+                    volume: 1.0
+                }
+            })
+
+            window.recorder = new Recorder(mediaStream)
+            window.recorder.beginRecord(mediaStream)
+        }
+
+        function createJSNode(audioContext) {
+            const BUFFER_SIZE = 16384
+            const INPUT_CHANNEL_COUNT = 2
+            const OUTPUT_CHANNEL_COUNT = 2
+            let creator = audioContext.createScriptProcessor
+            creator = creator.bind(audioContext)
+            return creator(BUFFER_SIZE, INPUT_CHANNEL_COUNT, OUTPUT_CHANNEL_COUNT)
+        }
+
+        function onAudioProcess(ev, channelList) {
+            let audioBuffer = ev.inputBuffer
+            let channelData = audioBuffer.getChannelData(0);
+            ws.send(channelData)
+            channelList.push(...channelData);
+            // console.log(channelData, performance.now())
+        }
+
+        class Recorder {
+            jsNode = null
+            mediaNode = null
+            channelList = []
+            aCtx = null
+            mediaStream = null
+            constructor(mediaStream) {
+                this.mediaStream = mediaStream
+
+                this.aCtx = new AudioContext
+                this.mediaNode = this.aCtx.createMediaStreamSource(mediaStream)
+                this.jsNode = createJSNode(this.aCtx)
+                this.jsNode.connect(this.aCtx.destination)
+                this.mediaNode.connect(this.jsNode)
+            }
+            beginRecord(mediaStream) {
+                this.jsNode.onaudioprocess = (ev) => {
+                    onAudioProcess(ev, this.channelList)
+                }
+            }
+            pauseRecord(mediaStream) {
+                this.jsNode.onaudioprocess = null
+            }
+            destory() {
+                this.mediaStream.getAudioTracks()[0].stop();
+                this.mediaNode.disconnect();
+                this.jsNode.disconnect();
+            }
+        }
+
+    </script>
+</body>
+
+</html>
