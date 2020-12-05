@@ -10,6 +10,26 @@
 <body>
     <button onclick="rock()">我是录音机</button>
     <script>
+        function createJSNode(audioContext: AudioContext) {
+            const BUFFER_SIZE = 4096
+            const INPUT_CHANNEL_COUNT = 2
+            const OUTPUT_CHANNEL_COUNT = 2
+            let creator = audioContext.createScriptProcessor
+            creator = creator.bind(audioContext)
+            return creator(BUFFER_SIZE, INPUT_CHANNEL_COUNT, OUTPUT_CHANNEL_COUNT)
+        }
+
+        function onAudioProcess(ev) {
+            console.log(ev.inputBuffer)
+        }
+
+        // 拿到流，输出到扬声器
+        function beginRecord(mediaStream) {
+            let aCtx = new AudioContext
+            let mediaNode = aCtx.createMediaStreamSource(mediaStream)
+            mediaNode.connect(aCtx.destination)
+        }
+
         (async () => {
             let mediaStream = await window.navigator.mediaDevices.getUserMedia({
                 audio: {
@@ -20,12 +40,6 @@
             })
             console.log(mediaStream)
 
-            // 拿到流，输出到扬声器
-            function beginRecord(mediaStream) {
-                let aCtx = new AudioContext
-                let mediaNode = aCtx.createMediaStreamSource(mediaStream)
-                mediaNode.connect(aCtx.destination)
-            }
             window.rock = () => {
                 beginRecord(mediaStream)
             }
