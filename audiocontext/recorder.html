@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>录音测试</title>
+</head>
+
+<body>
+    <button onclick="rock()">我是录音机</button>
+    <script>
+        (async () => {
+            let mediaStream = await window.navigator.mediaDevices.getUserMedia({
+                audio: {
+                    sampleRate: 44100,
+                    channelCount: 2,
+                    volume: 1.0
+                }
+            })
+            console.log(mediaStream)
+
+            // 拿到流，输出到扬声器
+            function beginRecord(mediaStream) {
+                let aCtx = new AudioContext
+                let mediaNode = aCtx.createMediaStreamSource(mediaStream)
+                mediaNode.connect(aCtx.destination)
+            }
+            window.rock = () => {
+                beginRecord(mediaStream)
+            }
+        })()
+    </script>
+</body>
+
+</html>
