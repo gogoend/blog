@@ -9,7 +9,17 @@
 
 <body>
     <button onclick="rock()">我是录音机</button>
+    <button onclick="stop()">我是录音机</button>
     <script>
+        function mergeArray(list) {
+            let length = list.length * list[0].length
+            let data = new Float32Array(length), offset = 0;
+            for (let i = 0; i < list.length; i++) {
+                data.set(list[i], offset);
+                offset += list[i].length;
+            }
+            return data
+        }
         function createJSNode(audioContext) {
             const BUFFER_SIZE = 4096
             const INPUT_CHANNEL_COUNT = 2
@@ -19,20 +29,41 @@
             return creator(BUFFER_SIZE, INPUT_CHANNEL_COUNT, OUTPUT_CHANNEL_COUNT)
         }
 
+        let jsNode, mediaNode
+        let leftChannelList = [], rightChannelList = []
+
         function onAudioProcess(ev) {
-            console.log(ev.inputBuffer)
+            let audioBuffer = ev.inputBuffer
+            let leftChannelData = audioBuffer.getChannelData(0),
+                rightChannelData = audioBuffer.getChannelData(1);
+
+            leftChannelList.push(leftChannelData.slice(0))
+            rightChannelList.push(rightChannelData.slice(0))
         }
 
         // 拿到流，输出到扬声器
         function beginRecord(mediaStream) {
             let aCtx = new AudioContext
-            let mediaNode = aCtx.createMediaStreamSource(mediaStream)
+            mediaNode = aCtx.createMediaStreamSource(mediaStream)
 
-            let jsNode = createJSNode(aCtx)
+            jsNode = createJSNode(aCtx)
             jsNode.connect(aCtx.destination)
-            jsNode.onaudioprocess = onAudioProcess
+            jsNode.onaudioprocess = function (ev) {
+                onAudioProcess(ev)
+            }
             mediaNode.connect(jsNode)
+        }
 
+        function stopRecord(mediaStream) {
+            // 停止录音
+
+            mediaStream.getAudioTracks()[0].stop();
+            mediaNode.disconnect();
+            jsNode.disconnect();
+            // 停止录音
+            let leftData = mergeArray(leftChannelList),
+                rightData = mergeArray(rightChannelList);
+            console.log(leftData, rightData);
         }
 
         (async () => {
@@ -47,6 +78,9 @@
 
             window.rock = () => {
                 beginRecord(mediaStream)
+            }
+            window.stop = () => {
+                stopRecord(mediaStream)
             }
         })()
     </script>
