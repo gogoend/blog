@@ -11,21 +11,29 @@
     <script src="./vue.js"></script>
     <script>
         let Dialog = Vue.extend({
-            template: `<dialog :open="dialogStatus">{{dialogContent}}</dialog>`,
+            template: `
+            <dialog :open="dialogStatus">
+                {{dialogContent}}
+            </dialog>`,
             data() {
                 return {
                     dialogContent: `对话框内容`,
                     dialogStatus: false
                 }
             },
-            mounted(){
+            mounted() {
                 dialogStatus: true
+            },
+            destroyed() {
+                if (this.$el && this.$el.parentNode) {
+                    this.$el.parentNode.removeChild(this.$el);
+                }
             }
         })
     </script>
     <script>
         var app = new Vue({
-            template:`
+            template: `
                 <div>
                     <button @click="handleOpenDialog">打开对话框</button>
                     <ul>
@@ -41,11 +49,15 @@
                 dialogComponent: null
             },
             methods: {
-                handleOpenDialog(){
+                handleOpenDialog() {
                     this.dialogComponent = new Dialog().$mount(document.getElementById('app'))
+                    this.dialogComponent.dialogStatus = true
+                    document.body.append(this.dialogComponent.$el)
                 }
             }
         });
+
+        app.$mount('#app')
     </script>
 </body>
 
