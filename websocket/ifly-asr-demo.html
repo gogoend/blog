@@ -4,9 +4,10 @@
 
 <body>
     <p></p>
+    <script src="ifly-asr-demo-auth.js"></script>
     <script>
-        let ws = new WebSocket('ws://vop.baidu.com/realtime_asr?sn=XXXX-XXXX-XXXX-XXX', 'websocket')
-        // let ws = new WebSocket('ws://localhost:3721/ws')
+        // let ws = new WebSocket('ws://vop.baidu.com/realtime_asr?sn=XXXX-XXXX-XXXX-XXX', 'websocket')
+        let ws = new WebSocket('ws://localhost:3721/ws')
 
         ws.addEventListener('open', async (ev) => {
             await callOnMedia()
