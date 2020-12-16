@@ -8,6 +8,44 @@
     <script src="ifly-asr-demo-auth.js"></script>
     <script>
 
+
+        let transAudioData = {
+            transcode(audioData, cb) {
+                let output = transAudioData.to16kHz(audioData)
+                output = transAudioData.to16BitPCM(output)
+                output = Array.from(new Uint8Array(output.buffer))
+                cb(output)
+                // return output
+            },
+            to16kHz(audioData) {
+                var data = new Float32Array(audioData)
+                var fitCount = Math.round(data.length * (16000 / 44100))
+                var newData = new Float32Array(fitCount)
+                var springFactor = (data.length - 1) / (fitCount - 1)
+                newData[0] = data[0]
+                for (let i = 1; i < fitCount - 1; i++) {
+                    var tmp = i * springFactor
+                    var before = Math.floor(tmp).toFixed()
+                    var after = Math.ceil(tmp).toFixed()
+                    var atPoint = tmp - before
+                    newData[i] = data[before] + (data[after] - data[before]) * atPoint
+                }
+                newData[fitCount - 1] = data[data.length - 1]
+                return newData
+            },
+            to16BitPCM(input) {
+                var dataLength = input.length * (16 / 8)
+                var dataBuffer = new ArrayBuffer(dataLength)
+                var dataView = new DataView(dataBuffer)
+                var offset = 0
+                for (var i = 0; i < input.length; i++, offset += 2) {
+                    var s = Math.max(-1, Math.min(1, input[i]))
+                    dataView.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true)
+                }
+                return dataView
+            },
+        }
+
         const toBase64 = function (buffer) {
             let binary = ''
             let bytes = new Uint8Array(buffer)
@@ -38,54 +76,6 @@
         }
         // let ws = new WebSocket('ws://vop.baidu.com/realtime_asr?sn=XXXX-XXXX-XXXX-XXX', 'websocket')
 
-        let ws
-        getWebSocketUrl().then(url => {
-            ws = new WebSocket(url)
-
-            ws.addEventListener('open', async (ev) => {
-                await callOnMedia()
-
-                var params = {
-                    common: {
-                        app_id: APPID,
-                    },
-                    business: {
-                        language: 'zh_cn', //小语种可在控制台--语音听写（流式）--方言/语种处添加试用
-                        domain: 'iat',
-                        accent: 'mandarin', //中文方言可在控制台--语音听写（流式）--方言/语种处添加试用
-                    },
-                    data: {
-                        status: 0,
-                        format: 'audio/L16;rate=16000',
-                        encoding: 'raw',
-                        audio: [],
-                    },
-                }
-
-                ws.send(JSON.stringify({
-                    params
-                }));
-            })
-            ws.addEventListener('message', (ev) => {
-                console.log(ev, 'messaged')
-                // ws.close()
-            })
-            ws.addEventListener('close', (ev) => {
-                console.log(ev, 'closed')
-            }); async function callOnMedia() {
-                let mediaStream = await window.navigator.mediaDevices.getUserMedia({
-                    audio: {
-                        sampleRate: 16000,
-                        channelCount: 1,
-                        volume: 1.0
-                    }
-                })
-
-                window.recorder = new Recorder(mediaStream)
-                window.recorder.beginRecord(mediaStream)
-            }
-        })
-
         function createJSNode(audioContext) {
             const BUFFER_SIZE = 0
             const INPUT_CHANNEL_COUNT = 1
@@ -98,7 +88,11 @@
         function onAudioProcess(ev, channelList) {
             let audioBuffer = ev.inputBuffer
             let channelData = audioBuffer.getChannelData(0);
-            channelList.push(...channelData);
+
+            console.log(channelData)
+
+            transAudioData.transcode(channelData,val => channelList.push(...val));
+            
         }
 
         class Recorder {
@@ -106,31 +100,80 @@
             mediaNode = null
             channelList = []
             aCtx = null
+            asrWs = null
             mediaStream = null
-            constructor(mediaStream) {
-                this.mediaStream = mediaStream
-
-                this.aCtx = new AudioContext
-                this.mediaNode = this.aCtx.createMediaStreamSource(mediaStream)
-                this.jsNode = createJSNode(this.aCtx)
-                this.jsNode.connect(this.aCtx.destination)
-                this.mediaNode.connect(this.jsNode)
+            constructor() {
+                this.init()
             }
-            beginRecord(mediaStream) {
+            async init() {
+                try {
+                    this.mediaStream = await window.navigator.mediaDevices.getUserMedia({
+                        audio: {
+                            sampleRate: 16000,
+                            channelCount: 1,
+                            volume: 1.0
+                        }
+                    })
+                    this.aCtx = new AudioContext
+                    this.mediaNode = this.aCtx.createMediaStreamSource(this.mediaStream)
+                    this.jsNode = createJSNode(this.aCtx)
+                    this.jsNode.connect(this.aCtx.destination)
+                    this.mediaNode.connect(this.jsNode)
+                } catch (error) {
+                    console.error(error)
+                }
+            }
+            async createWsConnect() {
+                let url = await getWebSocketUrl()
+                let ws = new WebSocket(url)
+
+                ws.addEventListener('open', async (ev) => {
+                    setTimeout(() => {
+                        let chunkedAduioData = toBase64(this.channelList.splice(0, 1280))
+                        var params = {
+                            common: {
+                                app_id: APPID,
+                            },
+                            business: {
+                                language: 'zh_cn', //小语种可在控制台--语音听写（流式）--方言/语种处添加试用
+                                domain: 'iat',
+                                accent: 'mandarin', //中文方言可在控制台--语音听写（流式）--方言/语种处添加试用
+                            },
+                            data: {
+                                status: 0,
+                                format: 'audio/L16;rate=16000',
+                                encoding: 'raw',
+                                audio: chunkedAduioData,
+                            }
+                        }
+                        ws.send(JSON.stringify(
+                            params
+                        ));
+                        setInterval(() => {
+                            this.sendAudioData()
+                        }, 1000)
+                    }, 500)
+                })
+                ws.addEventListener('message', (ev) => {
+                    console.log(ev, 'messaged')
+                })
+                ws.addEventListener('close', (ev) => {
+                    console.log(ev, 'closed')
+                });
+                this.asrWs = ws
+            }
+            async beginRecord() {
+                await this.createWsConnect()
                 this.jsNode.onaudioprocess = (ev) => {
                     onAudioProcess(ev, this.channelList)
                 }
-                setTimeout(() => {
-                    setInterval(() => {
-                        this.sendAudioData()
-                    }, 1000)
-                }, 1000)
             }
-            pauseRecord(mediaStream) {
+            pauseRecord() {
                 this.jsNode.onaudioprocess = null
             }
 
             sendAudioData() {
+                let ws = this.asrWs
                 if (this.channelList.length) {
                     let chunkedAduioData = toBase64(this.channelList.splice(0, 1280))
                     ws.send(JSON.stringify({
@@ -138,7 +181,7 @@
                             status: 1,
                             format: 'audio/L16;rate=16000',
                             encoding: 'raw',
-                            audio: toBase64(chunkedAduioData),
+                            audio: chunkedAduioData,
                         },
                     }))
                 }
@@ -148,9 +191,11 @@
                 this.mediaStream.getAudioTracks()[0].stop();
                 this.mediaNode.disconnect();
                 this.jsNode.disconnect();
+                this.asrWs.close()
             }
         }
 
+        window.recorder = new Recorder
     </script>
 </body>
 
