@@ -1,0 +1,157 @@
+<html>
+
+<head></head>
+
+<body>
+    <p></p>
+    <script src="https://unpkg.zhimg.com/crypto-js@4.0.0/crypto-js.js"></script>
+    <script src="ifly-asr-demo-auth.js"></script>
+    <script>
+
+        const toBase64 = function (buffer) {
+            let binary = ''
+            let bytes = new Uint8Array(buffer)
+            let len = bytes.byteLength
+            for (let i = 00; i < len; i++) {
+                binary += String.fromCharCode(bytes[i])
+            }
+            return btoa(binary)
+        }
+
+        const getWebSocketUrl = function () {
+            return new Promise(resolve => {
+                var url = 'wss://iat-api.xfyun.cn/v2/iat'
+                var host = 'iat-api.xfyun.cn'
+                var apiKey = API_KEY
+                var apiSecret = API_SECRET
+                var date = new Date().toGMTString()
+                var algorithm = 'hmac-sha256'
+                var headers = 'host date request-line'
+                var signatureOrigin = `host: ${host}\ndate: ${date}\nGET /v2/iat HTTP/1.1`
+                var signatureSha = CryptoJS.HmacSHA256(signatureOrigin, apiSecret)
+                var signature = CryptoJS.enc.Base64.stringify(signatureSha)
+                var authorizationOrigin = `api_key="${apiKey}", algorithm="${algorithm}", headers="${headers}", signature="${signature}"`
+                var authorization = btoa(authorizationOrigin)
+                url = `${url}?authorization=${authorization}&date=${date}&host=${host}`
+                resolve(url)
+            })
+        }
+        // let ws = new WebSocket('ws://vop.baidu.com/realtime_asr?sn=XXXX-XXXX-XXXX-XXX', 'websocket')
+
+        let ws
+        getWebSocketUrl().then(url => {
+            ws = new WebSocket(url)
+
+            ws.addEventListener('open', async (ev) => {
+                await callOnMedia()
+
+                var params = {
+                    common: {
+                        app_id: APPID,
+                    },
+                    business: {
+                        language: 'zh_cn', //小语种可在控制台--语音听写（流式）--方言/语种处添加试用
+                        domain: 'iat',
+                        accent: 'mandarin', //中文方言可在控制台--语音听写（流式）--方言/语种处添加试用
+                    },
+                    data: {
+                        status: 0,
+                        format: 'audio/L16;rate=16000',
+                        encoding: 'raw',
+                        audio: [],
+                    },
+                }
+
+                ws.send(JSON.stringify({
+                    params
+                }));
+            })
+            ws.addEventListener('message', (ev) => {
+                console.log(ev, 'messaged')
+                // ws.close()
+            })
+            ws.addEventListener('close', (ev) => {
+                console.log(ev, 'closed')
+            }); async function callOnMedia() {
+                let mediaStream = await window.navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        sampleRate: 16000,
+                        channelCount: 1,
+                        volume: 1.0
+                    }
+                })
+
+                window.recorder = new Recorder(mediaStream)
+                window.recorder.beginRecord(mediaStream)
+            }
+        })
+
+        function createJSNode(audioContext) {
+            const BUFFER_SIZE = 0
+            const INPUT_CHANNEL_COUNT = 1
+            const OUTPUT_CHANNEL_COUNT = 1
+            let creator = audioContext.createScriptProcessor
+            creator = creator.bind(audioContext)
+            return creator(BUFFER_SIZE, INPUT_CHANNEL_COUNT, OUTPUT_CHANNEL_COUNT)
+        }
+
+        function onAudioProcess(ev, channelList) {
+            let audioBuffer = ev.inputBuffer
+            let channelData = audioBuffer.getChannelData(0);
+            channelList.push(...channelData);
+        }
+
+        class Recorder {
+            jsNode = null
+            mediaNode = null
+            channelList = []
+            aCtx = null
+            mediaStream = null
+            constructor(mediaStream) {
+                this.mediaStream = mediaStream
+
+                this.aCtx = new AudioContext
+                this.mediaNode = this.aCtx.createMediaStreamSource(mediaStream)
+                this.jsNode = createJSNode(this.aCtx)
+                this.jsNode.connect(this.aCtx.destination)
+                this.mediaNode.connect(this.jsNode)
+            }
+            beginRecord(mediaStream) {
+                this.jsNode.onaudioprocess = (ev) => {
+                    onAudioProcess(ev, this.channelList)
+                }
+                setTimeout(() => {
+                    setInterval(() => {
+                        this.sendAudioData()
+                    }, 1000)
+                }, 1000)
+            }
+            pauseRecord(mediaStream) {
+                this.jsNode.onaudioprocess = null
+            }
+
+            sendAudioData() {
+                if (this.channelList.length) {
+                    let chunkedAduioData = toBase64(this.channelList.splice(0, 1280))
+                    ws.send(JSON.stringify({
+                        data: {
+                            status: 1,
+                            format: 'audio/L16;rate=16000',
+                            encoding: 'raw',
+                            audio: toBase64(chunkedAduioData),
+                        },
+                    }))
+                }
+            }
+
+            destory() {
+                this.mediaStream.getAudioTracks()[0].stop();
+                this.mediaNode.disconnect();
+                this.jsNode.disconnect();
+            }
+        }
+
+    </script>
+</body>
+
+</html>
