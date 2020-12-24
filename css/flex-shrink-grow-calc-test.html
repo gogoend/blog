@@ -24,6 +24,12 @@
             padding: 0;
         }
 
+        del {}
+
+        del:hover {
+            text-decoration: none;
+        }
+
         style {
             font-family: Consolas;
         }
@@ -70,7 +76,7 @@
         <hr />
     </div>
     <div>
-        <h1>设置grow - 整数</h1>
+        <h1>设置grow - flex-grow之和大于等于1</h1>
         <pre contenteditable>
     <style style="display: block;">
         ul.t2{
@@ -112,7 +118,7 @@
             <strong> 元素最终宽度 = ( 父元素width - 所有子元素width之和 ) * ( 当前子元素flex-grow / 所有元素flex-grow之和 ) + 元素width </strong>
             <br />
             <br />
-            以第一个元素为例： <br />
+            以第一、二个元素为例： <br />
             (600 - 130) * (2 / 16) + 40 = 98.75 <br />
             以第三个元素为例： <br />
             (600 - 130) * (4 / 16) + 40 = 157.5 <br />
@@ -122,7 +128,7 @@
         <hr />
     </div>
     <div>
-        <h1>设置grow - 小数</h1>
+        <h1>设置grow - flex-grow之和小于1</h1>
         <pre contenteditable>
     <style style="display: block;">
         ul.t3{
@@ -174,7 +180,7 @@
         <hr />
     </div>
     <div>
-        <h1>设置shrink - 整数</h1>
+        <h1>设置shrink - flex-shrink之和大于等于1</h1>
         <pre contenteditable>
     <style style="display: block;">
         ul.t4{
@@ -213,44 +219,49 @@
             <li>4</li>
         </ul>
         <section>
-            <strong> 收缩总和 = ( 父元素width - 所有子元素width之和 ) </strong><br />
+            <strong> 溢出宽度 = ( 父元素width - 所有子元素width之和 ) </strong><br />
             600-1300 = -700 <br />
             <strong> 总权重 = 所有 ( 元素width * 当前子元素flex-shrink )之和 </strong><br />
             3*400 + 2*400 + 1*400 + 0*100 = 2400<br />
+            <strong> 元素最终宽度 = 元素width - 溢出宽度 * ( 当前子元素 * 元素width ) / 总权重 </strong>
             <br />
             <br />
+            以第一个元素为例：<br />
             400 - 700 * ( 3 * 400 ) / 2400 = 50<br />
-
+            以第二个元素为例：<br />
             400 - 700 * ( 2 * 400 ) / 2400 = 166.67<br />
-
+            以第三个元素为例：<br />
             400 - 700 * ( 1 * 400 ) / 2400 = 283.33<br />
-
+            以第四个元素为例：<br />
             100 - 700 * ( 0 * 100 ) / 2400 = 100<br />
             <br />
 
             <details>
                 <summary>
-                    以下可能是错误的计算方式，但计算结果与正确结果一致
+                    以下计算方式，似乎计算结果与正确结果一致，但计算方式是错误的，仅供参考，请勿展开，以防混淆
                 </summary>
                 <br />
-                <strong> 元素最终宽度 = 元素width - ( 所有子元素width之和 - 父元素width ) * ( 当前子元素flex-shrink / 所有元素flex-shrink之和 ) </strong>
-                <br />
-                <br />
-                以第一个元素为例：<br />
-                400 - (1300 - 600) * 0.5 = 50 <br />
-                以第二个元素为例：<br />
-                400 - (1300 - 600) * 0.3333 = 166.69 <br />
-                以第三个元素为例：<br />
-                400 - (1300 - 600) * 0.1666 = 283.34 <br />
-                以第四个元素为例：<br />
-                100 - (1300 - 600) * 0 = 100 <br />
-                <br />
+                <del>
+                    <strong> 元素最终宽度 = 元素width - ( 所有子元素width之和 - 父元素width ) * ( 当前子元素flex-shrink / 所有元素flex-shrink之和 )
+                    </strong>
+                    <br />
+                    <br />
+                    以第一个元素为例：<br />
+                    400 - (1300 - 600) * 0.5 = 50 <br />
+                    以第二个元素为例：<br />
+                    400 - (1300 - 600) * 0.3333 = 166.69 <br />
+                    以第三个元素为例：<br />
+                    400 - (1300 - 600) * 0.1666 = 283.38 <br />
+                    以第四个元素为例：<br />
+                    100 - (1300 - 600) * 0 = 100 <br />
+                    <br />
+                </del>
             </details>
         </section>
         <hr />
     </div>
     <div>
-        <h1>设置shrink - 小数</h1>
+        <h1>设置shrink - flex-shrink之和小于1</h1>
         <pre contenteditable>
     <style style="display: block;">
         ul.t5{
@@ -289,18 +300,20 @@
             <li>4</li>
         </ul>
         <section>
-            <strong> 收缩总和 = ( 父元素width - 所有子元素width之和 ) * 所有元素flex-shrink之和 </strong><br />
+            <strong> 溢出宽度 = ( 父元素width - 所有子元素width之和 ) * 所有元素flex-shrink之和 </strong><br />
             (600-1300) * (0.3+0.2+0.1+0) = -420 <br />
             <strong> 总权重 = 所有 ( 元素width * 当前子元素flex-shrink )之和 </strong><br />
             0.3*400 + 0.2*400 + 0.1*400 + 0*100 = 240<br />
+            <strong> 元素最终宽度 = 元素width - 溢出宽度 * ( 当前子元素 * 元素width ) / 总权重 </strong>
             <br />
             <br />
+            以第一个元素为例：<br />
             400 - 420 * ( 0.3 * 400 ) / 240 = 190<br />
-
+            以第二个元素为例：<br />
             400 - 420 * ( 0.2 * 400 ) / 240 = 260<br />
-
+            以第三个元素为例：<br />
             400 - 420 * ( 0.1 * 400 ) / 240 = 330<br />
-
+            以第四个元素为例：<br />
             100 - 420 * ( 0 * 100 ) / 240 = 100<br />
             <br />
             提示：使用开发者工具选中元素后，发现实际结果与计算结果略有差异 —— 此时将各个子元素border值去掉即可
