@@ -68,12 +68,12 @@
                 gainNode.gain.exponentialRampToValueAtTime(0.001, aCtx.currentTime + 0.5);
 
                 oscillator.start(aCtx.currentTime);
-                oscillator.stop(aCtx.currentTime + 0.5);
+                oscillator.stop(aCtx.currentTime + 0.6);
 
                 document.getElementById('wow').innerText += i;
 
                 i += 1;
-            }, 1000)
+            }, 500)
         }
 
     </script>
