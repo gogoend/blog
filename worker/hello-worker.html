@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Worker</title>
+</head>
+<body>
+<script id="worker" type="app/worker">
+    postMessage('Worker已创建')
+    addEventListener('message', function(ev){
+        postMessage('some message')
+    }, false)
+</script>
+<script>
+    let blob = new Blob([document.querySelector('#worker').textContent])
+    let url = URL.createObjectURL(blob)
+    let worker = new Worker(url)
+
+    worker.onmessage = function (ev) {
+        console.log(ev)
+    }
+</script>
+</body>
+</html>
