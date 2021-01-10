@@ -7,10 +7,15 @@
 </head>
 <body>
 <script id="worker" type="app/worker">
-    postMessage('Worker已创建')
-    addEventListener('message', function(ev){
-        postMessage('some message')
-    }, false)
+    var i=0;
+
+    function timedCount() {
+        i=i+1;
+        postMessage(i);
+        setTimeout(timedCount,500);
+    }
+    
+    timedCount();
 </script>
 <script>
     let blob = new Blob([document.querySelector('#worker').textContent])
