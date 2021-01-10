@@ -8,7 +8,7 @@
 <body>
     <div id="app">
         <div v-for="(item,index) in values">
-            <input @blur="values[index]=$event.target.value" :value="values[index]" />
+            <input @change="values[index]=$event.target.value" :value="values[index]" />
         </div>
     </div>
 
