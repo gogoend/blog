@@ -33,23 +33,10 @@
             return creator(BUFFER_SIZE, INPUT_CHANNEL_COUNT, OUTPUT_CHANNEL_COUNT)
         }
 
-        function onAudioProcess(ev, lChannelList, rChannelList) {
+        function onAudioProcess(ev, lChannelList) {
             let audioBuffer = ev.inputBuffer
-            let leftChannelData = audioBuffer.getChannelData(0),
-                rightChannelData = audioBuffer.getChannelData(1);
+            let leftChannelData = audioBuffer.getChannelData(0)
             lChannelList.push(leftChannelData.slice(0))
-            rChannelList.push(rightChannelData.slice(0))
-        }
-
-        function interleaveLeftAndRight(left, right) {
-            let totalLength = left.length + right.length;
-            let data = new Float32Array(totalLength)
-            for (let i = 0; i < left.length; i++) {
-                let k = i * 2;
-                data[k] = left[i]
-                data[k + 1] = right[i]
-            }
-            return data
         }
 
         function writeUTFBytes(view, offset, string) {
@@ -79,7 +66,7 @@
             // sample format (raw)
             view.setUint16(20, 1, true)
             // stereo (2 channels)
-            view.setUint16(22, 2, true)
+            view.setUint16(22, 1, true)
             // sample rate
             view.setUint32(24, 44100, true)
             // byte rate (sample rate * block align)
@@ -120,7 +107,6 @@
             jsNode = null
             mediaNode = null
             leftChannelList = []
-            rightChannelList = []
             aCtx = null
             mediaStream = null
             constructor(mediaStream) {
@@ -134,7 +120,7 @@
             }
             beginRecord(mediaStream) {
                 this.jsNode.onaudioprocess = (ev) => {
-                    onAudioProcess(ev, this.leftChannelList, this.rightChannelList)
+                    onAudioProcess(ev, this.leftChannelList)
                 }
             }
             pauseRecord(mediaStream) {
@@ -147,9 +133,8 @@
             }
             saveWaveFile() {
                 let leftData = mergeArray(this.leftChannelList)
-                let rightData = mergeArray(this.rightChannelList)
 
-                let allData = interleaveLeftAndRight(leftData, rightData);
+                let allData = leftData;
                 let waveBuffer = createWavFile(allData)
                 let blob = new Blob([new Uint8Array(waveBuffer)])
                 downloadBlob(blob, new Date().toUTCString() + '.wav')
@@ -160,7 +145,7 @@
             let mediaStream = await window.navigator.mediaDevices.getUserMedia({
                 audio: {
                     sampleRate: 44100,
-                    channelCount: 2,
+                    channelCount: 1,
                     volume: 1.0
                 }
             })
