@@ -14,7 +14,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FFMPEG-WASM测试</title>
     <script src="../../vue/vue.js"></script>
-    <script src="./ffmpeg.js"></script>
 </head>
 
 <body>
@@ -25,9 +24,9 @@
         <dialog></dialog>
     </div>
 
-    <script>
-        window.rawPrompt = window.prompt
-        window.prompt = function () { }
+    <script type="app/worker"  id="worker">
+        self.importScripts('http://127.0.0.1:5501/wasm/ffmpeg_test/ffmpeg.js');
+
         function string2pointer(Module, s) {
             const ptr = Module._malloc((s.length + 1) * Uint8Array.BYTES_PER_ELEMENT);
             for (let i = 0; i < s.length; i += 1) {
@@ -46,15 +45,50 @@
 
             return listPtr;
         }
+
+        Module().then(module => {
+            self.theModule = module
+            self.ffmpeg = module.cwrap('ffmpeg', 'number', ['number', 'number']);
+        })
+
+        onmessage = function(e) {
+            const command = {
+                loadFile(fileName, data){
+
+                },
+                transcode(...args){
+
+                },
+                outputFile(){
+
+                }
+            }
+        //   console.log('ffmpeg_run', ffmpeg_run);
+        //   var files = e.data;
+        //   console.log(files);
+        //   ffmpeg_run({
+        //     arguments: ['-i', '/input/' + files[0].name, '-b:v', '64k', '-bufsize', '64k', '-vf', 'showinfo', '-strict', '-2', 'out.mp4'],
+        //     files: files,
+        //   }, function(results) {
+        //     console.log('result',results);
+        //     self.postMessage(results[0].data, [results[0].data]);
+        //   });
+        }
+    </script>
+    <script>
+        window.rawPrompt = window.prompt
+        window.prompt = function () { }
+
+        let blob = new Blob([document.querySelector("#worker").textContent]);
+        let url = window.URL.createObjectURL(blob);
+        var worker = new Worker(url);
+
         let app = new Vue({
             el: '#app',
             data: {
                 selectedFile: null,
             },
             async created() {
-                let module = await Module()
-                window.theModule = module
-                window.ffmpeg = module.cwrap('ffmpeg', 'number', ['number', 'number']);
                 // ffmpeg()
             },
             methods: {
@@ -65,6 +99,7 @@
                     this.selectedFile = e.currentTarget.files[0]
                     let data = new Uint8Array(await this.selectedFile.arrayBuffer())
                     console.log(data)
+                    worker.postMessage()
                     theModule.FS.writeFile('temp.mp4', data)
                 },
                 async transcode() {
@@ -86,6 +121,7 @@
         })
 
     </script>
+
 </body>
 
 </html>
