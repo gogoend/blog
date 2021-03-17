@@ -23,8 +23,8 @@
 
         <dialog></dialog>
     </div>
-
-    <script type="app/worker"  id="worker">
+    <!-- -->
+    <script type="app/worker" id="worker">
         self.importScripts('http://127.0.0.1:5501/wasm/ffmpeg_test/ffmpeg.js');
 
         function string2pointer(Module, s) {
@@ -51,28 +51,25 @@
             self.ffmpeg = module.cwrap('ffmpeg', 'number', ['number', 'number']);
         })
 
-        onmessage = function(e) {
-            const command = {
-                loadFile(fileName, data){
-
-                },
-                transcode(...args){
-
-                },
-                outputFile(){
-
-                }
+        const command = {
+            loadFile(fileName, data) {
+                self.theModule.FS.writeFile(fileName, data)
+            },
+            transcode(...args) {
+                self.ffmpeg(args.length, stringList2pointer(theModule, args))
+            },
+            getOutputFile(fileName) {
+                theModule.FS.readFile(fileName)
             }
-        //   console.log('ffmpeg_run', ffmpeg_run);
-        //   var files = e.data;
-        //   console.log(files);
-        //   ffmpeg_run({
-        //     arguments: ['-i', '/input/' + files[0].name, '-b:v', '64k', '-bufsize', '64k', '-vf', 'showinfo', '-strict', '-2', 'out.mp4'],
-        //     files: files,
-        //   }, function(results) {
-        //     console.log('result',results);
-        //     self.postMessage(results[0].data, [results[0].data]);
-        //   });
+        }
+
+        onmessage = function (ev) {
+            const {
+                op,
+                args
+            } = ev.data
+
+            command[op].call(this, ...args)
         }
     </script>
     <script>
@@ -99,23 +96,33 @@
                     this.selectedFile = e.currentTarget.files[0]
                     let data = new Uint8Array(await this.selectedFile.arrayBuffer())
                     console.log(data)
-                    worker.postMessage()
-                    theModule.FS.writeFile('temp.mp4', data)
+                    worker.postMessage({
+                        op: 'loadFile',
+                        args: ['temp.mp4', data]
+                    })
                 },
                 async transcode() {
                     const args = ['./ffmpeg', '-i', 'temp.mp4', 'temp2.mp4'];
-                    ffmpeg(args.length, stringList2pointer(theModule, args))
+                    worker.postMessage({
+                        op: 'transcode',
+                        args
+                    })
                 },
                 async saveTranscodedFile() {
-                    let outPutFile = theModule.FS.readFile('temp2.mp4')
-                    let fileBlob = new Blob(
-                        [outPutFile.buffer],
-                        {
-                            type: 'application/octet-stream'
+                    worker.postMessage({
+                        op: getOutputFile,
+                        fileName: 'temp2.mp4',
+                        success(buffer) {
+                            let fileBlob = new Blob(
+                                [buffer],
+                                {
+                                    type: 'application/octet-stream'
+                                }
+                            )
+                            const fileBlobUrl = window.URL.createObjectURL(fileBlob)
+                            console.log(fileBlobUrl)
                         }
-                    )
-                    const fileBlobUrl = window.URL.createObjectURL(fileBlob)
-                    console.log(fileBlobUrl)
+                    })
                 }
             }
         })
