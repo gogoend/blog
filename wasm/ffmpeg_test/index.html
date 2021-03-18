@@ -58,8 +58,15 @@
             transcode(...args) {
                 self.ffmpeg(args.length, stringList2pointer(theModule, args))
             },
-            getOutputFile(fileName) {
-                theModule.FS.readFile(fileName)
+            async getOutputFile({fileName,success}) {
+                const fileData = await theModule.FS.readFile(fileName)
+                self.postMessage({
+                    op: 'getOutputFile',
+                    args: {
+                        fileName,
+                        fileData
+                    }
+                })
             }
         }
 
@@ -69,7 +76,12 @@
                 args
             } = ev.data
 
-            command[op].call(this, ...args)
+            if (Array.isArray(args)){
+                command[op].call(this, ...args)
+            } else {
+                command[op].call(this, args)
+            }
+
         }
     </script>
     <script>
@@ -86,7 +98,7 @@
                 selectedFile: null,
             },
             async created() {
-                // ffmpeg()
+
             },
             methods: {
                 async handleFileChange(e) {
@@ -109,18 +121,33 @@
                     })
                 },
                 async saveTranscodedFile() {
-                    worker.postMessage({
-                        op: getOutputFile,
-                        fileName: 'temp2.mp4',
-                        success(buffer) {
+                    function todo(e) {
+                        const {
+                            op,
+                            args
+                        } = e.data
+                        console.log(e.data)
+                        if (op === 'getOutputFile') {
                             let fileBlob = new Blob(
-                                [buffer],
+                                args.fileData,
                                 {
                                     type: 'application/octet-stream'
                                 }
                             )
                             const fileBlobUrl = window.URL.createObjectURL(fileBlob)
                             console.log(fileBlobUrl)
+                        }
+
+                        worker.removeEventListener('message', todo)
+                    }
+                    worker.addEventListener(
+                        'message',
+                        todo
+                    )
+                    worker.postMessage({
+                        op: 'getOutputFile',
+                        args: {
+                            fileName: 'temp2.mp4'
                         }
                     })
                 }
