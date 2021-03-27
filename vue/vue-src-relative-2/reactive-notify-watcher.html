@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function defineObserve(obj, key) {
+            let val = obj[key]
+            let dep = {
+                notify(){
+                    
+                }
+            }
+            Object.defineProperty(obj, key, {
+                get() {
+                    return val
+                },
+                set(nVal) {
+                    val = nVal
+                    dep.notify()
+                }
+            })
+        }
+    </script>
+    <script>
+        const app = {
+            a: 1,
+            b: 'hello'
+        }
+        function init(){
+            Object.keys(app).forEach(key => {
+                defineObserve(app, key)
+            })
+        }
+        init()
+    </script>
+</body>
+</html>
