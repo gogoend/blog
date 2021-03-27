@@ -1,37 +1,74 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <script>
         function defineObserve(obj, key) {
             let val = obj[key]
             let dep = {
-                notify(){
-                    
+                notify() {
+
                 }
             }
             Object.defineProperty(obj, key, {
+                enumerable: true,
+                configurable: true,
                 get() {
                     return val
                 },
                 set(nVal) {
                     val = nVal
                     dep.notify()
+                    if (nVal && typeof nVal === 'object') {
+                        Object.keys(nVal).forEach(key2 => {
+                            defineObserve(nVal, key2)
+                        })
+                    }
                 }
             })
+            if (obj[key] && typeof obj[key] === 'object') {
+                Object.keys(obj[key]).forEach(key2 => {
+                    defineObserve(obj[key], key2)
+                })
+            }
         }
     </script>
     <script>
         const app = {
             a: 1,
-            b: 'hello'
+            b: 2,
+            c: {
+                d: 3,
+                e: {
+                    f: 4,
+                    g: 5,
+                    h: {
+                        i: 6,
+                        j: 7
+                    }
+                },
+                k: {
+                    l: 8,
+                    m: {
+                        n: 9,
+                        o: {
+                            p: 10
+                        }
+                    },
+                    q: 11,
+                },
+                r: 12,
+                s: 13
+            }
         }
-        function init(){
+        function init() {
             Object.keys(app).forEach(key => {
                 defineObserve(app, key)
             })
@@ -39,4 +76,5 @@
         init()
     </script>
 </body>
+
 </html>
