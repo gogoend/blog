@@ -10,13 +10,12 @@
 
 <body>
     <script>
+        class Dep{
+            notify(){}
+        }
         function defineObserve(obj, key) {
             let val = obj[key]
-            let dep = {
-                notify() {
-
-                }
-            }
+            let dep = new Dep()
             Object.defineProperty(obj, key, {
                 enumerable: true,
                 configurable: true,
