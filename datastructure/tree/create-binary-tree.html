@@ -1,0 +1,69 @@
+<html>
+
+<head></head>
+
+<body>
+    <script>
+        let arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+        function buildTree(arr){
+            let _arr = arr.concat()
+            let len = theQueue.length
+            level = 0
+            let queue = [{
+                id:_arr.shift(),
+                children:[]
+            }]
+            while(queue.length>0){
+                let node= {
+                    id:queue.shift(),
+                    children:[]
+                }
+                if(_arr.length===0) break;
+                let lVal = {
+                    id:_arr.shift()
+                }
+            }
+        }
+
+        /*
+        let targetTree = {
+            id: 0,
+            node: [
+                {
+                    id: 1,
+                    node: [
+                        {
+                            id: 3,
+                            node: [{
+                                id: 7
+                            },{
+                                id: 8
+                            }]
+                        },
+                        {
+                            id: 4,
+                            node: [{
+                                id: 9
+                            }]
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    node: [
+                        {
+                            id: 5
+                        },
+                        {
+                            id: 6
+                        }
+                    ]
+                }
+            ]
+        }
+        */
+    </script>
+</body>
+
+</html>

@@ -62,19 +62,9 @@
                     val = nVal
                     dep.notify()
                     observe(nVal)
-                    // if (isObj(nVal)) {
-                    //     Object.keys(nVal).forEach(key2 => {
-                    //         defineObserve(nVal, key2)
-                    //     })
-                    // }
                 }
             })
             observe(val)
-            // if (isObj(val)) {
-            //     Object.keys(val).forEach(key2 => {
-            //         defineObserve(val, key2)
-            //     })
-            // }
         }
     </script>
     <script>
@@ -107,9 +97,6 @@
         }
         function init() {
             observe(app)
-            // Object.keys(app).forEach(key => {
-            //     defineObserve(app, key)
-            // })
         }
         init()
     </script>

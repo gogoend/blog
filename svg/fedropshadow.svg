@@ -6,10 +6,10 @@
             .filtered{ filter: url(#myfilter);
         </style>
         <filter id="myfilter">
-            <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="hsla(180,90%,40%,0.9)" />
+            <feDropShadow dx="0" dy="0" stdDeviation="120" flood-color="hsla(180,90%,40%,0.9)"/>
         </filter>
     </defs>
     <g class="filtered">
-        <polygon class="st0" points="157,0 194,114 313.9,114 216.9,184.5 254,298.6 157,228.1 60,298.6 97,184.5 0,114 119.9,114 "/>
+        <polygon class="st0" points="100,100 100,300 300,300, 300,100"/>
     </g>
 </svg>

@@ -1829,7 +1829,7 @@ function createExportWrapper(name, fixedasm) {
   };
 }
 
-var wasmBinaryFile = 'ffmpeg.wasm';
+var wasmBinaryFile = 'http://127.0.0.1:8010/wasm/ffmpeg_test/ffmpeg.wasm';
 if (!isDataURI(wasmBinaryFile)) {
   wasmBinaryFile = locateFile(wasmBinaryFile);
 }
