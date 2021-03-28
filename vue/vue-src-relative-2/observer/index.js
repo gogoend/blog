@@ -41,10 +41,17 @@ export function observe(val) {
 function defineObserve(obj, key) {
     let val = obj[key]
     let dep = new Dep()
+    const childOb = observe(val)
     Object.defineProperty(obj, key, {
         enumerable: true,
         configurable: true,
         get() {
+            if (Dep.target) {
+                dep.depend()
+                if (childOb) {
+                    childOb.dep.depend()
+                }
+            }
             return val
         },
         set(nVal) {
