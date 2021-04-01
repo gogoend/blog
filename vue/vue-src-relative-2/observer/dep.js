@@ -2,7 +2,7 @@ import {
     remove
 } from '../utils/index.js'
 
-export class Dep{
+export default class Dep{
     static target
     constructor(){
         this.subs = []

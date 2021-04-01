@@ -1,9 +1,7 @@
 import { 
     isObj
 } from '../utils/index.js'
-import {
-    Dep
-} from '../observer/dep.js'
+import Dep from '../observer/dep.js'
 
 export class Observer{
     val;

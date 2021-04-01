@@ -13,6 +13,7 @@
         import {
             observe
         } from './observer/index.js'
+        import Watcher from './observer/watcher.js'
         const app = {
             a: 1,
             b: 2,
@@ -37,11 +38,18 @@
                     q: 11,
                 },
                 r: 12,
-                s: 13
+                s: 13,
+                get t(){
+                    return this.r+this.s
+                }
             }
         }
         function init() {
             observe(app)
+            new Watcher(() => {
+                console.log(app.c)
+                // document.getElementById('app').innerHTML = `msg is ${data.msg}`
+            })
             window.app = app
         }
         init()

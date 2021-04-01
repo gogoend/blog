@@ -1,8 +1,7 @@
 import {
-    Dep,
     pushTarget,
     popTarget
-} from './dep'
+} from './dep.js'
 
 export default class Watcher {
     constructor(getter) {
@@ -17,5 +16,8 @@ export default class Watcher {
     }
     update() {
         this.get()
+    }
+    addDep() {
+        // ...
     }
 }
