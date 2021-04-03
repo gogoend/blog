@@ -5,6 +5,7 @@ import {
 
 export default class Watcher {
     constructor(getter) {
+        this.deps = []
         this.getter = getter
         this.get()
     }
@@ -17,7 +18,8 @@ export default class Watcher {
     update() {
         this.get()
     }
-    addDep() {
-        // ...
+    addDep(dep) {
+        this.deps.push(dep)
+        dep.addSub(this)
     }
 }
