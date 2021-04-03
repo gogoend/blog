@@ -42,13 +42,16 @@
                 get t(){
                     return this.r+this.s
                 }
-            }
+            },
+            u: 15
         }
         function init() {
             observe(app)
             new Watcher(() => {
-                console.log(app.c)
-                // document.getElementById('app').innerHTML = `msg is ${data.msg}`
+                console.log(app.c+app.u)
+            })
+            new Watcher(() => {
+                console.error(app.u)
             })
             window.app = app
         }

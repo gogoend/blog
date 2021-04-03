@@ -2,9 +2,12 @@ import {
     remove
 } from '../utils/index.js'
 
+let dId = 0
+
 export default class Dep{
     static target
     constructor(){
+        this.id = dId++
         this.subs = []
     }
     addSub(sub){
