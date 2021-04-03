@@ -6,16 +6,23 @@ import {
 let wId = 0
 
 export default class Watcher {
-    constructor(getter) {
+    id
+    deps
+    depIds
+    getter
+    value
+    constructor(expOrFn) {
         this.id = wId++
         this.deps = []
         this.depIds = new Set()
-        this.getter = getter
+        if (typeof expOrFn === 'function') {
+            this.getter = expOrFn
+        }
         this.get()
     }
     get() {
         pushTarget(this)
-        this.getter()
+        this.value = this.getter()
         popTarget()
         return this.value
     }
