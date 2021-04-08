@@ -1,0 +1,25 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	y="0px" viewBox="0 0 1920 1080" style="enable-background:new 0 0 1920 1080;" xml:space="preserve">
+	<circle
+    style="fill:#DB4544;"
+    cx="800"
+    cy="300"
+    r="50"
+  />
+	<circle
+    style="fill:#69B84A;"
+    cx="1000"
+    cy="400"
+    r="50"
+  />
+	<path
+    style="fill:none;stroke:#44BEE8;stroke-width:5;stroke-miterlimit:10;"
+		d="
+    M
+    800,300
+    C
+    950,300,
+    850,400,
+    1000,400
+  " />
+</svg>
