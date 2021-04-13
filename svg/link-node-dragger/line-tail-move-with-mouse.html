@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>曲线末端跟随鼠标移动</title>
+  <style>
+    .draggable {
+      cursor: grab
+    }
+  </style>
+</head>
+<body>
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+    y="0px" viewBox="0 0 1920 1080" style="enable-background:new 0 0 1920 1080;" xml:space="preserve">
+    <circle
+      class="draggable"
+      style="fill:#DB4544;"
+      cx="800"
+      cy="300"
+      r="50"
+    />
+    <circle
+      class="draggable"
+      style="fill:#69B84A;"
+      cx="1000"
+      cy="400"
+      r="50"
+    />
+    <path
+      id="path"
+      style="
+      fill:none;
+      stroke:#44BEE8;
+      stroke-width:5;
+      stroke-miterlimit:10;
+      "
+      d="
+      M
+      800,300
+      C
+      950,300,
+      850,400,
+      1000,400
+    " />
+  </svg>
+  <script>
+    var path = document.getElementById('path')
+    document.documentElement.addEventListener('mousemove',function(e){
+      console.log(e.pageX, e.pageY)
+      const originX = 800
+      const originY = 300
+      path.setAttribute('d', `M${originX},${originY} C${originX+250},${originY},${e.pageX-250},${e.pageY},${e.pageX},${e.pageY}`)
+    })
+  </script>
+</body>
+</html>
