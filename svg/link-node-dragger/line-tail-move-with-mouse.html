@@ -25,12 +25,12 @@
     xml:space="preserve">
     <circle class="
         draggable
-        start 
+        start
         node
         " style="fill:#DB4544;" cx="800" cy="300" r="50" />
     <circle class="
         draggable
-        end 
+        end
         node
         " style="fill:#69B84A;" cx="1000" cy="400" r="50" />
     <path id="path" style="
@@ -41,57 +41,67 @@
       stroke-miterlimit:10;
       " d="
       M
-      800,300
+      850,300
       C
-      950,300,
-      850,400,
-      1000,400
+      1000,300,
+      800,400,
+      950,400
     " />
   </svg>
   <script>
     var path = document.getElementById('path')
+
+    // 圆形半径
+    const POINT_R = 50
+    // 曲线手柄长度
+    const HANDLE_LENGTH = 150
+
+    function mcPaser(path){
+      path = path+''
+      path = path.replace(/\s/g, '')
+      path = path.replace(/[a-z]/i, '')
+      path = path.replace(/[a-z]/ig, ',')
+      return path
+    }
 
     function selectToMove(ev) {
       pointerHelper(ev, {
         start() {
 
         },
-        move(ev) {
+        move(ev, { originEl }) {
 
-          const target = ev.target
+          const target = originEl
           target.setAttribute('cx', ev.pageX)
           target.setAttribute('cy', ev.pageY)
 
-          let originX
-          let originY
-          let originEl
-
+          const currentPath = mcPaser(path.getAttribute('d')).split(',')
 
           if (target.classList.contains('start')) {
-            originEl = document.querySelector('.end.node')
-
-            originX = +originEl.getAttribute('cx')
-            originY = +originEl.getAttribute('cy') + 50
             path.setAttribute(
               'd',
               `
-                M${ev.pageX - 50},${ev.pageY}
-                C${ev.pageX - 250},${ev.pageY},${originX + 250},${originY},
-                ${originX + 50},${originY}
+                M
+                ${ev.pageX + POINT_R},${ev.pageY}
+                C
+                ${ev.pageX + HANDLE_LENGTH},${ev.pageY},
+                ${currentPath[4]},${currentPath[7]},
+                ${currentPath[6]},${currentPath[7]}
               `
             )
-          } else if (target.classList.contains('end')) {
-            originEl = document.querySelector('.start.node')
+          } else 
+          if (target.classList.contains('end')) {
 
-            originX = +originEl.getAttribute('cx')
-            originY = +originEl.getAttribute('cy') + 50
 
             path.setAttribute(
               'd',
               `
-                M${originX + 50},${originY}
-                C${originX + 250},${originY},${ev.pageX - 250},${ev.pageY},
-                ${ev.pageX - 50},${ev.pageY}
+                M
+                ${currentPath[0]},${currentPath[1]}
+                C
+                ${currentPath[2]},${currentPath[1]},
+                ${ev.pageX - HANDLE_LENGTH},${ev.pageY},
+                ${ev.pageX - POINT_R},${ev.pageY}
               `
             )
 
@@ -110,6 +120,20 @@
 
     //   path.setAttribute('d', `M${originX},${originY} C${originX+250},${originY},${e.pageX-250},${e.pageY},${e.pageX},${e.pageY}`)
     // }
+
+    // let originX
+    // let originY
+    // originEl = document.querySelector('.start.node')
+    // originX = +originEl.getAttribute('cx')
+    // originY = +originEl.getAttribute('cy')
+    // `
+    //   M
+    //   ${originX + POINT_R},${originY}
+    //   C
+    //   ${originX + HANDLE_LENGTH},${originY},
+    //   ${ev.pageX - HANDLE_LENGTH},${ev.pageY},
+    //   ${ev.pageX - POINT_R},${ev.pageY}
+    // `
 
 
   </script>
