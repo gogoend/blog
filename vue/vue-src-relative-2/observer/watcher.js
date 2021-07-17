@@ -6,12 +6,19 @@ import {
 let wId = 0
 
 export default class Watcher {
+    vm
+    expression
+    cb
     id
     deps
     depIds
     getter
     value
-    constructor(expOrFn) {
+    constructor(
+        vm,
+        expOrFn,
+        cb
+    ) {
         this.id = wId++
         this.deps = []
         this.depIds = new Set()
