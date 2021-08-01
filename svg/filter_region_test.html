@@ -1,0 +1,49 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <style>
+        #app {
+            height: 100%;
+            width: 100%;
+        }
+
+        svg.svg-defs {
+            display: none
+        }
+
+        .main {
+            background-size: cover;
+            background-image: url(../_res/bbb-splash.png);
+            background-position: center;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+
+            <filter id="colorMeMatrix">
+                <feColorMatrix type="matrix" values="1 0 0 0 0 0 .5 0 0 0 0 0 0 .5 0 0 0 0 1 0 "/>
+            </filter>
+
+            <filter id="displacementFilter">
+                <feTurbulence type="turbulence" baseFrequency="0.01"
+                    numOctaves="2" result="turbulence"/>
+                <feDisplacementMap in="SourceGraphic" in2="turbulence"
+                    scale="40" xChannelSelector="B" yChannelSelector="G"/>
+            </filter>
+            
+        </defs>
+    </svg>
+    <div id="app">
+        <div class="main "></div>
+    </div>
+
+</body>
+
+</html>
