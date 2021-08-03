@@ -10,39 +10,21 @@
         }
 
         svg.svg-defs {
-            display: none
+            background-color: #d8d8d8;
         }
-
-        .main {
-            background-size: cover;
-            background-image: url(../_res/bbb-splash.png);
-            background-position: center;
-            width: 100%;
-            height: 100%;
+        .element-to-apply-filter {
+            filter: url(#displacementFilter)
         }
     </style>
 </head>
 
 <body>
-    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1">
-        <defs>
-
-            <filter id="colorMeMatrix">
-                <feColorMatrix type="matrix" values="1 0 0 0 0 0 .5 0 0 0 0 0 0 .5 0 0 0 0 1 0 "/>
-            </filter>
-
-            <filter id="displacementFilter">
-                <feTurbulence type="turbulence" baseFrequency="0.01"
-                    numOctaves="2" result="turbulence"/>
-                <feDisplacementMap in="SourceGraphic" in2="turbulence"
-                    scale="40" xChannelSelector="B" yChannelSelector="G"/>
-            </filter>
-            
-        </defs>
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 450" width="800" height="450">
+        <filter id="displacementFilter">
+            <feDropShadow dx="0" dy="0" stdDeviation="50" />
+        </filter>
+        <image class="element-to-apply-filter" x="100" y="200" width="300" height="160" href="../_res/image-indicate-a-image-to-use-filter.svg"></image>
     </svg>
-    <div id="app">
-        <div class="main "></div>
-    </div>
 
 </body>
 
