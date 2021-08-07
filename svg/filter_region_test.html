@@ -13,14 +13,14 @@
             background-color: #d8d8d8;
         }
         .element-to-apply-filter {
-            filter: url(#displacementFilter)
+            filter: url(#dropShadowFilter)
         }
     </style>
 </head>
 
 <body>
     <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 450" width="800" height="450">
-        <filter id="displacementFilter">
+        <filter id="dropShadowFilter">
             <feDropShadow dx="0" dy="0" stdDeviation="50" />
         </filter>
         <image class="element-to-apply-filter" x="100" y="200" width="300" height="160" href="../_res/image-indicate-a-image-to-use-filter.svg"></image>
