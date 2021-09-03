@@ -42,3 +42,11 @@ Axios.prototype.request = function () {
     }
     return promise
 }
+
+// 桥接模式 - 注册大量相似的方法,核心相同，细节不同
+const arr = ['get', 'post', 'put']
+arr.forEach(name => {
+    Axios.prototype[name] = function () {
+        this.request.call(this, name)
+    }
+})
