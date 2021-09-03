@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" />
+    <style>
+        #app {
+            height: 100%;
+            width: 100%;
+        }
+
+        svg.svg-defs {
+            background-color: #d8d8d8;
+        }
+        .element-to-apply-filter {
+            filter: url(#floodFilter)
+        }
+    </style>
+</head>
+
+<body>
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 800 450" width="800" height="450">
+        <filter id="floodFilter">
+            <feTile in="SourceGraphic" result="tile" />
+            <feFlood flood-color="#f00" flood-opacity="0.5" result="flood" />
+            <feMerge>
+                <feMergeNode in="tile" />
+                <feMergeNode in="flood" />
+            </feMerge>
+        </filter>
+        <image class="element-to-apply-filter" x="100" y="200" width="300" height="160" href="../_res/image-indicate-a-image-to-use-filter.svg"></image>
+    </svg>
+
+</body>
+
+</html>
