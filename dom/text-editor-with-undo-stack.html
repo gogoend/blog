@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>带有撤销功能的文本编辑器</title>
+    <style>
+        article {
+            border: 1px solid #000;
+            height: 40vh;
+        }
+    </style>
+</head>
+<body>
+    <article id="articleEl" contenteditable="true">
+        
+    </article>
+    <script>
+        
+        class Stack {
+            constructor () {
+                this.stack = []
+            }
+            stack = null
+            push (item) {
+                this.stack.push(item)
+            }
+            pop () {
+                this.stack.pop()
+            }
+        }
+        (() => {
+            const stack = new Stack()
+            window.addEventListener('keydown', (ev) => {
+                let code = ev.keyCode || ev.which || ev.charCode
+                if(ev.ctrlKey && code === 90){
+                    // ev.preventDefault() 
+                    console.log(code)
+                }
+            })
+            articleEl.addEventListener('input', (ev) => {
+                if (ev.inputType === 'insertCompositionText') {
+                    return
+                }
+                console.log(ev)
+            })
+            // articleEl.addEventListener('compositionstart', (ev) => {
+            //     console.log(ev)
+            // })
+            articleEl.addEventListener('compositionend', (ev) => {
+                console.log(ev)
+            })
+
+        })()
+
+    </script>
+</body>
+</html>
