@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>feBlend测试</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        .box {
+            display: inline-block;
+            margin: 40px
+        }
+    </style>
+</head>
+<body>
+    <svg style="
+        width: 0;
+        height: 0;
+        display: block;
+    ">
+        <filter id="blend-two-rect">
+            <feFlood flood-color="#0f0" result="result1"></feFlood>
+            <feFlood flood-color="#00f" result="result2"></feFlood>
+            <feOffset dx="50" dy="50" in="result2" result="result3"></feOffset>
+            <feBlend in="result1" in2="result3" mode="lighten"></feBlend>
+        </filter>
+    </svg>
+    <div 
+    class="box"
+    style="
+        background-color: #f00;
+        width: 256px;
+        height: 256px;
+    "
+    ></div>
+    <div 
+    class="box"
+        style="
+            background-color: #f00;
+            width: 256px;
+            height: 256px;
+            filter: url(#blend-two-rect)
+        "
+    ></div>
+</body>
+</html>
