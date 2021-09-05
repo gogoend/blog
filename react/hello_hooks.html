@@ -11,7 +11,7 @@
  
 <div id="example"></div>
 <script type="text/babel">
-const { useCallback, useEffect, useMemo, useState } = React
+const { useCallback, useEffect, useMemo, useState, useRef } = React
 
 const Counter = (prop) => {
   return <p>{prop.count}</p>
@@ -27,6 +27,16 @@ function App() {
   const changeX = useCallback(() => setX(x+1), [x]) // 缓存changeX函数。第二个参数应当使用包含在回调函数中的变量，表示changeX所依赖的变量，当第二个参数中某个变量（依赖项）发生变化时，将重新得到changeX函数
   //const changeX = useMemo(() => () => setX(x+1), [x]) // 上一行中useCallback等效写法
 
+  const renderCountRef = useRef(1) // 这里使用renderCountRef来统计组件的渲染次数
+  console.log(renderCountRef)
+  const isOdd = renderCountRef.current % 2 !== 0
+  // 当每次发生渲染时，渲染次数+1
+  renderCountRef.current += 1
+  // 根据视频评论区，在strict+dev模式下（CLI工程化创建的项目），组件render会被执行2次，实测上方renderCountRef.current并不准确，因此放入了useEffect中执行
+  // useEffect(() => {
+  //   renderCountRef.current += 1
+  // })
+
   useEffect(() => { document.title = y+'' }, [y]) // 当依赖变量发生变化时将会调用的函数。第二个参数可选，当不传第二个参数时则依赖全部变量
 
   return (
@@ -34,6 +44,7 @@ function App() {
       <button onClick={changeX}>x += 1</button>
       <Counter count={x}></Counter>
       <Counter count={y}></Counter>
+      <p>{isOdd ? '奇数次更新': '偶数次更新'}</p>
     </div>
   );
 }
