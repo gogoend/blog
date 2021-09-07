@@ -10,20 +10,29 @@
     </div>
 
     <script src="./vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.109.0/build/three.js"></script>
     <script>
         var app = new Vue({
             el: '#app',
             data: {
-                divEl: document.createElement('div') // 不会
+                divEl: document.createElement('div'), // 不会
+                threeScene: new THREE.Scene(), // 会
             },
             mounted(){
                 console.dir(this.divEl)
+                console.dir(this.threeScene)
             },
             watch: {
                 divEl: {
                     deep: true,
                     handler () {
                         console.log(1)
+                    }
+                },
+                threeScene: {
+                    deep: true,
+                    handler () {
+                        console.log(2)
                     }
                 }
             }
