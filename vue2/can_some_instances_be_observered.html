@@ -12,6 +12,12 @@
     <script src="./vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.109.0/build/three.js"></script>
     <script>
+        Reflect.defineProperty(THREE.Scene.prototype, Symbol.toStringTag, {
+            get () {
+                return 'THREE.Scene'
+            }
+        })
+
         var app = new Vue({
             el: '#app',
             data: {
@@ -24,7 +30,9 @@
                 // divEl不会被添加响应式
                 // 首先Vue中会通过Object.keys去找对象上的key，但使用此方式去找，返回的key为空数组；
                 // 另外Vue会检查这个对象是不是一个纯对象（toString后得到[object Object]），如果是的话才会被添加响应式
-                threeScene: new THREE.Scene(), // 会
+                threeScene: new THREE.Scene(),
+                // threeScene原本会被添加响应式 —— 因为threeScene是一个纯对象（toString后得到[object Object]）
+                // 但上方代码修改了THREE.Scene类上的Symbol.toStringTag，导致其对象实例不再是一个纯对象（toString后得到[object THREE.Scene]），因此此时不再添加响应式
             },
             mounted(){
                 console.dir(this.divEl)
