@@ -15,7 +15,15 @@
         var app = new Vue({
             el: '#app',
             data: {
-                divEl: document.createElement('div'), // 不会
+                divEl: (() => {
+                    let a = document.createElement('div')
+                    a.zzz = 100
+                    console.log(Object.keys(a))
+                    return a
+                })(),
+                // divEl不会被添加响应式
+                // 首先Vue中会通过Object.keys去找对象上的key，但使用此方式去找，返回的key为空数组；
+                // 另外Vue会检查这个对象是不是一个纯对象（toString后得到[object Object]），如果是的话才会被添加响应式
                 threeScene: new THREE.Scene(), // 会
             },
             mounted(){
