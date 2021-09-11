@@ -47,10 +47,10 @@
         }
         function init() {
             observe(app)
-            new Watcher(() => {
+            new Watcher(app, () => {
                 console.log(app.c+app.u)
             })
-            new Watcher(() => {
+            new Watcher(app, () => {
                 console.error(app.u)
             })
             window.app = app
