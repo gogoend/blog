@@ -4,9 +4,16 @@ function isObject (object) {
 
 function defineObserve(object, key) {
     let value = object[key]
+    let dep = {
+        notify() {
+            console.log(`${key}触发了变化，去通知依赖我的Watcher进行更新`)
+        }
+    }
+
     Object.defineProperty(object, key, {
         set (val) {
             value = val
+            dep.notify()
             observe(val)
         },
         get () {
@@ -25,3 +32,4 @@ export function observe (object) {
         }
     }
 }
+
