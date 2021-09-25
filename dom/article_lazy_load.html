@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章滚动懒加载测试</title>
+</head>
+
+<body>
+    <article id="content"></article>
+    <script src="./../_res/large-string.js"></script>
+    <script>
+        window.__sampleLargeString = window.__sampleLargeString.substr(0, 8000000)
+
+        let pageIndex = 0
+        let pageSize = 2000
+        let totalPage = window.__sampleLargeString.length / pageSize
+        const articleEl = document.getElementById('content')
+        articleEl.innerText = window.__sampleLargeString.substr(pageIndex * pageSize, pageSize)
+
+        function loadNewContent (ev) {
+            let loadFlag = (document.documentElement.scrollHeight - (document.documentElement.scrollTop + innerHeight)) < 100
+            if (loadFlag) {
+                pageIndex += 1
+                articleEl.innerText += window.__sampleLargeString.substr(pageIndex * pageSize, pageSize)
+                console.log(pageIndex)
+
+                window.removeEventListener('scroll', loadNewContent)
+
+                if(pageIndex < totalPage){
+                    setTimeout(() => {
+                        window.addEventListener('scroll', loadNewContent)
+                    })
+                }
+            }
+        }
+        window.addEventListener('scroll', loadNewContent)
+    </script>
+</body>
+
+</html>
