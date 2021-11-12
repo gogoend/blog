@@ -52,7 +52,7 @@
         function render(vnode, container) {
             let ele = createDomElementFromVnode(vnode) // 将vnode转换为真实node
 
-            container.appendChild(ele)
+            container && container.appendChild(ele)
 
             return ele
             // console.log(vnode,container)
@@ -137,6 +137,7 @@
         function diffChildren(oChildren, nChildren/*,index*/, patches) {
             // 比较老的第一个与新的第一个
             oChildren.forEach((child, idx) => {
+                debugger
                 // 索引不应为index了
                 // index每次传给walk时，index是递增的，所有的人都基于一个序号来实现
                 walk(child, nChildren[idx], ++Index, patches); // 原先此处是本地变量index，但此处使用index有Bug，因此需要在全局维护一个
@@ -155,6 +156,7 @@
         // -----------------------------
         // index: 据说是树的层次
         function walk(oNode, nNode, index, patches) {
+            debugger
             let currentPatch = [] // 每个元素都有一个补丁对象
 
             // 判断老节点在新节点中被删除
@@ -218,6 +220,7 @@
             }
         }
         function doPatch(node, patches) {
+            debugger
             patches.forEach(patch => {
                 switch (patch.type) {
                     case ATTRS:
@@ -235,7 +238,7 @@
                         break;
                     case REPLACE:
                         // node有问题！！
-                        let nNode = (patch.nNode&&patch.nNode.children)?render(patch.nNode,node): document.createTextNode(patch.nNode);
+                        let nNode = (patch.nNode&&patch.nNode.children)?render(patch.nNode): document.createTextNode(patch.nNode);
                         node.parentNode.replaceChild(nNode,node)
                         break;
                     case REMOVE:
@@ -248,10 +251,10 @@
         }
     </script>
     <script>
-        let theVNode = h('ul', { class: 'list' },
-            h('li', { class: "item" }, 'a'),
-            h('li', { class: "item" }, 'b'),
-            h('li', { class: "item" }, 'c')
+        let theVNode = h('section', { class: 'list' },
+            h('div', { class: "item" }, 'a'),
+            h('div', { class: "item" }, 'b'),
+            h('div', { class: "item" }, 'c')
         )
         // 一种表示
         // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
@@ -261,20 +264,22 @@
         // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
         // 文本的变化{type:"TEXT",text:1}
         let vnode1 = theVNode
-        let vnode2 = h('ul', { class: 'list' },
-            h('li', { class: "item" }, '1'),
-            h('div', { class: "item" }, 'z'),
-            h('dl', { class: "item" }, '3')
+        let vnode2 = h('section', { class: 'list' },
+            h('p', { class: "item" }, 'a'),
+            h('div', { class: "item" }, 'b'),
+            h('p', { class: "item" }, 'c')
         )
 
         let el = render(theVNode, app)
 
 
-        // debugger
-        let patches = diff(vnode1, vnode2)
+        setTimeout(() => {
+            // debugger
+            let patches = diff(vnode1, vnode2)
 
-        // 给元素打补丁，更新视图
-        patch(el, patches)
+            // 给元素打补丁，更新视图
+            patch(el, patches)
+        }, 4000)
 
     </script>
 </body>
