@@ -13,7 +13,7 @@ function emptyNodeAt(elm) {
 }
 
 function sameVnode(oVnode, nVnode) {
-  return oVnode.type === nVnode.type && oVnode.key === nVnode.type;
+  return oVnode.type === nVnode.type && oVnode.key === nVnode.key;
 }
 
 function createElm(vnode) {
