@@ -25,11 +25,16 @@
         }
     </script>
     <script>
-        function h(type, data, ...children) {
+        function h(type, data, children) {
+            if(typeof children === 'string') {
+                children = [children]
+            }
             // 判断子节点是否为字符串；如果是也把它转成vnode
             children = children.map(child => {
                 if (typeof child === 'string') {
                     return vnode(undefined, undefined, undefined, child, undefined)
+                } else {
+                    return child
                 }
             })
             return vnode(
@@ -44,9 +49,11 @@
     <script></script>
     <script>
         let theVNode = h('section', { class: 'list' },
-            h('div', { class: "item" }, 'a'),
-            h('div', { class: "item" }, 'b'),
-            h('div', { class: "item" }, 'c')
+            [
+                h('div', { class: "item" }, 'a'),
+                h('div', { class: "item" }, 'b'),
+                h('div', { class: "item" }, 'c')
+            ]
         )
         // 一种表示
         // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
@@ -56,13 +63,17 @@
         // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
         // 文本的变化{type:"TEXT",text:1}
         let vnode1 = theVNode
+        console.log(vnode1)
         let vnode2 = h('section', { class: 'list' },
-            h('p', { class: "item" }, 'a'),
-            h('div', { class: "item" }, 'b'),
-            h('p', { class: "item" }, 'c')
+            [
+                h('p', { class: "item" }, 'a'),
+                h('div', { class: "item" }, 'b'),
+                h('p', { class: "item" }, 'c')
+            ]
         )
 
-        let el = render(theVNode, app)
+        // TODO: render
+        // let el = render(theVNode, app)
 
 
         // setTimeout(() => {
