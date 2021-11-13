@@ -5,251 +5,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>vdom测试</title>
-    <meta name="description" content="https://www.bilibili.com/video/BV1jJ411x7FX" />
-    <meta name="description" content="https://www.bilibili.com/video/BV1UJ411X7tJ" />
+    <meta name="description" content="https://www.bilibili.com/video/BV1dV411a7mT" />
 </head>
 
 <body>
     <div id="app">
     </div>
     <script>
-        function vnode(type, key, props, children, text) {
+        function vnode(type,data,children,text,elm) {
+            const key = data === undefined ? undefined: data.key
             return {
                 type,
-                key,
-                props,
+                data,
                 children,
-                text
+                text,
+                elm,
+                key
             }
         }
     </script>
     <script>
-        function h(type, props = {}, ...children) {
-            let key;
-            if (props.key) {
-                key = props.key;
-                delete props.key
-            }
+        function h(type, data, ...children) {
             // 判断子节点是否为字符串；如果是也把它转成vnode
             children = children.map(child => {
                 if (typeof child === 'string') {
-                    return vnode(undefined, undefined, undefined, undefined, child)
-                } else {
-                    return child
+                    return vnode(undefined, undefined, undefined, child, undefined)
                 }
             })
             return vnode(
                 type,
-                key,
-                props,
-                children
+                data,
+                children,
+                undefined,
+                undefined
             )
         }
     </script>
-    <script>
-        // vonde: 节点
-        // container: 目标容器
-        function render(vnode, container) {
-            let ele = createDomElementFromVnode(vnode) // 将vnode转换为真实node
-
-            container && container.appendChild(ele)
-
-            return ele
-            // console.log(vnode,container)
-        }
-        // 后续比对时，根据老的属性和新的属性，重新更新节点
-        function updateProperties(newVnode, oldProps = {}) {
-            let domElement = newVnode.domElement;
-            let newProps = newVnode.props;
-
-            // 若老的里面有，新的里面没有，这个属性被移除了
-            for (let oldPropName in oldProps) {
-                delete domElement[oldPropName]
-            }
-            // 若新的里面有style，老的里面也有style
-            // style还可能不一样：老的里面有background，而新的里面没有
-            let newStyleObj = newProps.style || {}
-            let oldStyleObj = oldProps.style || {}
-
-            for (let propName in oldStyleObj) {
-                if (!newStyleObj[propName]) {
-                    domElement.style[propName] = '' // 老DOM元素上更新后，若没有某个样式，则需要删除
-                }
-            }
-
-            // 若老的里面没有，新的里面有
-            for (let newPropName in newProps) { // 用新节点属性覆盖掉老节点属性
-                if (newPropName === 'style') {
-                    let styleObj = newProps.style;
-                    for (let s in styleObj) {
-                        domElement.style[s] = styleObj[s]
-                    }
-                } else {
-                    domElement[newPropName] = newProps[newPropName]
-                }
-            }
-        }
-        // 通过虚拟Dom，创建一个真实的dom元素
-        function createDomElementFromVnode(vnode) {
-            let { type, key, props, children, text } = vnode
-            // 是否是文本节点
-            if (type) {
-                vnode.domElement = document.createElement(type); // 建立虚拟节点和真实元素关系
-                updateProperties(vnode) // 根据当前虚拟节点的属性，更新真实DOM元素
-                // children中放的也是一个个的虚拟节点
-                // 此处递归渲染子的虚拟节点
-                children.forEach(childVnode => render(childVnode, vnode.domElement))
-            } else {
-                vnode.domElement = document.createTextNode(text)
-            }
-            return vnode.domElement
-        }
-    </script>
-
-    <script>
-        const ATTRS = "ATTRS", TEXT = 'TEXT', REMOVE = 'REMOVE', REPLACE = 'REPLACE';
-        let Index = 0
-
-        function diff(oTree, nTree) {
-            let patches = {}
-            let index = 0
-            // 递归树，比较后的结果放到补丁包
-            walk(oTree, nTree, index, patches)
-            return patches;
-        }
-        // 比较属性
-        function diffAttr(oAttrs, nAttrs) {
-            let patch = {}
-            // 判断老属性、新属性关系
-            for (let key in oAttrs) {
-                if (oAttrs[key] !== nAttrs[key]) {
-                    patch[key] = nAttrs[key] // 有可能undefined
-                }
-            }
-            for (let key in nAttrs) {
-                // 若老节点没有新节点的属性
-                if (!oAttrs.hasOwnProperty(key)) {
-                    patch[key] = nAttrs[key];
-                }
-            }
-            return patch;
-        }
-        function diffChildren(oChildren, nChildren/*,index*/, patches) {
-            // 比较老的第一个与新的第一个
-            oChildren.forEach((child, idx) => {
-                debugger
-                // 索引不应为index了
-                // index每次传给walk时，index是递增的，所有的人都基于一个序号来实现
-                walk(child, nChildren[idx], ++Index, patches); // 原先此处是本地变量index，但此处使用index有Bug，因此需要在全局维护一个
-            })
-        }
-        // 此处卡壳，不使用此方法以及一直报无法调用forEach的原因：
-        // 这里判断有问题，和前一个讲解vdom的渲染视频不同，这个讲解diff的视频里文本节点并没有包裹在虚拟节点对象中，而是单独存在的
-        // 按照下面这个方法判断前一视频中讲解的文本节点- 虚拟节点对象，无法得到[object String]
-        // function isString(node){
-        //     return Object.prototype.toString.call(node) === '[object String]'
-        // }
-        // ---------随便写的判断---------
-        function hasNoChild(node) {
-            return node.children === undefined
-        }
-        // -----------------------------
-        // index: 据说是树的层次
-        function walk(oNode, nNode, index, patches) {
-            debugger
-            let currentPatch = [] // 每个元素都有一个补丁对象
-
-            // 判断老节点在新节点中被删除
-            if (!nNode) {
-                currentPatch.push({
-                    type: REMOVE, index
-                })
-            }
-            // else if(isString(oNode) && isString(nNode)){ // 判断文本是否一致
-            else if (hasNoChild(oNode) && hasNoChild(nNode)) { // 判断文本是否一致
-                if (oNode.text !== nNode.text) {
-                    currentPatch.push({
-                        type: TEXT,
-                        text: nNode
-                    })
-                }
-            }
-            else if (oNode.type === nNode.type) {
-                // 比较属性是否有更改
-                let attrs = diffAttr(oNode.props, nNode.props)
-                // console.log(attrs)
-                if (Object.keys(attrs).length > 0) {
-                    currentPatch.push({
-                        type: ATTRS,
-                        attrs
-                    })
-                }
-                // 若有子节点 遍历子节点
-                diffChildren(oNode.children, nNode.children,/*index,*/patches)
-            } else {
-                // 以上变化之外的变化 - 节点被替换
-                currentPatch.push({
-                    type: REPLACE,
-                    nNode
-                })
-            }
-            if (currentPatch.length > 0) { // 若当前元素确实有补丁
-                // 将元素与补丁对应起来，放到大补丁包中
-                patches[index] = currentPatch
-                console.log(patches)
-            }
-        }
-    </script>
-
-    <script>
-        let allPatches // ?
-        let Index2 = 0 // 默认哪个需要打补丁
-        function patch(node, patches) {
-            console.log(node)
-            allPatches = patches
-            walk2(node)
-            // 给某个元素打补丁
-        }
-        function walk2(node) {
-            let currentPatch = allPatches[Index2++]
-            let childNodes = node.childNodes;
-            childNodes.forEach(child => walk2(child))
-
-            if (currentPatch) {
-                doPatch(node, currentPatch)
-            }
-        }
-        function doPatch(node, patches) {
-            debugger
-            patches.forEach(patch => {
-                switch (patch.type) {
-                    case ATTRS:
-                        for(let key in patch.attrs){
-                            let value = patch.attrs[key]
-                            if(value){
-                                setAttr(node,key,value)
-                            }else{
-                                node.removeAttribute(key)
-                            }
-                        }
-                        break;
-                    case TEXT:
-                        node.textContent = patch.text.text
-                        break;
-                    case REPLACE:
-                        // node有问题！！
-                        let nNode = (patch.nNode&&patch.nNode.children)?render(patch.nNode): document.createTextNode(patch.nNode);
-                        node.parentNode.replaceChild(nNode,node)
-                        break;
-                    case REMOVE:
-                        node.parentNode.removeChild(node)
-                        break;
-                    default:
-                        break;
-                }
-            })
-        }
-    </script>
+    <script></script>
     <script>
         let theVNode = h('section', { class: 'list' },
             h('div', { class: "item" }, 'a'),
@@ -273,13 +65,13 @@
         let el = render(theVNode, app)
 
 
-        setTimeout(() => {
-            // debugger
-            let patches = diff(vnode1, vnode2)
+        // setTimeout(() => {
+        //     // debugger
+        //     let patches = diff(vnode1, vnode2)
 
-            // 给元素打补丁，更新视图
-            patch(el, patches)
-        }, 4000)
+        //     // 给元素打补丁，更新视图
+        //     patch(el, patches)
+        // }, 4000)
 
     </script>
 </body>
