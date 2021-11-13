@@ -66,6 +66,21 @@ function removeVnodes(
   }
 }
 
+function addVnodes (
+  parentElm,
+  before,
+  vnodes,
+  startIdx,
+  endIdx
+) {
+  for(; startIdx<=endIdx; ++startIdx) {
+    const ch = vnodes[startIdx]
+    if (ch !== null) {
+      parentElm.insertBefore(createElm(ch), before)
+    }
+  }
+}
+
 export default function patch(oVnode, nVnode) {
   let elm, parent;
 
