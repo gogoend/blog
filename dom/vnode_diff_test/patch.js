@@ -3,6 +3,9 @@ import vnode from "./vnode.js";
 function isVnode(vnode) {
   return vnode.type !== undefined;
 }
+function isDef(s) {
+  return s !== undefined;
+}
 
 function emptyNodeAt(elm) {
   const type = elm.tagName.toLocaleLowerCase();
@@ -39,6 +42,28 @@ function createElm(vnode) {
   return vnode.elm
 }
 
+function removeVnodes(
+  parentElm,
+  vnodes,
+  startIdx,
+  endIdx
+) {
+  for (; startIdx <= endIdx; ++startIdx) {
+    const ch = vnodes[startIdx];
+    if (ch != null) {
+      if (isDef(ch.type)) {
+        // 我猜这里不使用parentElm来做parent，而要重新取值
+        // 可能有类似对话框类的组件会把DOM给放到文档中的其他地方
+        const parent = ch.elm.parentNode;
+        parent.removeChild(ch.elm)
+      } else {
+        // 文本节点
+        parentElm.removeChild(ch.elm)
+      }
+    }
+  }
+}
+
 export default function patch(oVnode, nVnode) {
   let elm, parent;
 
@@ -58,7 +83,7 @@ export default function patch(oVnode, nVnode) {
 
     if (parent !== null) {
       parent.insertBefore(nVnode.elm, elm.nextSibling);
-      // removeVnodes(parent, [oldVnode], 0, 0);
+      removeVnodes(parent, [oVnode], 0, 0);
     }
   }
 
