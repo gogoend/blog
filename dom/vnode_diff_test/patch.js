@@ -54,6 +54,8 @@ function removeVnodes(
       if (isDef(ch.type)) {
         // 我猜这里不使用parentElm来做parent，而要重新取值
         // 可能有类似对话框类的组件会把DOM给放到文档中的其他地方
+        // 此处可能会出现removeChild方法被重复调用的情况，需留意
+        // https://www.bilibili.com/video/BV1rA411F78U?note=open&p=17&t=219
         const parent = ch.elm.parentNode;
         parent.removeChild(ch.elm)
       } else {
