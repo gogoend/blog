@@ -16,25 +16,18 @@
         import patch from './patch.js'
         let theVNode = h('section', { class: 'list' },
             [
-                h('div', { class: "item" }, 'a'),
+                h('input', { class: "item" }),
                 h('div', { class: "item" }, 'b'),
                 h('div', { class: "item" }, 'c')
             ]
         )
-        // 一种表示
-        // DOM Diff比较两个虚拟DOM区别比较两个对象的区别
-        // dom diff作用根据两个虚拟对象创建出补丁，描述改变的内容，将这个补丁用来更新dom
-        // 规则:当节点类型相同时，去看一下属性是否相同 产生一个属性的补丁包{type: 'ATTRS' ,ttrs:(lass:list-group'}}
-        // 新的dom节点不存在{type:'REMOVE',index:xxx}
-        // 节点类型不相同直接采用替换模式{type: 'REPLACE' ,newNode:newNode}
-        // 文本的变化{type:"TEXT",text:1}
         let vnode1 = theVNode
         console.log(vnode1)
         let vnode2 = h('section', { class: 'list' },
             [
-                h('p', { class: "item" }, '1'),
-                h('div', { class: "item" }, '2'),
-                h('p', { class: "item" }, '3')
+                h('div', { class: "item" }, '1'),
+                h('input', { class: "item" }),
+                h('div', { class: "item" }, '2')
             ]
         )
 
@@ -44,14 +37,10 @@
         // TODO: render
         // let el = render(theVNode, app)
 
-
-        // setTimeout(() => {
-        //     // debugger
-        //     let patches = diff(vnode1, vnode2)
-
-        //     // 给元素打补丁，更新视图
-        //     patch(el, patches)
-        // }, 4000)
+        setTimeout(() => {
+            // 给元素打补丁，更新视图
+            patch(vnode1, vnode2)
+        }, 4000)
 
     </script>
 </body>

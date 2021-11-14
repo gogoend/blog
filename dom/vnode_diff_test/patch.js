@@ -69,6 +69,76 @@ function removeVnodes(
   }
 }
 
+function updateChildren (
+  parentElm,
+  oChildren,
+  nChildren
+  ) {
+    let oStartIdx = 0, nStartIdx = 0
+
+    let oStartVnode = oChildren[0], nStartVnode = nChildren[0]
+
+    let oEndIdx = oChildren.length - 1, nEndIdx = nChildren.length - 1
+    let oEndVnode = oChildren[oEndIdx], nEndVnode = nChildren[nEndIdx]
+
+    while(oStartIdx <= oEndIdx && nStartIdx <= nEndIdx) {
+      //
+      if(oStartVnode == null) {
+        oStartVnode = oChildren[++oStartIdx]
+      }
+      //
+      else if (oEndVnode == null){
+        oEndVnode = oChildren[--oEndIdx]
+      }
+      //
+      else if (nStartVnode == null) {
+        nStartVnode = nChildren[++nStartIdx]
+      }
+      //
+      else if (nEndVnode == null) {
+        nEndVnode = nChildren[--nEndIdx]
+      }
+      // 比较、排序原有节点
+      // 新节点起点对比旧节点起点
+      else if (sameVnode(oStartVnode, nStartVnode)) {
+        patchVnode(oStartVnode, nStartVnode)
+        oStartVnode = oChildren[++oStartIdx]
+        nStartVnode = nChildren[++nStartIdx]
+      }
+      // 新节点终点对比旧节点终点
+      else if (sameVnode(oEndVnode, nEndVnode)) {
+        patchVnode(oEndVnode, nEndVnode)
+        oEndVnode = oChildren[--oEndIdx]
+        nEndVnode = nChildren[--nEndIdx]
+      }
+      // 新节点终点对比旧节点起点
+      else if (sameVnode(nEndVnode, oStartVnode)) {
+        patchVnode(oStartVnode, nEndVnode)
+        parentElm.insertBefore(
+          oStartVnode.elm,
+          oEndVnode.elm.nextSibling
+        )
+        oStartVnode = oChildren[++oStartIdx]
+        nEndVnode = nChildren[--nEndIdx]
+      }
+      // 新节点起点对比旧节点终点
+      else if (sameVnode(nEndVnode, oStartVnode)) {
+        patchVnode(oEndVnode, nStartVnode)
+        parentElm.insertBefore(
+          oEndVnode.elm,
+          oStartVnode.elm
+        )
+        oEndVnode = oChildren[--oEndIdx]
+        nStartVnode = nChildren[++nStartIdx]
+      }
+      // // 处理新节点
+      // else {
+      //   // TODO:
+      // }
+    }
+    // 以上循环结束后，需要进行其它操作
+}
+
 function addVnodes (
   parentElm,
   before,
@@ -103,7 +173,7 @@ function patchVnode (
     if (isDef(oChildren) && isDef(nChildren)) {
       // 新/旧节点的children变量不相等（不是同一个值？），更新children
       if (oChildren !== nChildren) {
-        // updateChildren(elm, oChildren, nChildren)
+        updateChildren(elm, oChildren, nChildren)
       }
     }
     // 如果不是上面这种情况，那就是说新节点或旧节点之一缺少children属性
