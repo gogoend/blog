@@ -112,7 +112,7 @@ function updateChildren (
         nEndVnode = nChildren[--nEndIdx]
       }
       // 新节点终点对比旧节点起点
-      else if (sameVnode(nEndVnode, oStartVnode)) {
+      else if (sameVnode(oStartVnode, nEndVnode)) {
         patchVnode(oStartVnode, nEndVnode)
         parentElm.insertBefore(
           oStartVnode.elm,
@@ -122,7 +122,7 @@ function updateChildren (
         nEndVnode = nChildren[--nEndIdx]
       }
       // 新节点起点对比旧节点终点
-      else if (sameVnode(nEndVnode, oStartVnode)) {
+      else if (sameVnode(oEndVnode, nStartVnode)) {
         patchVnode(oEndVnode, nStartVnode)
         parentElm.insertBefore(
           oEndVnode.elm,
@@ -131,10 +131,14 @@ function updateChildren (
         oEndVnode = oChildren[--oEndIdx]
         nStartVnode = nChildren[++nStartIdx]
       }
-      // // 处理新节点
-      // else {
-      //   // TODO:
-      // }
+      // 处理以上比较之外的其他情况 - 看起来是要创建新元素了
+      else {
+        parentElm.insertBefore(
+          createElm(nStartVnode),
+          oStartVnode.elm
+        );
+        nStartVnode = nChildren[++nStartIdx];
+      }
     }
     // 以上循环结束后，需要进行其它操作
 }
