@@ -141,6 +141,35 @@ function updateChildren (
       }
     }
     // 以上循环结束后，需要进行其它操作
+    if (oStartIdx <= oEndIdx || nStartIdx <= nEndIdx){
+      if (oStartIdx > oEndIdx) {
+        // 此时表示旧vnode均已遍历结束，新vnode尚未遍历完
+        // 也就是说新vnode数量多于旧vnode，需要创建元素
+        // -----
+        // 根据索引，找到在哪里插入元素
+        let before = nChildren[nEndIdx + 1] == null ? null : nChildren[nEndIdx+1].elm // 此处before可以为null；如果为null则表示插入到父节点末端
+        addVnodes(
+          parentElm,
+          before,
+          nChildren,
+          nStartIdx,
+          nEndIdx
+        )
+      }
+      else if (nStartIdx > nEndIdx)
+      {
+        // 此时表示新vnode均已遍历结束，旧vnode尚未遍历完
+        // 也就是说未遍历过的节点是多余的节点，需要删除元素
+        // -----
+        // 根据索引，找到要删除的元素的范围
+        removeVnodes(
+          parentElm,
+          oChildren,
+          oStartIdx,
+          oEndIdx
+        )
+      }
+    }
 }
 
 function addVnodes (
