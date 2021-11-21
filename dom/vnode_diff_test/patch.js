@@ -154,22 +154,37 @@ function updateChildren (
           // oKeyIdxMap仅在上方进行了声明，用到的时候才进行创建
           oKeyIdxMap = createKeyIdxMap(oChildren)
         }
-        if (isUndef(oKeyIdxMap[nStartVnode.key])) {
+        const idxInOChildren = oKeyIdxMap[nStartVnode.key]
+        if (isUndef(idxInOChildren)) {
           // 这里是确实找不到对应关系的情况
           parentElm.insertBefore(
             createElm(nStartVnode),
             oStartVnode.elm
           );
         } else {
-          // 这里是新旧节点具有对应关系、可复用旧节点的情况
-          const idxInOChildren = oKeyIdxMap[nStartVnode.key]
+          // 这里是新旧节点具有对应关系的情况
+          // 这里找到了对应节点
           const nodeToMove = oChildren[idxInOChildren]
-          oChildren[idxInOChildren] = undefined
+          // 对于是不是真的可以复用，还是需要看一下两个节点的类型（type）是不是相同的
+          if (
+            nStartVnode.type === nodeToMove.type
+          ) {
+            // 类型相同，可复用旧节点的情况
+            // 进行patch
+            patchVnode(nodeToMove, nStartVnode)
+            oChildren[idxInOChildren] = undefined // 此处置为undefined，移出待对比队列
 
-          parentElm.insertBefore(
-            nodeToMove.elm,
-            oStartIdx.elm
-          )
+            parentElm.insertBefore(
+              nodeToMove.elm,
+              oStartVnode.elm
+            )
+          } else {
+            // 类型不同，不能复用，依然只能新建节点
+            parentElm.insertBefore(
+              createElm(nStartVnode),
+              oStartVnode.elm
+            );
+          }
         }
         nStartVnode = nChildren[++nStartIdx];
       }
