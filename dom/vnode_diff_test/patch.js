@@ -69,6 +69,17 @@ function removeVnodes(
   }
 }
 
+function createKeyIdxMap (children) {
+  const map = {}
+  children.forEach((child, idx) => {
+    let key = child.data?.key
+    if (key != undefined) {
+      map[key] = idx
+    }
+  })
+  return map
+}
+
 function updateChildren (
   parentElm,
   oChildren,
@@ -80,6 +91,10 @@ function updateChildren (
 
     let oEndIdx = oChildren.length - 1, nEndIdx = nChildren.length - 1
     let oEndVnode = oChildren[oEndIdx], nEndVnode = nChildren[nEndIdx]
+
+    // 旧节点中key-idx对应map声明
+    // 这里不需要立即用到，可能之后也不会用到，因此仅在用到的时候再赋值
+    let oKeyIdxMap
 
     while(oStartIdx <= oEndIdx && nStartIdx <= nEndIdx) {
       //
@@ -131,12 +146,31 @@ function updateChildren (
         oEndVnode = oChildren[--oEndIdx]
         nStartVnode = nChildren[++nStartIdx]
       }
-      // 处理以上比较之外的其他情况 - 看起来是要创建新元素了
+      // 处理以上比较之外的其他情况
+      // 看起来是要创建新元素了，不过在创建之前还是先看一看原先的元素能否被复用，以节省创建新元素的资源
+      // 通过key来尝试复用
       else {
-        parentElm.insertBefore(
-          createElm(nStartVnode),
-          oStartVnode.elm
-        );
+        if (!oKeyIdxMap) {
+          // oKeyIdxMap仅在上方进行了声明，用到的时候才进行创建
+          oKeyIdxMap = createKeyIdxMap(oChildren)
+        }
+        if (isUndef(oKeyIdxMap[nStartVnode.key])) {
+          // 这里是确实找不到对应关系的情况
+          parentElm.insertBefore(
+            createElm(nStartVnode),
+            oStartVnode.elm
+          );
+        } else {
+          // 这里是新旧节点具有对应关系、可复用旧节点的情况
+          const idxInOChildren = oKeyIdxMap[nStartVnode.key]
+          const nodeToMove = oChildren[idxInOChildren]
+          oChildren[idxInOChildren] = undefined
+
+          parentElm.insertBefore(
+            nodeToMove.elm,
+            oStartIdx.elm
+          )
+        }
         nStartVnode = nChildren[++nStartIdx];
       }
     }
