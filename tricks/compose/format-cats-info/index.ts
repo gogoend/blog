@@ -27,32 +27,42 @@ const catCollection = [{
 
 const transformBirthday = (cat: ICat) => {
     cat.birthday = new Date(cat.birthday as string)
+    return cat
 }
 
 const transformName = (cat: ICat) => {
     cat.name = cat.name[0].toUpperCase() + cat.name.substring(1)
+    return cat
 }
 
 const addUid = (cat: ICat) => {
     cat.uid = uid++
+    return cat
 }
 
-const processors = [transformBirthday, transformName, addUid]
-
-const composedProcessors = compose(processors)
+const composedProcessors = compose<ICat>(transformBirthday, transformName, addUid)
 
 catCollection.forEach(composedProcessors)
 
-function compose(processors: Function[]) {
+function compose<T>(...processors: Array<(arg: T) => T>) {
     if (!Array.isArray(processors)) throw new TypeError('Processors stack must be an array!')
     for (const fn of processors) {
       if (typeof fn !== 'function') throw new TypeError('Processors must be composed of functions!')
     }
 
-    return (context) => {
-        // 虽然执行正确，但应该不是这样使用
-        processors.forEach(fn => fn(context))
+    return (context: T): T => {
+        let result = context
 
-        return context
+        let dispatch = (i: number) => {
+            let currentFn = processors[i]
+            if(!currentFn) {
+                return result
+            }
+            result = currentFn(result)
+            return dispatch(i+1)
+        }
+
+        return dispatch(0)
     }
+
 }
