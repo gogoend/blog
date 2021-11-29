@@ -1,5 +1,5 @@
 import { createWavFile, downloadBlob, mergeArray } from "./save-to-file.js";
-function createJSNode(audioContext) {
+function createCollectNode(audioContext) {
     const BUFFER_SIZE = 4096;
     const INPUT_CHANNEL_COUNT = 2;
     const OUTPUT_CHANNEL_COUNT = 2;
@@ -13,31 +13,42 @@ function onAudioProcess(ev, lChannelList) {
     lChannelList.push(leftChannelData.slice(0));
 }
 export default class Recorder {
-    jsNode = null;
-    mediaNode = null;
     leftChannelList = [];
     aCtx = null;
     mediaStream = null;
+    collectNode = null;
+    audioContextNodes = [];
     constructor(mediaStream) {
         this.mediaStream = mediaStream;
         this.aCtx = new AudioContext;
-        this.mediaNode = this.aCtx.createMediaStreamSource(mediaStream);
-        this.jsNode = createJSNode(this.aCtx);
-        this.jsNode.connect(this.aCtx.destination);
-        this.mediaNode.connect(this.jsNode);
+        this.collectNode = createCollectNode(this.aCtx);
+        this.audioContextNodes = [
+            this.aCtx.createMediaStreamSource(mediaStream),
+            this.collectNode,
+            this.aCtx.destination
+        ];
+        this.linkNodes();
+    }
+    linkNodes() {
+        for (let i = 0; i < this.audioContextNodes.length; i++) {
+            let currentNode = this.audioContextNodes[i];
+            let nextNode = this.audioContextNodes[i + 1];
+            if (nextNode) {
+                currentNode.connect(nextNode);
+            }
+        }
     }
     beginRecord() {
-        this.jsNode.onaudioprocess = (ev) => {
+        this.collectNode.onaudioprocess = (ev) => {
             onAudioProcess(ev, this.leftChannelList);
         };
     }
     pauseRecord() {
-        this.jsNode.onaudioprocess = null;
+        this.collectNode.onaudioprocess = null;
     }
     destory() {
         this.mediaStream.getAudioTracks()[0].stop();
-        this.mediaNode.disconnect();
-        this.jsNode.disconnect();
+        this.audioContextNodes.forEach(node => node.disconnect());
     }
     saveWaveFile() {
         let leftData = mergeArray(this.leftChannelList);
