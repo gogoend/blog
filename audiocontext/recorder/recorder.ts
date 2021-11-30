@@ -21,7 +21,7 @@ function createAnalysisNode(audioContext: AudioContext) {
     return creator()
 }
 
-function onAudioProcess(ev: AudioProcessingEvent, lChannelList: Float32Array[]) {
+function collectAudioData(ev: AudioProcessingEvent, lChannelList: Float32Array[]) {
     let inputBuffer = ev.inputBuffer
     let inputLeftChannelData = inputBuffer.getChannelData(0)
     lChannelList.push(inputLeftChannelData.slice(0))
@@ -99,7 +99,7 @@ export default class Recorder {
     }
     beginRecord() {
         this.collectNode.onaudioprocess = (ev) => {
-            onAudioProcess(ev, this.leftChannelList)
+            collectAudioData(ev, this.leftChannelList)
         }
     }
     pauseRecord() {
