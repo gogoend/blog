@@ -5,12 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>录音测试</title>
+    <style>
+        .visualize-bars div{
+            height: 10px;
+            background-color: #0f8;
+        }
+    </style>
 </head>
 
 <body>
-    <button onclick="recorder.beginRecord()">开始</button>
-    <button onclick="recorder.pauseRecord()">暂停</button>
-    <button onclick="recorder.saveWaveFile()">保存</button>
+    <div>
+        <button onclick="recorder.beginRecord()">开始</button>
+        <button onclick="recorder.pauseRecord()">暂停</button>
+        <button onclick="recorder.saveWaveFile()">保存</button>
+    </div>
+
+    <div class="visualize-bars"></div>
     <script type="module">
         import init from './index.js'
 

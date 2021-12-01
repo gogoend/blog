@@ -76,14 +76,34 @@ export default class Recorder {
         // 连接节点
         this.linkNodes()
 
-        // // 音频分析
-        // var frequencyBinCount = this.analysisNode.frequencyBinCount;
-        // var dataArray = new Uint8Array(frequencyBinCount);
+        // 音频分析
+        var frequencyBinCount = this.analysisNode.frequencyBinCount;
+        var dataArray = new Uint8Array(frequencyBinCount);
 
-        // setInterval(() => {
-        //     this.analysisNode.getByteFrequencyData(dataArray)
-        //     console.log(dataArray)
-        // }, 500)
+        const visualize = () => {
+            const barWrapEl = document.querySelector('.visualize-bars')
+            if (barWrapEl && !barWrapEl.children.length) {
+                let i= -1
+                while(++i < frequencyBinCount) {
+                    const barEl = document.createElement('div')
+                    barWrapEl.appendChild(barEl)
+                }
+            }
+
+            const cb = () => {
+                this.analysisNode.getByteFrequencyData(dataArray)
+                console.log(dataArray)
+
+                let i =  -1
+                while(++i <  frequencyBinCount) {
+                    (barWrapEl.children[i] as HTMLElement).style.width = dataArray[i] + 'px'
+                }
+                requestAnimationFrame(cb)
+            }
+            requestAnimationFrame(cb)
+        }
+        visualize()
+
     }
     linkNodes() {
         this.audioContextPaths.forEach(path => {
