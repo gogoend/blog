@@ -94,9 +94,23 @@ export default class Recorder {
                 this.analysisNode.getByteFrequencyData(dataArray)
                 console.log(dataArray)
 
+                const preArray: number[] = []
+                const postArray: number[] = []
+
+                dataArray.forEach((number, index) => {
+                    if (index % 2 === 0) {
+                        postArray.push(number)
+                    } else {
+                        preArray.push(number)
+                    }
+                })
+                preArray.reverse()
+
+                const transformedArray = [...preArray, ...postArray]
+
                 let i =  -1
-                while(++i <  frequencyBinCount) {
-                    (barWrapEl.children[i] as HTMLElement).style.width = dataArray[i] + 'px'
+                while(++i < transformedArray.length) {
+                    (barWrapEl.children[i] as HTMLElement).style.width = transformedArray[i] + 'px'
                 }
                 requestAnimationFrame(cb)
             }

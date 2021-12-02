@@ -77,9 +77,21 @@ export default class Recorder {
             const cb = () => {
                 this.analysisNode.getByteFrequencyData(dataArray);
                 console.log(dataArray);
+                const preArray = [];
+                const postArray = [];
+                dataArray.forEach((number, index) => {
+                    if (index % 2 === 0) {
+                        postArray.push(number);
+                    }
+                    else {
+                        preArray.push(number);
+                    }
+                });
+                preArray.reverse();
+                const transformedArray = [...preArray, ...postArray];
                 let i = -1;
-                while (++i < frequencyBinCount) {
-                    barWrapEl.children[i].style.width = dataArray[i] + 'px';
+                while (++i < transformedArray.length) {
+                    barWrapEl.children[i].style.width = transformedArray[i] + 'px';
                 }
                 requestAnimationFrame(cb);
             };
