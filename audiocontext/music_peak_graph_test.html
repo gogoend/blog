@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>音频peak波形图demo</title>
+    <style>
+        .waveform {
+            display: flex;
+            width: 100%;
+            height: 400px;
+            align-items: center;
+        }
+        .waveform .bar {
+            height: 100%;
+            background-color: aqua;
+            flex: 1
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="waveform">
+        
+    </div>
+    <script>
+        const WAVE_FORM_CONTAINER = document.querySelector('.waveform')
+        const SAMPLE_COUNT = 400
+
+        async function fetchAudioArrayBuffer () {
+            return await fetch('/_res/redsun.mp3').then(res => res.arrayBuffer())
+        }
+
+        function createOfflineAudioContext () {
+            return new OfflineAudioContext({
+                length: 2,
+                sampleRate: 44100,
+                numberOfChannels: 2
+            })
+        }
+
+        async function init () {
+            const audioBuffer = await fetchAudioArrayBuffer()
+            const ac = createOfflineAudioContext()
+
+            let audioData = (await ac.decodeAudioData(audioBuffer)).getChannelData(0)
+
+            const sampleStep = ~~(audioData.length / SAMPLE_COUNT)
+            const sampledAudioData = []
+
+            for(let i = 0; i < audioData.length; i+= sampleStep) {
+                const currentPeak = Math.abs(audioData[i])
+                sampledAudioData.push(currentPeak)
+
+                const barEl = document.createElement('div')
+                barEl.classList.add('bar')
+                barEl.style.height = currentPeak * 100 + '%'
+
+                WAVE_FORM_CONTAINER.append(barEl)
+
+            }
+        }
+
+        init()
+
+    </script>
+</body>
+
+</html>
