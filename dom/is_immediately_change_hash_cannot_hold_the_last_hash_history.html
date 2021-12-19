@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面载入后，立即更改页面hash，能不能保持住改变之前的hash？</title>
+</head>
+
+<body>
+    <div id="currentHash"></div>
+    <script>
+        const currentHashEl = document.getElementById('currentHash')
+
+        function setCurrentHashElContent () {
+            currentHashEl.textContent = window.location.hash
+        }
+        window.addEventListener('hashchange', setCurrentHashElContent)
+
+        setTimeout(() => {
+            window.location.hash = 'the-has-has-changed'
+            setCurrentHashElContent()
+        }, 500)
+
+    </script>
+</body>
+
+</html>
