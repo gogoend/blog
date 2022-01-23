@@ -1,0 +1,58 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    <div id="app">
+    </div>
+    <script>
+        let _obj={};
+        let obj= processTarget(_obj)
+
+        function processTarget (o) {
+            return new Proxy(o, {
+                get(target,propKey,receiver){
+                    console.log(target,propKey,receiver);
+                    if (
+                        !(propKey in target)
+                        &&
+                        propKey !== 'toJSON'
+                    ) {
+                        Reflect.defineProperty(
+                            target,
+                            propKey,
+                            {
+                                value: processTarget({}),
+                                enumerable: true,
+                                writable: true,
+                                configurable: true
+                            }
+                        )
+                    }
+                    return Reflect.get(target, propKey, receiver);
+                },
+                set(target,propKey,value,receiver){
+                    console.log(target,propKey,value,receiver);
+                    Reflect.defineProperty(
+                        target,
+                        propKey,
+                        {
+                            value: isObj(value) ? processTarget(value) : value,
+                            enumerable: true,
+                            writable: true,
+                            configurable: true
+                        }
+                    )
+                }
+            })
+        }
+
+        function isObj (o) {
+            return o && Object.prototype.toString.call(o) === '[object Object]'
+        }
+    </script>
+</body>
+
+</html>
