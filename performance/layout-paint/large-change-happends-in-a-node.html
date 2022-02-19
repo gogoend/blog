@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>布局、重绘测试 - 单个节点内</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        const appEl = document.getElementById('app')
+
+        const normalizeContentToNode = (content) => {
+            if (['string', 'number'].includes(typeof content)) {
+                content = document.createTextNode(content)
+            }
+            return content
+        }
+
+        const nodes = []
+        for(let i = 0; i < 5000; i++) {
+            const wrapper = document.createElement('div')
+            wrapper.style.float = 'left'
+
+            wrapper.appendChild(normalizeContentToNode(i))
+            nodes.push(wrapper)
+        }
+
+        nodes.forEach(node => appEl.append(node))
+        setInterval(() => {
+            if (appEl.children.length === 0) {
+                nodes.forEach(node => appEl.append(node))
+            } else {
+                nodes.forEach(node => appEl.removeChild(node))
+            }
+        }, 500)
+
+    </script>
+</body>
+</html>
