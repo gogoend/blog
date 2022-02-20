@@ -20,6 +20,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "D": () => (/* binding */ someNumber)
 /* harmony export */ });
+/* unused harmony export hasOwn */
 /* harmony import */ var _modules_module_2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(280);
 
 const { logHello } = __webpack_require__(188)
@@ -28,6 +29,8 @@ const snapshotImg = __webpack_require__(523)
 const examplePackageJson = __webpack_require__(497)
 
 const someNumber = 666
+
+const hasOwn = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 
 logHello()
 ;(0,_modules_module_2__WEBPACK_IMPORTED_MODULE_0__/* .logGogoend */ .l)()

@@ -6,5 +6,7 @@ const examplePackageJson = require('./assets/json-1.json')
 
 export const someNumber = 666
 
+export const hasOwn = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+
 logHello()
 logGogoend()
