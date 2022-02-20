@@ -1,0 +1,19 @@
+{
+  "name": "example-project-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config ./webpack.conf.js"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "raw-loader": "^4.0.2",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  },
+  "author": "gogoend",
+  "license": "ISC"
+}
