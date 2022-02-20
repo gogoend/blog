@@ -13,6 +13,28 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ 138:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "D": () => (/* binding */ someNumber)
+/* harmony export */ });
+/* harmony import */ var _modules_module_2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(280);
+
+const { logHello } = __webpack_require__(188)
+
+const snapshotImg = __webpack_require__(523)
+const examplePackageJson = __webpack_require__(497)
+
+const someNumber = 666
+
+logHello()
+;(0,_modules_module_2__WEBPACK_IMPORTED_MODULE_0__/* .logGogoend */ .l)()
+
+
+/***/ }),
+
 /***/ 188:
 /***/ ((module) => {
 
@@ -29,7 +51,10 @@ module.exports.logHello = logHello
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "l": () => (/* binding */ logGogoend)
 /* harmony export */ });
-const logGogoend = () => console.log('gogoend')
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(138);
+
+
+const logGogoend = () => console.log('gogoend', _index__WEBPACK_IMPORTED_MODULE_0__/* .someNumber */ .D)
 
 
 /***/ }),
@@ -130,21 +155,11 @@ module.exports = JSON.parse('{"name":"example-project-1","version":"1.0.0","desc
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-/* harmony import */ var _modules_module_2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(280);
-
-const { logHello } = __webpack_require__(188)
-
-const snapshotImg = __webpack_require__(523)
-const examplePackageJson = __webpack_require__(497)
-
-logHello()
-;(0,_modules_module_2__WEBPACK_IMPORTED_MODULE_0__/* .logGogoend */ .l)()
-
-})();
-
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__(138);
+/******/ 	
 /******/ })()
 ;
