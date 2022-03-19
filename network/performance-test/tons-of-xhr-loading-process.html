@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一次性载入大量图片（通过xhr）</title>
+    <script src="/vue2/vue.js"></script>
+    <script src="/_lib/axios.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <img v-for="url in targetUrlList" title="url" :src="url" />
+    </div>
+
+    <script>
+        let app = new Vue({
+            el: '#app',
+            methods: {
+            },
+            data () {
+                return {
+                    targetImageUrl: '/_res/color-linear-gradient.png',
+                    targetUrlList: []
+                }
+            },
+            mounted () {
+                let targetUrlList = []
+                let exceptImageCount = 1000
+
+                const baseUrlList = [
+                    '//localhost:8500',
+                    '//127.0.0.1:8500',
+                ]
+
+                for (let i=0; i<exceptImageCount;i++ ) {
+                    const baseURL = baseUrlList[i%baseUrlList.length]
+                    axios.get(`${baseUrlList[i%baseUrlList.length]}${this.targetImageUrl}?index=${i}`, {
+                        responseType: 'blob',
+                        // timeout: 
+                    }).then(({data}) => {
+                        targetUrlList.push(URL.createObjectURL(data))
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }
+                // debugger
+                this.targetUrlList = targetUrlList
+            }
+        })
+    </script>
+</body>
+
+</html>
