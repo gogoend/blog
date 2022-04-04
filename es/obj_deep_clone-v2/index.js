@@ -14,7 +14,7 @@ let cloneDeep = val => {
     }
     if (getObjectTagFromValue(val) === concatObjectTag('Object')) {
         let newVal = new val.constructor()
-        for(let key in newVal) {
+        for(let key in val) {
             if (hasOwn(val, key)) {
                 newVal[key] = cloneDeep(val[key])
             }
