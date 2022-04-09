@@ -16,10 +16,17 @@
         "-1": 1,
       };
 
-      const BIAS = 127;
-      const SIGN_LENGTH = 1;
-      const EXPONENT_LENGTH = 8;
-      const MANTISSA_LENGTH = 23;
+    // For float
+    //   const BIAS = 127;
+    //   const SIGN_LENGTH = 1;
+    //   const EXPONENT_LENGTH = 8;
+    //   const MANTISSA_LENGTH = 23;
+
+    // For double
+    const BIAS = 1023;
+    const SIGN_LENGTH = 1;
+    const EXPONENT_LENGTH = 11;
+    const MANTISSA_LENGTH = 52;
 
       const abs = (n) => (n < 0 ? -n : n);
 
