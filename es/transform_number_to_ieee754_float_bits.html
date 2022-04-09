@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>转换 JavaScript Number 到 IEEE 754 浮点数</title>
+  </head>
+
+  <body>
+    <div>请打开DevTools</div>
+    <script>
+      const SIGN_FLAG_MAP = {
+        0: 0,
+        1: 0,
+        "-1": 1,
+      };
+
+      const BIAS = 127;
+      const SIGN_LENGTH = 1;
+      const EXPONENT_LENGTH = 8;
+      const MANTISSA_LENGTH = 23;
+
+      const abs = (n) => (n < 0 ? -n : n);
+
+      // [sign, fraction, exponent]
+      const findComponents = (n) => {
+        const sign = n > 0 ? 1 : -1;
+        const originNumber = abs(n);
+        let fraction = originNumber;
+
+        let exponent = 0;
+        if (originNumber >= 1) {
+          while (fraction >= 2) {
+            fraction = fraction / 2;
+            exponent++;
+          }
+        } else {
+          while (fraction < 1) {
+            fraction = fraction * 2;
+            exponent--;
+          }
+        }
+
+        console.log(
+          `${sign * fraction} * 2 ** ${exponent} = ${
+            sign * fraction * 2 ** exponent
+          }`
+        );
+
+        return [sign, fraction, exponent];
+      };
+
+      const transExponentToBits = (exponent) => {
+        const bitFlags = Array(EXPONENT_LENGTH);
+        exponent += BIAS;
+
+        for (let i = 0; i < bitFlags.length; i++) {
+          bitFlags[bitFlags.length - 1 - i] = exponent % 2;
+          exponent = ~~(exponent / 2);
+        }
+
+        // console.log(bitFlags)
+        return bitFlags;
+      };
+
+      const transFractionToBits = (fraction) => {
+        const bitFlags = Array(MANTISSA_LENGTH);
+        fraction -= 1;
+
+        for (let i = 0; i < bitFlags.length; i++) {
+          if (fraction * 2 >= 1) {
+            bitFlags[i] = 1;
+            fraction = fraction * 2 - 1;
+          } else {
+            bitFlags[i] = 0;
+            fraction = fraction * 2;
+          }
+        }
+        // console.log(bitFlags)
+        return bitFlags;
+      };
+
+      const transSignToBits = (sign) => {
+        const bitFlags = Array(SIGN_LENGTH);
+        bitFlags[0] = SIGN_FLAG_MAP[sign];
+        // console.log(bitFlags)
+        return bitFlags;
+      };
+
+      const transNumberToFloatBits = (n) => {
+        const [sign, fraction, exponent] = findComponents(n);
+
+        return [
+          ...transSignToBits(sign),
+          ...transExponentToBits(exponent),
+          ...transFractionToBits(fraction),
+        ];
+      };
+
+      window.transNumberToFloatBits = transNumberToFloatBits
+    </script>
+  </body>
+</html>
