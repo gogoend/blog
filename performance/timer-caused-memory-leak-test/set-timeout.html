@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>setTimeout 导致内存泄漏测试</title>
+</head>
+<body>
+    <div>打开DevTools Memory面板以进行测试</div>
+
+    <script>
+
+        const MAX_STRING_LENGTH_IN_V8 = 2**29 - ( 2**4 + 2**3 )
+        const MAX_STRING_LENGTH_IN_FIREFOX = 2 ** 30 - 2 ** 1
+
+        function generateTimeout (){
+            let arr = []
+
+            function pushStrToArr () {
+                arr.push(
+                    ...Array(100000).fill('0'.repeat(MAX_STRING_LENGTH_IN_V8))
+                )
+                // console.log(arr.map(str => str.length))
+            }
+
+            let timer = null
+            window.getTimer = () => timer // 这行代码导致内存泄漏
+            ;(function a() {
+                timer = setTimeout(function() {
+                    pushStrToArr()
+                    a()
+                }, 300)
+            })()
+        }
+
+    </script>
+</body>
+</html>
