@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>宏任务、微任务调度测试-包含内联script标签</title>
+    <!-- 工具 -->
+    <script src="../util.js"></script>
+    <!-- 脚本 1 -->
+    <script>
+      (function script1() {
+        makeStuck(6);
+        // 同步
+        console.log("start1");
+        // 异步宏
+        // setTimeout(() => console.log("timer1"), 0);
+        new Promise((resolve, reject) => {
+          // 同步
+          console.log("p1");
+          resolve();
+        }).then(() => {
+          // 异步微
+          console.log("then1");
+        });
+        // // 同步
+        // console.log("end1");
+      })();
+    </script>
+
+    <!-- 脚本 2 -->
+    <script>
+      (function script2() {
+        makeStuck(6);
+
+        // 同步
+        console.log("start2");
+        // 异步宏
+        // setTimeout(() => console.log("timer2"), 0);
+        new Promise((resolve, reject) => {
+          // 同步
+          console.log("p2");
+          resolve();
+        }).then(() => {
+          // 异步微
+          console.log("then2");
+        });
+        // // 同步
+        // console.log("end2");
+      })();
+    </script>
+    <!--
+        ———————————————— 版权声明：本文为CSDN博主「走馬勿观花」的原创文章，遵循CC
+      4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+      原文链接：https://blog.csdn.net/weixin_45389633/article/details/118737832
+    -->
+  </head>
+  <body>
+    <div>打开DevTools Performance面板以进行测试</div>
+  </body>
+</html>
