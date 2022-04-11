@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>setTimeout 导致内存泄漏测试 - 闭包被定时器持有后，无法释放</title>
+</head>
+<body>
+    <div>打开DevTools Memory面板以进行测试</div>
+
+    <script>
+
+        const MAX_STRING_LENGTH_IN_V8 = 2**29 - ( 2**4 + 2**3 )
+        const MAX_STRING_LENGTH_IN_FIREFOX = 2 ** 30 - 2 ** 1
+
+        let timer = null
+        window.cleanTimer = () => {
+            window.clearTimeout(timer)
+        }
+        function generateTimeout (){
+            let arr = []
+            for(let i = 0; i < 10; i++) {
+                arr.push(
+                    ...Array(100000).fill('0'.repeat(MAX_STRING_LENGTH_IN_V8))
+                )
+            }
+            ;(function a() {
+                timer = setTimeout(function() {
+                    void arr
+                    console.log('done')
+                }, 30000) // 同步函数执行完后，arr不会被释放，因为它被定时器所持有
+                // window.cleanTimer()
+            })()
+        }
+    </script>
+</body>
+</html>
