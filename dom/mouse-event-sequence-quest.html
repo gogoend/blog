@@ -1,0 +1,64 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鼠标事件触发顺序测试</title>
+    <style>
+        #app {
+            width: 400px;
+            height: 400px;
+            background-color: aqua;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="https://w3c.github.io/uievents/#events-mouseevent-event-order" target="_blank">规范</a>
+    <div id="app">
+        点击蓝色区域
+    </div>
+    <script>
+        let appEl = document.getElementById('app')
+
+        const handler = function (ev) {
+            console.log(ev.type)
+        }
+
+        const eventNames = [
+            'auxclick',
+            'click',
+            'dblclick',
+            'contextmenu',
+            'mousedown',
+            'mouseenter',
+            'mouseleave',
+            'mousemove',
+            'mouseout',
+            'mouseover',
+            'mouseup'
+        ]
+        
+        eventNames.forEach(name => {
+            appEl.addEventListener(name, handler)
+        })
+    </script>
+    <pre>
+20220423 测试：
+
+左键单击：
+mousedown -> mouseup -> click
+
+左键双击：
+mousedown -> mouseup -> click -> mousedown -> mouseup -> click -> dblclick
+
+右键单击：
+mousedown -> contextmenu // Chrome；没有mouseup？
+mousedown -> contextmenu -> mouseout -> mouseleave // Firefox；没有mouseup？
+
+鼠标滑入后滑出（符合规范定义）：
+mouseover -> mouseenter -> mousemove -> mouseout -> mouseleave
+    </pre>
+</body>
+
+</html>
