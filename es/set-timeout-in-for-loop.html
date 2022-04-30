@@ -9,9 +9,12 @@
 <body>
   <div>
     请在控制台执行usingVar、usingVar函数
+    理解：
+    var变量声明提前到当前作用域顶部，i的自加操作时都在更改同一作用域内的值，因此输出i时输出的值都一样
+    let具有生成了一个独立作用域，每个作用域中i值不一样，因此输出i时输出的值不一样
   </div>
   <script>
-    function usingVar(){
+    function usingVar () {
       for (var i = 0; i < 5; i++) {
         setTimeout(() => {
           console.log(i)
@@ -19,7 +22,7 @@
       }
     }
 
-    function usingLet(){
+    function usingLet () {
       for (let i = 0; i < 5; i++) {
         setTimeout(() => {
           console.log(i)
