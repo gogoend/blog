@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>脚本执行顺序测试 - 通过DOM操作更改&lt;script&gt;标签</title>
+  </head>
+  <body>
+    <script>
+      (function a(){
+        let scriptElToAdd = document.createElement('script')
+        document.head.append(scriptElToAdd)
+
+        new Promise(
+          function(resolve) {
+            setTimeout(
+              resolve,
+              2000
+            )
+          },
+        )
+        .then(() => {
+          scriptElToAdd.innerHTML = `
+            console.warn(\`I've been executed!\`, 1)
+          `// 只执行这行
+          scriptElToAdd.innerHTML = `
+            console.warn(\`I've been executed!\`, 2)
+          `
+        })
+      })()
+    </script>
+    <script>
+      (function a(){
+        let scriptElToAdd = document.createElement('script')
+        document.head.append(scriptElToAdd)
+
+        new Promise(
+          function(resolve) {
+            setTimeout(
+              resolve,
+              2000
+            )
+          },
+        )
+        .then(() => {
+          scriptElToAdd.src='/_lib/jquery.js' // 只引入jQuery
+          scriptElToAdd.src='/_lib/axios.js' // 此处不会再发请求下载axios库
+        })
+      })()
+    </script>
+    <pre>
+      结论：
+      1. 通过DOM操作附加的script标签，无论放在head还是body、无论解析顺序如何，都会执行
+      2. script执行时以第一次设置的innerHTML或src为准，且innerHTML与src互斥，以第一个设置的为准，之后再更改将不会再执行
+
+      引用资料：
+      规范文档<a href="https://html.spec.whatwg.org/multipage/scripting.html#script-processing-model" target="_blank">https://html.spec.whatwg.org/multipage/scripting.html#script-processing-model</a>
+      
+    </pre>
+  </body>
+</html>
