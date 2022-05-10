@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>字符串反转 - 考虑多字节</title>
+  </head>
+  <body>
+    <script>
+      function isSurrogate(char) {
+        return char.charCodeAt() >= 0xd800 || char.charCodeAt() <= 0xdbff;
+      }
+
+      function isJoiner(char) {
+        return false;
+      }
+
+      function reverseString(str) {
+        let currentChar = "";
+        let result = "";
+
+        let reversedStrArr = str.split("").reverse();
+
+        for (let i = 0; i < reversedStrArr.length; ) {
+          currentChar += reversedStrArr[i];
+
+          // let continueLoop = false
+          // // 代理对
+          // while (
+          //   typeof reversedStrArr[i] === 'string' &&
+          //   (
+          //     isSurrogate(reversedStrArr[i]) ||
+          //     isJoiner(reversedStrArr[i])
+          //   )
+          // ) {
+          //   currentChar += reversedStrArr[i];
+          //   i++;
+            
+          //   continueLoop = true
+          // }
+          // if (continueLoop) {
+          //   continue
+          // }
+
+          result += currentChar.split("").reverse();
+          currentChar = "";
+
+          i++;
+        }
+
+        return result;
+      }
+    </script>
+  </body>
+</html>
