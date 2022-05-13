@@ -5,7 +5,10 @@
   <body>
     <script>
       function isSurrogate(char) {
-        return char.charCodeAt() >= 0xd800 || char.charCodeAt() <= 0xdbff;
+        if (typeof char !== 'string'){
+          return false
+        }
+        return char.charCodeAt() >= 0xd800 && char.charCodeAt() <= 0xdbff;
       }
 
       function isJoiner(char) {
@@ -14,35 +17,18 @@
 
       function reverseString(str) {
         let currentChar = "";
+        let singleCharUnits = []
         let result = "";
 
-        let reversedStrArr = str.split("").reverse();
-
-        for (let i = 0; i < reversedStrArr.length; ) {
-          currentChar += reversedStrArr[i];
-
-          // let continueLoop = false
-          // // 代理对
-          // while (
-          //   typeof reversedStrArr[i] === 'string' &&
-          //   (
-          //     isSurrogate(reversedStrArr[i]) ||
-          //     isJoiner(reversedStrArr[i])
-          //   )
-          // ) {
-          //   currentChar += reversedStrArr[i];
-          //   i++;
-            
-          //   continueLoop = true
-          // }
-          // if (continueLoop) {
+        for (let i = 0; i < str.length; i++) {
+          currentChar += str[i]
+          // if( isSurrogate(str[i]) ) {
           //   continue
           // }
+          singleCharUnits.push(currentChar)
+          currentChar = ''
 
-          result += currentChar.split("").reverse();
-          currentChar = "";
-
-          i++;
+          console.log(singleCharUnits)
         }
 
         return result;
