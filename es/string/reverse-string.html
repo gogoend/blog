@@ -22,16 +22,16 @@
 
         for (let i = 0; i < str.length; i++) {
           currentChar += str[i]
-          // if( isSurrogate(str[i]) ) {
-          //   continue
-          // }
-          singleCharUnits.push(currentChar)
+          if( isSurrogate(str[i]) ) {
+            continue
+          }
+          singleCharUnits.unshift(currentChar)
           currentChar = ''
 
           console.log(singleCharUnits)
         }
 
-        return result;
+        return singleCharUnits.join('')
       }
     </script>
   </body>
