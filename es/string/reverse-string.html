@@ -12,7 +12,17 @@
       }
 
       function isJoiner(char) {
-        return false;
+        if (typeof char !== 'string'){
+          return false
+        }
+        if (
+          [
+            0x200d
+          ].includes(char.charCodeAt())
+        ) {
+          return true
+        }
+        return false
       }
 
       function reverseString(str) {
@@ -22,7 +32,12 @@
 
         for (let i = 0; i < str.length; i++) {
           currentChar += str[i]
-          if( isSurrogate(str[i]) ) {
+          if( 
+            [
+              isSurrogate(str[i]),
+              (isJoiner(str[i]) || isJoiner(str[i+1]))
+            ].includes(true)
+          ) {
             continue
           }
           singleCharUnits.unshift(currentChar)
