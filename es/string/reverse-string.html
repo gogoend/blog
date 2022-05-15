@@ -25,6 +25,21 @@
         return false
       }
 
+      // 是否为变体选择器
+      function isVariationSelector(char) {
+        if (typeof char !== 'string'){
+          return false
+        }
+        if (
+          [
+            0xfe0f
+          ].includes(char.charCodeAt())
+        ) {
+          return true
+        }
+        return false
+      }
+
       function reverseString(str) {
         let currentChar = "";
         let singleCharUnits = []
@@ -35,7 +50,8 @@
           if( 
             [
               isSurrogate(str[i]),
-              (isJoiner(str[i]) || isJoiner(str[i+1]))
+              (isJoiner(str[i]) || isJoiner(str[i+1])),
+              (isVariationSelector(str[i]) || isVariationSelector(str[i+1]))
             ].includes(true)
           ) {
             continue
