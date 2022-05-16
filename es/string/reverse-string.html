@@ -3,6 +3,96 @@
     <title>字符串反转 - 考虑多字节</title>
   </head>
   <body>
+    <div>提交信息注释</div>
+
+    <blockquote>
+      “考虑了变体选择器，避免了某些字符（如emoji： “3️⃣”（['0033', 'fe0f', '20e3']） 被拆分。”
+    </blockquote>
+    <div>
+      这里“3️⃣”其实有两种渲染方式：
+      <dl>
+        <dt>
+          <a href="https://www.emojiall.com/en/code/0033-20E3" target="_blank">不显示为Emoji的渲染方式</a>
+        </dt>
+        <dd>
+          &#x0033;&#x20E3;
+        </dd>
+        <dd>
+          `\u0033\u20E3`
+        </dd>
+        <dt>
+          <a href="https://www.emojiall.com/en/code/0033-FE0F-20E3" target="_blank">显示为Emoji的渲染方式</a>
+        </dt>
+        <dd>
+          &#x0033;&#xFE0F;&#x20E3;
+        </dd>
+        <dd>
+          `\u0033\uFE0F\u20E3`
+        </dd>
+      </dl>
+    </div>
+
+    <blockquote>
+      TODO: 根据测试，一些emoji字符拆分有误，例如：
+      “❤️”（['2764', 'fe0f']）
+      "🈚️"（['d83c', 'de1a', 'fe0f']）
+      。目前的逻辑仅考虑了变体选择器字符（fe0f）仅出现在emoji（或者是ZWJ序列）中间的情况，而没有考虑出现在末尾的情况
+    </blockquote>
+    <div>
+      同样，这里“❤️”其实有两种渲染方式：
+      <dl>
+        <dt>
+          <a href="https://www.emojiall.com/en/code/2764" target="_blank">不显示为Emoji的渲染方式</a>
+        </dt>
+        <dd>
+          &#x2764;
+        </dd>
+        <dd>
+          `\u2764`
+        </dd>
+        <dt>
+          <a href="https://www.emojiall.com/en/code/2764-FE0F" target="_blank">显示为Emoji的渲染方式</a>
+        </dt>
+        <dd>
+          &#x2764;&#xFE0F;
+        </dd>
+        <dd>
+          `\u2764\uFE0F
+        </dd>
+      </dl>
+    </div>
+    <div>
+      这里"🈚️"的渲染方式也很多样：
+      <dl>
+        <dt>
+          <a href="https://www.emojiall.com/en/code/1F21A" target="_blank">由系统决定的默认渲染方式</a>
+        </dt>
+        <dd>
+          &#x1F21A;
+        </dd>
+        <dd>
+          `\uD83C\uDE1A`
+        </dd>
+        <dt>
+          <a href="https://www.emojiall.com/en/code/1F21A-FE0E" target="_blank">不显示为Emoji的渲染方式</a>
+        </dt>
+        <dd>
+          &#x1F21A;&#xFE0E;
+        </dd>
+        <dd>
+          `\uD83C\uDE1A\uFE0E`
+        </dd>
+        <dt>
+          <a href="https://www.emojiall.com/en/code/1F21A-FE0F" target="_blank">显示为Emoji的渲染方式</a>
+        </dt>
+        <dd>
+          &#x1F21A;&#xFE0F;
+        </dd>
+        <dd>
+          `\uD83C\uDE1A\uFE0F`
+        </dd>
+      </dl>
+    </div>
     <script>
       function isSurrogate(char) {
         if (typeof char !== 'string'){
