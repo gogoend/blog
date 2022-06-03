@@ -8,10 +8,14 @@
 </head>
 <body>
   <div>
+    <p>
     请在控制台执行usingVar、usingVar函数
+    </p>
+    <p>
     理解：
     var变量声明提前到当前作用域顶部，i的自加操作时都在更改同一作用域内的值，因此输出i时输出的值都一样
-    let具有生成了一个独立作用域，每个作用域中i值不一样，因此输出i时输出的值不一样
+    </p>
+
   </div>
   <script>
     function usingVar () {
@@ -29,6 +33,64 @@
         })
       }
     }
+    </script>
+    <div>
+      <p>
+      let具有生成了一个独立作用域，每个作用域中i值不一样，因此输出i时输出的值不一样。
+      </p>
+      <p>
+      修复方式：<br />
+      使用
+      <ol>
+        <li>嵌套函数</li>
+        <li>try{}catch(){} 的catch子句</li>
+        <li>with语句</li>
+      </ol>
+      来创建一个独立作用域，将输出逻辑放入到独立作用域中。
+    </div>
+    <script>
+    function usingVarFixedWithEmbedFunction () {
+      for (var i = 0; i < 5; i++) {
+        (function(i){
+          setTimeout(() => {
+            console.log(i)
+          })
+        })(i)
+      }
+    }
+
+    function usingVarFixedWithCatchBlockScope () {
+      for (var i = 0; i < 5; i++) {
+        try {
+          throw i
+        } catch (i) {
+          setTimeout(() => {
+              console.log(i)
+          })
+        }
+      }
+    }
+
+    function usingVarFixedWithWithScope () {
+      for (var i = 0; i < 5; i++) {
+        with ({ i : i }) {
+          setTimeout(() => {
+              console.log(i)
+          })
+        }
+      }
+    }
+
+    // function usingVarFixedWithEvalScope () {
+    //   for (var i = 0; i < 5; i++) {
+    //     eval(' \
+    //       setTimeout(() => { \
+    //           console.log(' + i + ') \
+    //       }) \
+    //       \
+    //     ')
+    //   }
+    // }
   </script>
 </body>
 </html>
