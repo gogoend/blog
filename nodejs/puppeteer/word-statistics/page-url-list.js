@@ -10,7 +10,7 @@ let originList = {
       "WebGL compatibility check": "manual/en/introduction/WebGL-compatibility-check",
       "How to run things locally": "manual/en/introduction/How-to-run-things-locally",
       "Typescript setup": "manual/en/introduction/Typescript-setup",
-      "Drawing lines": "manual/en/introduction/Drawing-lines",
+      // "Drawing lines": "manual/en/introduction/Drawing-lines",
       "Creating text": "manual/en/introduction/Creating-text",
       "Loading 3D models": "manual/en/introduction/Loading-3D-models",
       "FAQ": "manual/en/introduction/FAQ",
@@ -21,43 +21,43 @@ let originList = {
       "How to dispose of objects": "manual/en/introduction/How-to-dispose-of-objects",
       "How to create VR content": "manual/en/introduction/How-to-create-VR-content",
       "How to use post-processing": "manual/en/introduction/How-to-use-post-processing",
-      "Matrix transformations": "manual/en/introduction/Matrix-transformations",
-      "Animation system": "manual/en/introduction/Animation-system"
+      // "Matrix transformations": "manual/en/introduction/Matrix-transformations",
+      // "Animation system": "manual/en/introduction/Animation-system"
     },
 
     "Build Tools": {
-      "Testing with NPM": "manual/en/buildTools/Testing-with-NPM"
+      // "Testing with NPM": "manual/en/buildTools/Testing-with-NPM"
     }
 
   },
   "Reference": {
 
     "Animation": {
-      "AnimationAction": "api/en/animation/AnimationAction",
-      "AnimationClip": "api/en/animation/AnimationClip",
-      "AnimationMixer": "api/en/animation/AnimationMixer",
-      "AnimationObjectGroup": "api/en/animation/AnimationObjectGroup",
-      "AnimationUtils": "api/en/animation/AnimationUtils",
-      "KeyframeTrack": "api/en/animation/KeyframeTrack",
-      "PropertyBinding": "api/en/animation/PropertyBinding",
-      "PropertyMixer": "api/en/animation/PropertyMixer"
+      // "AnimationAction": "api/en/animation/AnimationAction",
+      // "AnimationClip": "api/en/animation/AnimationClip",
+      // "AnimationMixer": "api/en/animation/AnimationMixer",
+      // "AnimationObjectGroup": "api/en/animation/AnimationObjectGroup",
+      // "AnimationUtils": "api/en/animation/AnimationUtils",
+      // "KeyframeTrack": "api/en/animation/KeyframeTrack",
+      // "PropertyBinding": "api/en/animation/PropertyBinding",
+      // "PropertyMixer": "api/en/animation/PropertyMixer"
     },
 
     "Animation / Tracks": {
-      "BooleanKeyframeTrack": "api/en/animation/tracks/BooleanKeyframeTrack",
-      "ColorKeyframeTrack": "api/en/animation/tracks/ColorKeyframeTrack",
-      "NumberKeyframeTrack": "api/en/animation/tracks/NumberKeyframeTrack",
-      "QuaternionKeyframeTrack": "api/en/animation/tracks/QuaternionKeyframeTrack",
-      "StringKeyframeTrack": "api/en/animation/tracks/StringKeyframeTrack",
-      "VectorKeyframeTrack": "api/en/animation/tracks/VectorKeyframeTrack"
+      // "BooleanKeyframeTrack": "api/en/animation/tracks/BooleanKeyframeTrack",
+      // "ColorKeyframeTrack": "api/en/animation/tracks/ColorKeyframeTrack",
+      // "NumberKeyframeTrack": "api/en/animation/tracks/NumberKeyframeTrack",
+      // "QuaternionKeyframeTrack": "api/en/animation/tracks/QuaternionKeyframeTrack",
+      // "StringKeyframeTrack": "api/en/animation/tracks/StringKeyframeTrack",
+      // "VectorKeyframeTrack": "api/en/animation/tracks/VectorKeyframeTrack"
     },
 
     "Audio": {
-      "Audio": "api/en/audio/Audio",
-      "AudioAnalyser": "api/en/audio/AudioAnalyser",
-      "AudioContext": "api/en/audio/AudioContext",
-      "AudioListener": "api/en/audio/AudioListener",
-      "PositionalAudio": "api/en/audio/PositionalAudio"
+      // "Audio": "api/en/audio/Audio",
+      // "AudioAnalyser": "api/en/audio/AudioAnalyser",
+      // "AudioContext": "api/en/audio/AudioContext",
+      // "AudioListener": "api/en/audio/AudioListener",
+      // "PositionalAudio": "api/en/audio/PositionalAudio"
     },
 
     "Cameras": {
@@ -79,38 +79,38 @@ let originList = {
     },
 
     "Core": {
-      "BufferAttribute": "api/en/core/BufferAttribute",
-      "BufferGeometry": "api/en/core/BufferGeometry",
-      "Clock": "api/en/core/Clock",
-      "DirectGeometry": "api/en/core/DirectGeometry",
-      "EventDispatcher": "api/en/core/EventDispatcher",
-      "Face3": "api/en/core/Face3",
-      "Geometry": "api/en/core/Geometry",
-      "GLBufferAttribute": "api/en/core/GLBufferAttribute",
-      "InstancedBufferAttribute": "api/en/core/InstancedBufferAttribute",
-      "InstancedBufferGeometry": "api/en/core/InstancedBufferGeometry",
-      "InstancedInterleavedBuffer": "api/en/core/InstancedInterleavedBuffer",
-      "InterleavedBuffer": "api/en/core/InterleavedBuffer",
-      "InterleavedBufferAttribute": "api/en/core/InterleavedBufferAttribute",
-      "Layers": "api/en/core/Layers",
+      // "BufferAttribute": "api/en/core/BufferAttribute",
+      // "BufferGeometry": "api/en/core/BufferGeometry",
+      // "Clock": "api/en/core/Clock",
+      // "DirectGeometry": "api/en/core/DirectGeometry",
+      // "EventDispatcher": "api/en/core/EventDispatcher",
+      // "Face3": "api/en/core/Face3",
+      // "Geometry": "api/en/core/Geometry",
+      // "GLBufferAttribute": "api/en/core/GLBufferAttribute",
+      // "InstancedBufferAttribute": "api/en/core/InstancedBufferAttribute",
+      // "InstancedBufferGeometry": "api/en/core/InstancedBufferGeometry",
+      // "InstancedInterleavedBuffer": "api/en/core/InstancedInterleavedBuffer",
+      // "InterleavedBuffer": "api/en/core/InterleavedBuffer",
+      // "InterleavedBufferAttribute": "api/en/core/InterleavedBufferAttribute",
+      // "Layers": "api/en/core/Layers",
       "Object3D": "api/en/core/Object3D",
       "Raycaster": "api/en/core/Raycaster",
-      "Uniform": "api/en/core/Uniform"
+      // "Uniform": "api/en/core/Uniform"
     },
 
     "Core / BufferAttributes": {
-      "BufferAttribute Types": "api/en/core/bufferAttributeTypes/BufferAttributeTypes"
+      // "BufferAttribute Types": "api/en/core/bufferAttributeTypes/BufferAttributeTypes"
     },
 
     "Extras": {
-      "Earcut": "api/en/extras/Earcut",
-      "ImageUtils": "api/en/extras/ImageUtils",
-      "PMREMGenerator": "api/en/extras/PMREMGenerator",
-      "ShapeUtils": "api/en/extras/ShapeUtils",
+      // "Earcut": "api/en/extras/Earcut",
+      // "ImageUtils": "api/en/extras/ImageUtils",
+      // "PMREMGenerator": "api/en/extras/PMREMGenerator",
+      // "ShapeUtils": "api/en/extras/ShapeUtils",
     },
 
     "Extras / Core": {
-      "Curve": "api/en/extras/core/Curve",
+      // "Curve": "api/en/extras/core/Curve",
       "CurvePath": "api/en/extras/core/CurvePath",
       "Font": "api/en/extras/core/Font",
       "Interpolations": "api/en/extras/core/Interpolations",
@@ -133,7 +133,7 @@ let originList = {
     },
 
     "Extras / Objects": {
-      "ImmediateRenderObject": "api/en/extras/objects/ImmediateRenderObject",
+      // "ImmediateRenderObject": "api/en/extras/objects/ImmediateRenderObject",
     },
 
     "Geometries": {
@@ -182,19 +182,19 @@ let originList = {
     },
 
     "Helpers": {
-      "ArrowHelper": "api/en/helpers/ArrowHelper",
-      "AxesHelper": "api/en/helpers/AxesHelper",
-      "BoxHelper": "api/en/helpers/BoxHelper",
-      "Box3Helper": "api/en/helpers/Box3Helper",
-      "CameraHelper": "api/en/helpers/CameraHelper",
-      "DirectionalLightHelper": "api/en/helpers/DirectionalLightHelper",
-      "GridHelper": "api/en/helpers/GridHelper",
-      "PolarGridHelper": "api/en/helpers/PolarGridHelper",
-      "HemisphereLightHelper": "api/en/helpers/HemisphereLightHelper",
-      "PlaneHelper": "api/en/helpers/PlaneHelper",
-      "PointLightHelper": "api/en/helpers/PointLightHelper",
-      "SkeletonHelper": "api/en/helpers/SkeletonHelper",
-      "SpotLightHelper": "api/en/helpers/SpotLightHelper"
+      // "ArrowHelper": "api/en/helpers/ArrowHelper",
+      // "AxesHelper": "api/en/helpers/AxesHelper",
+      // "BoxHelper": "api/en/helpers/BoxHelper",
+      // "Box3Helper": "api/en/helpers/Box3Helper",
+      // "CameraHelper": "api/en/helpers/CameraHelper",
+      // "DirectionalLightHelper": "api/en/helpers/DirectionalLightHelper",
+      // "GridHelper": "api/en/helpers/GridHelper",
+      // "PolarGridHelper": "api/en/helpers/PolarGridHelper",
+      // "HemisphereLightHelper": "api/en/helpers/HemisphereLightHelper",
+      // "PlaneHelper": "api/en/helpers/PlaneHelper",
+      // "PointLightHelper": "api/en/helpers/PointLightHelper",
+      // "SkeletonHelper": "api/en/helpers/SkeletonHelper",
+      // "SpotLightHelper": "api/en/helpers/SpotLightHelper"
     },
 
     "Lights": {
@@ -211,34 +211,34 @@ let originList = {
     },
 
     "Lights / Shadows": {
-      "LightShadow": "api/en/lights/shadows/LightShadow",
-      "PointLightShadow": "api/en/lights/shadows/PointLightShadow",
-      "DirectionalLightShadow": "api/en/lights/shadows/DirectionalLightShadow",
-      "SpotLightShadow": "api/en/lights/shadows/SpotLightShadow"
+      // "LightShadow": "api/en/lights/shadows/LightShadow",
+      // "PointLightShadow": "api/en/lights/shadows/PointLightShadow",
+      // "DirectionalLightShadow": "api/en/lights/shadows/DirectionalLightShadow",
+      // "SpotLightShadow": "api/en/lights/shadows/SpotLightShadow"
     },
 
     "Loaders": {
-      "AnimationLoader": "api/en/loaders/AnimationLoader",
-      "AudioLoader": "api/en/loaders/AudioLoader",
-      "BufferGeometryLoader": "api/en/loaders/BufferGeometryLoader",
-      "Cache": "api/en/loaders/Cache",
-      "CompressedTextureLoader": "api/en/loaders/CompressedTextureLoader",
-      "CubeTextureLoader": "api/en/loaders/CubeTextureLoader",
-      "DataTextureLoader": "api/en/loaders/DataTextureLoader",
+      // "AnimationLoader": "api/en/loaders/AnimationLoader",
+      // "AudioLoader": "api/en/loaders/AudioLoader",
+      // "BufferGeometryLoader": "api/en/loaders/BufferGeometryLoader",
+      // "Cache": "api/en/loaders/Cache",
+      // "CompressedTextureLoader": "api/en/loaders/CompressedTextureLoader",
+      // "CubeTextureLoader": "api/en/loaders/CubeTextureLoader",
+      // "DataTextureLoader": "api/en/loaders/DataTextureLoader",
       "FileLoader": "api/en/loaders/FileLoader",
       "FontLoader": "api/en/loaders/FontLoader",
       "ImageBitmapLoader": "api/en/loaders/ImageBitmapLoader",
-      "ImageLoader": "api/en/loaders/ImageLoader",
+      // "ImageLoader": "api/en/loaders/ImageLoader",
       "Loader": "api/en/loaders/Loader",
-      "LoaderUtils": "api/en/loaders/LoaderUtils",
+      // "LoaderUtils": "api/en/loaders/LoaderUtils",
       "MaterialLoader": "api/en/loaders/MaterialLoader",
       "ObjectLoader": "api/en/loaders/ObjectLoader",
       "TextureLoader": "api/en/loaders/TextureLoader"
     },
 
     "Loaders / Managers": {
-      "DefaultLoadingManager": "api/en/loaders/managers/DefaultLoadingManager",
-      "LoadingManager": "api/en/loaders/managers/LoadingManager"
+      // "DefaultLoadingManager": "api/en/loaders/managers/DefaultLoadingManager",
+      // "LoadingManager": "api/en/loaders/managers/LoadingManager"
     },
 
     "Materials": {
@@ -269,7 +269,7 @@ let originList = {
       "Cylindrical": "api/en/math/Cylindrical",
       "Euler": "api/en/math/Euler",
       "Frustum": "api/en/math/Frustum",
-      "Interpolant": "api/en/math/Interpolant",
+      // "Interpolant": "api/en/math/Interpolant",
       "Line3": "api/en/math/Line3",
       "MathUtils": "api/en/math/MathUtils",
       "Matrix3": "api/en/math/Matrix3",
@@ -279,7 +279,7 @@ let originList = {
       "Ray": "api/en/math/Ray",
       "Sphere": "api/en/math/Sphere",
       "Spherical": "api/en/math/Spherical",
-      "SphericalHarmonics3": "api/en/math/SphericalHarmonics3",
+      // "SphericalHarmonics3": "api/en/math/SphericalHarmonics3",
       "Triangle": "api/en/math/Triangle",
       "Vector2": "api/en/math/Vector2",
       "Vector3": "api/en/math/Vector3",
@@ -287,10 +287,10 @@ let originList = {
     },
 
     "Math / Interpolants": {
-      "CubicInterpolant": "api/en/math/interpolants/CubicInterpolant",
-      "DiscreteInterpolant": "api/en/math/interpolants/DiscreteInterpolant",
-      "LinearInterpolant": "api/en/math/interpolants/LinearInterpolant",
-      "QuaternionLinearInterpolant": "api/en/math/interpolants/QuaternionLinearInterpolant"
+      // "CubicInterpolant": "api/en/math/interpolants/CubicInterpolant",
+      // "DiscreteInterpolant": "api/en/math/interpolants/DiscreteInterpolant",
+      // "LinearInterpolant": "api/en/math/interpolants/LinearInterpolant",
+      // "QuaternionLinearInterpolant": "api/en/math/interpolants/QuaternionLinearInterpolant"
     },
 
     "Objects": {
@@ -309,22 +309,22 @@ let originList = {
     },
 
     "Renderers": {
-      "WebGLMultisampleRenderTarget": "api/en/renderers/WebGLMultisampleRenderTarget",
-      "WebGLRenderer": "api/en/renderers/WebGLRenderer",
-      "WebGL1Renderer": "api/en/renderers/WebGL1Renderer",
-      "WebGLRenderTarget": "api/en/renderers/WebGLRenderTarget",
-      "WebGLCubeRenderTarget": "api/en/renderers/WebGLCubeRenderTarget"
+      // "WebGLMultisampleRenderTarget": "api/en/renderers/WebGLMultisampleRenderTarget",
+      // "WebGLRenderer": "api/en/renderers/WebGLRenderer",
+      // "WebGL1Renderer": "api/en/renderers/WebGL1Renderer",
+      // "WebGLRenderTarget": "api/en/renderers/WebGLRenderTarget",
+      // "WebGLCubeRenderTarget": "api/en/renderers/WebGLCubeRenderTarget"
     },
 
     "Renderers / Shaders": {
-      "ShaderChunk": "api/en/renderers/shaders/ShaderChunk",
-      "ShaderLib": "api/en/renderers/shaders/ShaderLib",
-      "UniformsLib": "api/en/renderers/shaders/UniformsLib",
-      "UniformsUtils": "api/en/renderers/shaders/UniformsUtils"
+      // "ShaderChunk": "api/en/renderers/shaders/ShaderChunk",
+      // "ShaderLib": "api/en/renderers/shaders/ShaderLib",
+      // "UniformsLib": "api/en/renderers/shaders/UniformsLib",
+      // "UniformsUtils": "api/en/renderers/shaders/UniformsUtils"
     },
 
     "Renderers / WebXR": {
-      "WebXRManager": "api/en/renderers/webxr/WebXRManager"
+      // "WebXRManager": "api/en/renderers/webxr/WebXRManager"
     },
 
     "Scenes": {
@@ -337,9 +337,9 @@ let originList = {
       "CanvasTexture": "api/en/textures/CanvasTexture",
       "CompressedTexture": "api/en/textures/CompressedTexture",
       "CubeTexture": "api/en/textures/CubeTexture",
-      "DataTexture": "api/en/textures/DataTexture",
-      "DataTexture2DArray": "api/en/textures/DataTexture2DArray",
-      "DataTexture3D": "api/en/textures/DataTexture3D",
+      // "DataTexture": "api/en/textures/DataTexture",
+      // "DataTexture2DArray": "api/en/textures/DataTexture2DArray",
+      // "DataTexture3D": "api/en/textures/DataTexture3D",
       "DepthTexture": "api/en/textures/DepthTexture",
       "Texture": "api/en/textures/Texture",
       "VideoTexture": "api/en/textures/VideoTexture"
@@ -349,9 +349,9 @@ let originList = {
   "Examples": {
 
     "Animations": {
-      "CCDIKSolver": "examples/en/animations/CCDIKSolver",
-      "MMDAnimationHelper": "examples/en/animations/MMDAnimationHelper",
-      "MMDPhysics": "examples/en/animations/MMDPhysics"
+      // "CCDIKSolver": "examples/en/animations/CCDIKSolver",
+      // "MMDAnimationHelper": "examples/en/animations/MMDAnimationHelper",
+      // "MMDPhysics": "examples/en/animations/MMDPhysics"
     },
 
     "Controls": {
@@ -372,32 +372,32 @@ let originList = {
     },
 
     "Helpers": {
-      "FaceNormalsHelper": "examples/en/helpers/FaceNormalsHelper",
-      "LightProbeHelper": "examples/en/helpers/LightProbeHelper",
-      "PositionalAudioHelper": "examples/en/helpers/PositionalAudioHelper",
-      "RectAreaLightHelper": "examples/en/helpers/RectAreaLightHelper",
-      "VertexNormalsHelper": "examples/en/helpers/VertexNormalsHelper",
-      "VertexTangentsHelper": "examples/en/helpers/VertexTangentsHelper"
+      // "FaceNormalsHelper": "examples/en/helpers/FaceNormalsHelper",
+      // "LightProbeHelper": "examples/en/helpers/LightProbeHelper",
+      // "PositionalAudioHelper": "examples/en/helpers/PositionalAudioHelper",
+      // "RectAreaLightHelper": "examples/en/helpers/RectAreaLightHelper",
+      // "VertexNormalsHelper": "examples/en/helpers/VertexNormalsHelper",
+      // "VertexTangentsHelper": "examples/en/helpers/VertexTangentsHelper"
     },
 
     "Lights": {
-      "LightProbeGenerator": "examples/en/lights/LightProbeGenerator"
+      // "LightProbeGenerator": "examples/en/lights/LightProbeGenerator"
     },
 
     "Loaders": {
-      "BasisTextureLoader": "examples/en/loaders/BasisTextureLoader",
-      "DRACOLoader": "examples/en/loaders/DRACOLoader",
+      // "BasisTextureLoader": "examples/en/loaders/BasisTextureLoader",
+      // "DRACOLoader": "examples/en/loaders/DRACOLoader",
       "GLTFLoader": "examples/en/loaders/GLTFLoader",
       "MMDLoader": "examples/en/loaders/MMDLoader",
-      "MTLLoader": "examples/en/loaders/MTLLoader",
-      "OBJLoader": "examples/en/loaders/OBJLoader",
-      "OBJLoader2": "examples/en/loaders/OBJLoader2",
-      "OBJLoader2Parallel": "examples/en/loaders/OBJLoader2Parallel",
-      "PCDLoader": "examples/en/loaders/PCDLoader",
-      "PDBLoader": "examples/en/loaders/PDBLoader",
-      "PRWMLoader": "examples/en/loaders/PRWMLoader",
-      "SVGLoader": "examples/en/loaders/SVGLoader",
-      "TGALoader": "examples/en/loaders/TGALoader"
+      // "MTLLoader": "examples/en/loaders/MTLLoader",
+      // "OBJLoader": "examples/en/loaders/OBJLoader",
+      // "OBJLoader2": "examples/en/loaders/OBJLoader2",
+      // "OBJLoader2Parallel": "examples/en/loaders/OBJLoader2Parallel",
+      // "PCDLoader": "examples/en/loaders/PCDLoader",
+      // "PDBLoader": "examples/en/loaders/PDBLoader",
+      // "PRWMLoader": "examples/en/loaders/PRWMLoader",
+      // "SVGLoader": "examples/en/loaders/SVGLoader",
+      // "TGALoader": "examples/en/loaders/TGALoader"
     },
 
     "Objects": {
@@ -409,22 +409,22 @@ let originList = {
     },
 
     "Exporters": {
-      "GLTFExporter": "examples/en/exporters/GLTFExporter",
-      "PLYExporter": "examples/en/exporters/PLYExporter",
-      "ColladaExporter": "examples/en/exporters/ColladaExporter"
+      // "GLTFExporter": "examples/en/exporters/GLTFExporter",
+      // "PLYExporter": "examples/en/exporters/PLYExporter",
+      // "ColladaExporter": "examples/en/exporters/ColladaExporter"
     },
 
     "Math": {
-      "LookupTable": "examples/en/math/Lut",
-      "MeshSurfaceSampler": "examples/en/math/MeshSurfaceSampler",
+      // "LookupTable": "examples/en/math/Lut",
+      // "MeshSurfaceSampler": "examples/en/math/MeshSurfaceSampler",
     },
 
     "ConvexHull": {
-      "Face": "examples/en/math/convexhull/Face",
-      "HalfEdge": "examples/en/math/convexhull/HalfEdge",
-      "ConvexHull": "examples/en/math/convexhull/ConvexHull",
-      "VertexNode": "examples/en/math/convexhull/VertexNode",
-      "VertexList": "examples/en/math/convexhull/VertexList"
+      // "Face": "examples/en/math/convexhull/Face",
+      // "HalfEdge": "examples/en/math/convexhull/HalfEdge",
+      // "ConvexHull": "examples/en/math/convexhull/ConvexHull",
+      // "VertexNode": "examples/en/math/convexhull/VertexNode",
+      // "VertexList": "examples/en/math/convexhull/VertexList"
     },
 
     "Renderers": {
@@ -435,22 +435,22 @@ let originList = {
     },
 
     "Utils": {
-      "BufferGeometryUtils": "examples/en/utils/BufferGeometryUtils",
-      "SceneUtils": "examples/en/utils/SceneUtils",
-      "SkeletonUtils": "examples/en/utils/SkeletonUtils"
+      // "BufferGeometryUtils": "examples/en/utils/BufferGeometryUtils",
+      // "SceneUtils": "examples/en/utils/SceneUtils",
+      // "SkeletonUtils": "examples/en/utils/SkeletonUtils"
     }
 
   },
   "Developer Reference": {
 
     "Polyfills": {
-      "Polyfills": "api/en/Polyfills"
+      // "Polyfills": "api/en/Polyfills"
     },
 
     "WebGLRenderer": {
-      "WebGLProgram": "api/en/renderers/webgl/WebGLProgram",
-      "WebGLShader": "api/en/renderers/webgl/WebGLShader",
-      "WebGLState": "api/en/renderers/webgl/WebGLState"
+      // "WebGLProgram": "api/en/renderers/webgl/WebGLProgram",
+      // "WebGLShader": "api/en/renderers/webgl/WebGLShader",
+      // "WebGLState": "api/en/renderers/webgl/WebGLState"
     }
 
   }
