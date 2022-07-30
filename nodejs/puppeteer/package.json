@@ -1,0 +1,15 @@
+{
+  "name": "@gogoend-demo/puppeteer",
+  "private": true,
+  "version": "1.0.0",
+  "description": "puppeteer测试",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "gogoend",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^15.5.0"
+  }
+}
