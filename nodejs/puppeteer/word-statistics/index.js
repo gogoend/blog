@@ -2,10 +2,12 @@ const puppeteer = require('puppeteer');
 const cleanIgnoredElements = require('./clean-ignored-elements')
 const cleanDuplicatedSpaces = require('./clean-duplicated-spaces')
 
+const urlList = require('./page-url-list').list
+
 const pages = []
-async function processPage(browser) {
+async function processPage(browser, url) {
   let page = await browser.newPage();
-  await page.goto('http://localhost:8080/docs/manual/en/introduction/Creating-a-scene.html')
+  await page.goto(url)
   pages.push(page)
 
   await new Promise(resolve => setTimeout(resolve, 2000))
@@ -33,7 +35,14 @@ async function processPage(browser) {
 ;(async () => {
   const browser = await puppeteer.launch({ headless: false })
 
-  await processPage(browser)
+  const promises = urlList.map(url => {
+    return processPage(
+      browser,
+      url
+    )
+  })
+
+  await Promise.all(promises)
 
   ;await new Promise(() => {})
   ;await browser.close()
