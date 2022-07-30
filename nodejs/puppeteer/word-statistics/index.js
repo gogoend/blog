@@ -35,14 +35,30 @@ async function processPage(browser, url) {
 ;(async () => {
   const browser = await puppeteer.launch({ headless: false })
 
-  const promises = urlList.map(url => {
-    return processPage(
-      browser,
-      url
-    )
-  })
+  // const promiseFactory = urlList.map(url => {
+    // return () => processPage(
+    //   browser,
+    //   url
+    // )
+  // })
 
-  await Promise.all(promises)
+  let cursor = 0
+  const CONCURRENCY = 20
+  const originLength = urlList.length
+
+  while(cursor < originLength) {
+    cursor += CONCURRENCY
+    await Promise.all(
+      urlList
+      .splice(0, CONCURRENCY)
+      .map(
+        (url) => processPage(
+          browser,
+          url
+        )
+      )
+    )
+  }
 
   ;await new Promise(() => {})
   ;await browser.close()
