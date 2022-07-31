@@ -837,6 +837,11 @@ ul, li {
 								*/
 						}
 					});
+					// 重点：避免按钮被点击后，编辑区域被blur
+					toolbarBtnGroup.addEventListener("mousedown",function(event){
+						event.preventDefault()
+					});
+
 				document.getElementById("editor_bottom_btn_group").addEventListener("click",function(event){
 					switch(event.target.id){
 						case "btn_saveRichText":saveDraftRichText(1);break;
@@ -877,6 +882,7 @@ ul, li {
 						document.execCommand("fontSize",true,size);
 					}
 					function textPaste(){
+						// TODO: 不生效？
 						document.execCommand("paste",true,null);
 					}
 					function textCopy(){
