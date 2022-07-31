@@ -287,16 +287,24 @@ ul, li {
         <div class="visual_editor">
           <div id="visual_editor_control_btn_area">
             <ul class="editor_left_btn_group" id="editor_left_btn_group">
-              <!--
-      <li class="font_icon editor_toolbar_btn" id="btn_undo">U</li>
-      <li class="font_icon editor_toolbar_btn" id="btn_redo">r</li>
-      <li class="editor_separate_line "></li>
-      <li class="font_icon editor_toolbar_btn" id="btn_paste">P</li>
-      <li class="font_icon editor_toolbar_btn" id="btn_cut">X</li>
-      <li class="font_icon editor_toolbar_btn" id="btn_copy">C</li>
-      <li class="font_icon editor_toolbar_btn" id="btn_selectAll">S</li>
-      <li class="editor_separate_line "></li>
-      -->
+						<!--
+							<li class="font_icon editor_toolbar_btn" id="btn_undo">U</li>
+							<li class="font_icon editor_toolbar_btn" id="btn_redo">r</li>
+							<li class="editor_separate_line "></li>
+						-->
+							<li class="font_icon editor_toolbar_btn" id="btn_copy">C
+								<div class="btn_description">复制</div>
+							</li>
+							<li class="font_icon editor_toolbar_btn" id="btn_cut">X
+								<div class="btn_description">剪切</div>
+							</li>
+							<li class="font_icon editor_toolbar_btn" id="btn_paste">P
+								<div class="btn_description">粘贴</div>
+							</li>
+							<li class="font_icon editor_toolbar_btn" id="btn_selectAll">S
+								<div class="btn_description">全选</div>
+							</li>
+							<li class="editor_separate_line "></li>
               <li class="font_icon editor_toolbar_btn" id="btn_fontSize"> T
                 <div class="btn_description">字体大小</div>
                 <ul class="down_list">
@@ -360,7 +368,7 @@ ul, li {
           </div>
           <div class="visual_editor_display_area"> 
             <!--设置属性使得div中的内容可以编辑-->
-            <iframe id="visual_editor_edit_content" class="visual_editor_edit_content" style="display: block"></iframe>
+            <div id="visual_editor_edit_content" class="visual_editor_edit_content" style="display: block"></div>
             <!--<iframe id="visual_editor_edit_content" contenteditable="true"></iframe>-->
             <textarea id="code_editor_edit_content" class="code_editor_edit_content" name="article_content_code" style="display: none"></textarea>
           </div>
@@ -448,7 +456,7 @@ ul, li {
 			}
 		}
 	function checkArticleContent(){
-		articleContent=document.getElementById("visual_editor_edit_content").contentWindow.document.getElementsByTagName("body")[0].innerHTML;
+		articleContent=document.getElementById("visual_editor_edit_content").innerHTML;
 		filteredArticleContent=filterHtmlTag(articleContent,0);
 		if(filteredArticleContent==""||filteredArticleContent==null){
 			return false;
@@ -490,7 +498,7 @@ ul, li {
 	function ifEditableAreaEmpty(){
 			if(!checkArticleContent()){
 						if(localStorage.getItem("articleContent")){
-							document.getElementById("visual_editor_edit_content").contentWindow.document.getElementsByTagName("body")[0].innerHTML=localStorage.getItem("articleContent");
+							document.getElementById("visual_editor_edit_content").innerHTML=localStorage.getItem("articleContent");
 							document.getElementById("code_editor_edit_content").value=localStorage.getItem("articleContent");
 						}
 					}
@@ -571,7 +579,7 @@ ul, li {
 
 	function saveDraftRichText(operation){
 		saveTitle();
-		origArticleContent=document.getElementById("visual_editor_edit_content").contentWindow.document.getElementsByTagName("body")[0].innerHTML;
+		origArticleContent=document.getElementById("visual_editor_edit_content").innerHTML;
 		filteredArticleContent=filterHtmlTag(origArticleContent,1);	
 		//filteredArticleContent_for_check=filterHtmlTag(filteredArticleContent,0);	
 		failMsg="保存失败，请在编辑器中输入内容";
@@ -649,7 +657,7 @@ ul, li {
 			}
 			return false;
 		}else{
-			document.getElementById("visual_editor_edit_content").contentWindow.document.getElementsByTagName("body")[0].innerHTML=filteredArticleContent;
+			document.getElementById("visual_editor_edit_content").innerHTML=filteredArticleContent;
 			localStorage.setItem("articleContent",filteredArticleContent);
 			switch(operation){
 				case 0:;break;
@@ -793,8 +801,8 @@ ul, li {
 			window.onload=function(){
 					ifEditableAreaEmpty();
 					autoSaveTimerStart();
-					var editor=document.getElementById("visual_editor_edit_content").contentWindow;//获得iframe Window对象
- 					var content=document.getElementById("visual_editor_edit_content").contentDocument;//获得iframe Document对象
+					var editor= {document: document.getElementById("visual_editor_edit_content")};//获得iframe Window对象
+ 					// var content=document.getElementById("visual_editor_edit_content").contentDocument;//获得iframe Document对象
 					var toolbarBtnGroup=document.getElementById("visual_editor_control_btn_area");
 					//设置事件监听
 					toolbarBtnGroup.addEventListener("click",function(event){
@@ -844,65 +852,65 @@ ul, li {
 					//使用document.execCommand(aCommandName, aShowDefaultUI, aValueArgument)方法实现各个按钮功能
 					
 					function textUndo(){
-						editor.document.execCommand("undo",true,null);
+						document.execCommand("undo",true,null);
 					}
 					
 					function textRedo(){
-						editor.document.execCommand("redo",true,null);
+						document.execCommand("redo",true,null);
 					}
 					
 					
 					function addBold(){
-						editor.document.execCommand("bold",true,null);
+						document.execCommand("bold",true,null);
 					}
 					
 					function addItalic(){
-						editor.document.execCommand("italic",true,null);
+						document.execCommand("italic",true,null);
 					}
 					
 					function addUnderline(){
-						editor.document.execCommand("underline",true,null);
+						document.execCommand("underline",true,null);
 					}
 					
 					function setFontSize(){
 						size=parseInt(prompt('请输入字体大小'));
-						editor.document.execCommand("fontSize",true,size);
+						document.execCommand("fontSize",true,size);
 					}
 					function textPaste(){
-						editor.document.execCommand("paste",true,null);
+						document.execCommand("paste",true,null);
 					}
 					function textCopy(){
-						editor.document.execCommand("copy",true,null);
+						document.execCommand("copy",true,null);
 					}
 					function textCut(){
-						editor.document.execCommand("cut",true,null);
+						document.execCommand("cut",true,null);
 					}
 					function textSelectAll(){
-						editor.document.execCommand("selectAll",true,null);
+						document.execCommand("selectAll",true,null);
 					}
 					function insertUl(){
-						editor.document.execCommand("insertUnorderedList",true,null);
+						document.execCommand("insertUnorderedList",true,null);
 					}
 					function insertOl(){
-						editor.document.execCommand("insertOrderedList",true,null);
+						document.execCommand("insertOrderedList",true,null);
 					}
 					function textLeftAlign(){
-						editor.document.execCommand("justifyLeft",true,null);
+						document.execCommand("justifyLeft",true,null);
 					}
 					function textRightAlign(){
-						editor.document.execCommand("justifyRight",true,null);
+						document.execCommand("justifyRight",true,null);
 					}
 					function textCenterAlign(){
-						editor.document.execCommand("justifyCenter",true,null);
+						document.execCommand("justifyCenter",true,null);
 					}
 					function textCleanFormat(){
-						editor.document.execCommand("removeFormat",true,null);
+						document.execCommand("removeFormat",true,null);
 					}			
 					/*function insert_hyperlink(){
-						editor.document.execCommand("createLink",true,"http://h-cube.ga");
+						document.execCommand("createLink",true,"http://h-cube.ga");
 					}
 					function insert_deleteHyperlink(){
-						editor.document.execCommand("unlink",true,null);
+						document.execCommand("unlink",true,null);
 					}*/
 				}
 			
