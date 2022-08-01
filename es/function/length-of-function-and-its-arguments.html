@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>function 及其 arguments 的长度</title>
+  </head>
+  <body>
+    <script>
+      (function () {
+        return arguments; // []
+      })();
+
+      (function () {
+        return arguments; // [1,2,3,4,5]
+      })(1, 2, 3, 4, 5);
+
+      (function () {
+        return arguments; // 0
+      }.length);
+
+      (function (a, b, c, d, e) {
+        return arguments; // 5
+      }.length);
+
+      (function (a, b, c, d, e) {
+        return arguments; // []
+      })();
+
+      (function (a = 1, b = 2, c = 3, d = 4, e = 5) {
+        return arguments; 
+      })(); // []
+
+      (function (a = 1, b = 2, c = 3, d = 4, e = 5) {
+        return arguments; 
+      }.length); // 0
+    </script>
+  </body>
+</html>
