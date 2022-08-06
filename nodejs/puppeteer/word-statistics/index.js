@@ -4,6 +4,7 @@ const cleanDuplicatedSpaces = require('./clean-duplicated-spaces')
 
 const urlList = require('./page-url-list').list
 const PromisePoll = require('./promise-pool')
+const asyncPoll = require('tiny-async-pool')
 
 const pages = []
 const charCountInPages = []
@@ -42,23 +43,19 @@ async function processPage(browser, url) {
 }
 
 ;(async () => {
-  const browser = await puppeteer.launch()
-
-  const promiseFactories = urlList.map(url => {
-    return () => processPage(
-      browser,
-      url
-    )
+  const browser = await puppeteer.launch({
+    headless: false
   })
 
   const CONCURRENCY = 30
-
-  const promisePool = new PromisePoll(
-    promiseFactories,
-    CONCURRENCY
+  const results = await asyncPoll(
+    CONCURRENCY,
+    urlList.map(url => [
+      browser,
+      url
+    ]),
+    async (args) => await processPage(...args)
   )
-
-  const results = await promisePool
 
   console.log(
     JSON.stringify(charCountInPages)
