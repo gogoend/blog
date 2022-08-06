@@ -3,6 +3,7 @@ const cleanIgnoredElements = require('./clean-ignored-elements')
 const cleanDuplicatedSpaces = require('./clean-duplicated-spaces')
 
 const urlList = require('./page-url-list').list
+const PromisePoll = require('./promise-pool')
 
 const pages = []
 const charCountInPages = []
@@ -41,32 +42,24 @@ async function processPage(browser, url) {
 }
 
 ;(async () => {
-  const browser = await puppeteer.launch({ headless: true })
+  const browser = await puppeteer.launch()
 
-  // const promiseFactory = urlList.map(url => {
-    // return () => processPage(
-    //   browser,
-    //   url
-    // )
-  // })
-
-  let cursor = 0
-  const CONCURRENCY = 30
-  const originLength = urlList.length
-
-  while(cursor < originLength) {
-    cursor += CONCURRENCY
-    await Promise.all(
-      urlList
-      .splice(0, CONCURRENCY)
-      .map(
-        (url) => processPage(
-          browser,
-          url
-        )
-      )
+  const promiseFactories = urlList.map(url => {
+    return () => processPage(
+      browser,
+      url
     )
-  }
+  })
+
+  const CONCURRENCY = 30
+
+  const promisePool = new PromisePoll(
+    promiseFactories,
+    CONCURRENCY
+  )
+
+  const results = await promisePool
+
   console.log(
     JSON.stringify(charCountInPages)
   )
