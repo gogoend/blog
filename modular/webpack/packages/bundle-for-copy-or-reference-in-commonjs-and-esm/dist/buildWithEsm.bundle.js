@@ -11,6 +11,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "limitAge": () => (/* binding */ limitAge),
 /* harmony export */   "people": () => (/* binding */ people)
 /* harmony export */ });
+/* harmony import */ var _m2_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(931);
 const people = [{
     name: 'Bob',
     phone: '10086',
@@ -21,9 +22,26 @@ const people = [{
     age: 28
 }]
 
+;
+console.log(_m2_mjs__WEBPACK_IMPORTED_MODULE_0__/* .limitAgeMultiply10 */ .E)
+
 let limitAge = 29
 const addLimitAge = () => { limitAge++ }
 
+
+
+/***/ }),
+
+/***/ 931:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "E": () => (/* binding */ limitAgeMultiply10)
+/* harmony export */ });
+/* harmony import */ var _m1_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(324);
+
+
+let limitAgeMultiply10 = _m1_mjs__WEBPACK_IMPORTED_MODULE_0__.limitAge * 10
 
 
 /***/ })

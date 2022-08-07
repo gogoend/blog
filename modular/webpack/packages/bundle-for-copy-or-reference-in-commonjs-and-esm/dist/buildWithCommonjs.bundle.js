@@ -2,7 +2,7 @@
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 791:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 const people = [{
     name: 'Bob',
@@ -14,6 +14,9 @@ const people = [{
     age: 28
 }]
 
+let limitAgeMultiply10 = (__webpack_require__(446).limitAgeMultiply10)
+console.log(limitAgeMultiply10)
+
 let limitAge = 29
 const addLimitAge = () => { limitAge++ }
 
@@ -22,6 +25,22 @@ module.exports = {
     people,
     limitAge,
     addLimitAge
+}
+
+
+
+/***/ }),
+
+/***/ 446:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+let limitAge = __webpack_require__(791)
+
+let limitAgeMultiply10 = limitAge * 10
+
+module.exports = {
+    ...module.exports,
+    limitAgeMultiply10
 }
 
 

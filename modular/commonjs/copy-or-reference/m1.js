@@ -8,6 +8,9 @@ const people = [{
     age: 28
 }]
 
+let limitAgeMultiply10 = require('./m2.js').limitAgeMultiply10
+console.log(limitAgeMultiply10)
+
 let limitAge = 29
 const addLimitAge = () => { limitAge++ }
 
