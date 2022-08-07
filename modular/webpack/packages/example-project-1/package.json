@@ -1,0 +1,13 @@
+{
+  "name": "@gogoend-demo/example-project-for-webpack-demo-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config ./webpack.conf.js"
+  },
+  "devDependencies": {
+  },
+  "author": "gogoend",
+  "license": "ISC"
+}
