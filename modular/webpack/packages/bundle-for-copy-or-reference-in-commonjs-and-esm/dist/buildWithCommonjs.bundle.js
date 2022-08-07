@@ -14,8 +14,8 @@ const people = [{
     age: 28
 }]
 
-let limitAgeMultiply10 = (__webpack_require__(446).limitAgeMultiply10)
-console.log(limitAgeMultiply10)
+let m2 = __webpack_require__(446), limitAgeMultiply10 = m2.limitAgeMultiply10
+console.log(m2, limitAgeMultiply10)
 
 let limitAge = 29
 const addLimitAge = () => { limitAge++ }
@@ -28,13 +28,15 @@ module.exports = {
 }
 
 
-
 /***/ }),
 
 /***/ 446:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-let limitAge = __webpack_require__(791)
+let m1 = __webpack_require__(791), limitAge = m1.limitAge
+
+console.log(m1)
+console.log(limitAge)
 
 let limitAgeMultiply10 = limitAge * 10
 
@@ -42,7 +44,6 @@ module.exports = {
     ...module.exports,
     limitAgeMultiply10
 }
-
 
 
 /***/ })
