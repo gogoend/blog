@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intersection observer</title>
+    <script src="/_lib/vue.global.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <ol style="height: 500px; overflow-y: auto">
+        <li-component
+          v-for="n in expectNumber"
+        >{{ n }}</li-component>
+      </ol>
+    </div>
+
+    <script>
+      let LiComponent = Vue.defineComponent({
+        template: '<li><slot /></li>'
+      })
+
+      let app = Vue.createApp({
+        components: { 
+          LiComponent
+        },
+        methods: {
+        },
+        data () {
+            return {
+              expectNumber: 1000
+            }
+        },
+        mounted () {
+        }
+      })
+      app.mount('#app')
+    </script>
+  </body>
+</html>
