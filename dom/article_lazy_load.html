@@ -18,7 +18,7 @@
         let pageSize = 2000
         let totalPage = window.__sampleLargeString.length / pageSize
         const articleEl = document.getElementById('content')
-        articleEl.innerText = window.__sampleLargeString.substr(pageIndex * pageSize, pageSize)
+        // articleEl.innerText = window.__sampleLargeString.substr(pageIndex * pageSize, pageSize)
 
         function loadNewContent (ev) {
             let loadFlag = (document.documentElement.scrollHeight - (document.documentElement.scrollTop + innerHeight)) < 100
@@ -35,6 +35,10 @@
                     })
                 }
             }
+        }
+
+        while(pageIndex < totalPage && articleEl.scrollHeight < document.documentElement.clientHeight) {
+            loadNewContent()
         }
         window.addEventListener('scroll', loadNewContent)
     </script>
