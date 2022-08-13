@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>布局 绘制 合成测试</title>
+  <style>
+    #app {
+      position: absolute;
+      inset: 0;
+    }
+    .app-header{
+      height: 40px;
+      background-color: aqua;
+    }
+    .app-main {
+      position: absolute;
+      top: 40px;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    .app-biz__aside {
+      position: absolute;
+      width: 200px;
+      height: 100%;
+      background-color: aquamarine;
+    }
+    .app-biz__main {
+      position: absolute;
+      height: 100%;
+      right: 0;
+      left: 200px;
+      background-color: azure;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="app-header">
+      <nav></nav>
+    </header>
+    <div class="app-main">
+      <aside class="app-biz__aside"></aside>
+      <main class="app-biz__main"></main>
+    </div>
+    <footer
+      class="app-footer"
+    ></footer>
+  </div>
+</body>
+</html>
