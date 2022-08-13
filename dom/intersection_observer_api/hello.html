@@ -5,37 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Intersection observer</title>
     <script src="/_lib/vue.global.js"></script>
+    <script src="/_lib/babel.js"></script>
   </head>
 
   <body>
     <div id="app">
-      <ol style="height: 500px; overflow-y: auto">
+      <dl>
+        <dt>当前条目</dt>
+        <dd>{{ current }}</dd>
+      </dl>
+      <div>
+        <button @click="goPrev">上一个</button>
+        <button @click="goNext">下一个</button>
+      </div>
+      <ol style="height: 500px; overflow-y: auto" ref="olEl">
         <li-component
           v-for="n in expectNumber"
-        >{{ n }}</li-component>
+          :style="{
+            width: '100%',
+            height: '120%',
+            display: 'flex',
+            alignItems: 'center',
+            outline: '1px solid #000',
+            lineHeight: '100%'
+          }"
+          :key="n"
+          :data-page-index="n"
+          >{{ n }}</li-component
+        >
       </ol>
     </div>
 
-    <script>
-      let LiComponent = Vue.defineComponent({
-        template: '<li><slot /></li>'
-      })
+    <script type="text/babel">
+      const {
+        ref,
+        shallowRef,
+        defineComponent,
+        onMounted,
+        createApp,
+        getCurrentInstance,
+        nextTick,
+        onUnmounted,
+      } = Vue;
 
-      let app = Vue.createApp({
-        components: { 
-          LiComponent
+      let LiComponent = defineComponent({
+        template: "<li><slot /></li>",
+        setup(props, ctx) {},
+      });
+
+      let app = createApp({
+        components: {
+          LiComponent,
         },
-        methods: {
+        setup(props, ctx) {
+          const instance = getCurrentInstance()
+
+          const current = ref(1);
+          onMounted(() => {
+            const pageObserver: IntersectionObserverCallback = (entries) => {
+              // 此处逻辑，只针对页面滚入视口时进行了处理，但没有针对页面滚出视口时进行处理。
+              //
+              // 这样的话：
+              // 1. 假设我先从第1页滚到第2页的顶部开始的位置 - 此时`currentPage.value`设为了第2页的索引；
+              // 2. 然后我往回滚，滚到第1页，此时第2页已经完全滚了出去，并回到了第1页，但`currentPage.value`依然为第2页的索引。
+              //
+              // 此时：
+              // 1. 点击“下一页”，将直接跳转到第3页；
+              // 2. 此时点击“上一页”，页面将不发生任何跳转（看起来就像“上一页”按钮被锁死了一样）—— 因为现在就已经是在第一页的位置了（`scrollIntoView`再执行好像就没效果了），但`currentPage.value`的变化又依赖于`IntersectionObserver`；因此，这种情况下，“上一页”按钮就被锁死了。
+              if (entries[0].isIntersecting) {
+                current.value = Number(
+                  entries[0].target.getAttribute("data-page-index")
+                );
+              }
+            };
+            const observer = new IntersectionObserver(pageObserver);
+            document.querySelectorAll(`[data-page-index]`).forEach((el) => {
+              observer.observe(el);
+            });
+            onUnmounted(() => {
+              observer.disconnect();
+            });
+          });
+
+          const olEl = shallowRef()
+          return {
+            expectNumber: 1000,
+            current,
+            olEl,
+            goPrev() {
+              console.log(current.value - 1)
+              const targetEl = document.querySelector(
+                `[data-page-index="${current.value - 1}"]`
+              );
+              targetEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            },
+            goNext() {
+              console.log(current.value + 1)
+              const targetEl = document.querySelector(
+                `[data-page-index="${current.value + 1}"]`
+              );
+              targetEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            },
+          };
         },
-        data () {
-            return {
-              expectNumber: 1000
-            }
-        },
-        mounted () {
-        }
-      })
-      app.mount('#app')
+      });
+      app.mount("#app");
     </script>
   </body>
 </html>
