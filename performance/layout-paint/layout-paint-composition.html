@@ -6,6 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>布局 绘制 合成测试</title>
   <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
     #app {
       position: absolute;
       inset: 0;
@@ -21,18 +27,74 @@
       bottom: 0;
       left: 0;
     }
-    .app-biz__aside {
-      position: absolute;
-      width: 200px;
-      height: 100%;
-      background-color: aquamarine;
-    }
     .app-biz__main {
       position: absolute;
       height: 100%;
       right: 0;
-      left: 200px;
-      background-color: azure;
+      left: 400px;
+      background-color: rgba(240, 255, 255, 0.75);
+    }
+    .app-biz__main .app-biz__main-layer-0 {
+      position: relative;
+      z-index: -1;
+    }
+    .app-biz__main .app-biz__main-layer-1 {
+
+    }
+    .app-biz__main .app-biz__main-layer-1__child-1 {
+      position: relative;
+      z-index: -1;
+    }
+
+    .app-biz__aside {
+      position: relative;
+      width: 400px;
+      height: 100%;
+      background-color: rgba(128, 255, 212, 0.5);
+    }
+    .app-biz__aside .app-biz__aside-layer-0 {
+      position: relative;
+      z-index: -1;
+    }
+    .app-biz__little-widget-1 {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: rgba(0, 0, 255);
+      top: 10px;
+      left: 30px;
+      color: #fff;
+      z-index: 1;
+    }
+    .app-biz__little-widget-2 {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: rgba(0, 255, 128);
+      top: 35px;
+      left: 35px;
+      color: #fff;
+      z-index: 1;
+    }
+    .app-biz__little-widget-3 {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: rgba(255, 128, 255);
+      top: 60px;
+      left: 40px;
+      color: #fff;
+      z-index: 1;
+    }
+    .app-biz__little-widget-4 {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background-color: rgb(255, 192, 64);
+      top: 85px;
+      left: 45px;
+      color: #fff;
+      z-index: 1;
     }
   </style>
 </head>
@@ -42,8 +104,35 @@
       <nav></nav>
     </header>
     <div class="app-main">
-      <aside class="app-biz__aside"></aside>
-      <main class="app-biz__main"></main>
+      <main class="app-biz__main">
+        <span class="app-biz__main-layer-0">内容@0</span>
+        <div class="app-biz__main-layer-1">
+          内容@1
+          <div class="app-biz__main-layer-1__child-1">
+            <div style="position: relative; z-index: 10;">内容@2</div>
+          </div>
+          <div>
+            Hello World~
+          </div>
+        </div>
+      </main>
+      <aside class="app-biz__aside">
+        <span class="app-biz__aside-layer-0">内容@0</span>
+        <span class="app-biz__aside-layer-1">内容@1</span>
+        <span class="app-biz__aside-layer-2">内容@2</span>
+      </aside>
+      <div class="app-biz__little-widget-1">
+        小挂件@1
+      </div>
+      <div class="app-biz__little-widget-2">
+        小挂件@2
+      </div>
+      <div class="app-biz__little-widget-3">
+        小挂件@3
+      </div>
+      <div class="app-biz__little-widget-4">
+        小挂件@4
+      </div>
     </div>
     <footer
       class="app-footer"
