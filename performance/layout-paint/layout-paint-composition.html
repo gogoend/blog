@@ -45,6 +45,24 @@
       position: relative;
       z-index: -1;
     }
+    .app-biz__main .app-biz__main-layer-1__child-2 {
+      position: absolute;
+      background-color: #f00;
+      width: 200px;
+      height: 100px;
+
+      display: inline-block;
+    }
+    .app-biz__main .app-biz__main-layer-1__child-3 {
+      background-color: #0f0;
+      width: 100px;
+      height: 200px;
+
+      margin-top: -20px;
+    }
+    .app-biz__main .app-biz__main-layer-1__child-3__text {
+      color: #fff;
+    }
 
     .app-biz__aside {
       position: relative;
@@ -105,15 +123,40 @@
     </header>
     <div class="app-main">
       <main class="app-biz__main">
-        <span class="app-biz__main-layer-0">内容@0</span>
+        <div class="app-biz__main-layer-0">
+          内容@0
+        </div>
         <div class="app-biz__main-layer-1">
-          内容@1
           <div class="app-biz__main-layer-1__child-1">
-            <div style="position: relative; z-index: 10;">内容@2</div>
+            <div style="position: relative; z-index: 10;">内容@1</div>
           </div>
-          <div>
-            Hello World~
+          <div class="app-biz__main-layer-1__child-2">
+            内容@2
           </div>
+          <span>
+            内容@2附加文字
+            内容@2附加文字
+            内容@2附加文字
+            内容@2附加文字
+          </span>
+          <!--
+            可通过设置opacity<1、更改mix-blend-mode来创建堆叠上下文，提升堆叠层次
+            使其覆盖到其他元素之上
+          -->
+          <div class="app-biz__main-layer-1__child-3">
+            内容@3
+            <div class="app-biz__main-layer-1__child-3__text">
+              内容@3内部文字
+              内容@3内部文字
+              内容@3内部文字
+            </div>
+          </div>
+          <span>
+            内容@3附加文字
+            内容@3附加文字
+            内容@3附加文字
+            内容@3附加文字
+          </span>
         </div>
       </main>
       <aside class="app-biz__aside">
