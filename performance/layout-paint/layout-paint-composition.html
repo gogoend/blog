@@ -53,6 +53,20 @@
 
       display: inline-block;
     }
+    @keyframes moveAndBack {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(10px, 10px);
+      }
+    }
+    .app-biz__main .app-biz__main-layer-1__child-2__extra-text {
+      animation: moveAndBack 1s ease infinite;
+      animation-fill-mode: backwards;
+      animation-direction: alternate;
+      display: inline-block;
+    }
     .app-biz__main .app-biz__main-layer-1__child-3 {
       background-color: #0f0;
       width: 100px;
@@ -133,7 +147,7 @@
           <div class="app-biz__main-layer-1__child-2">
             内容@2
           </div>
-          <span>
+          <span class="app-biz__main-layer-1__child-2__extra-text">
             内容@2附加文字
             内容@2附加文字
             内容@2附加文字
