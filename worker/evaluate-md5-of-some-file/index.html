@@ -37,12 +37,28 @@
 
       let app = createApp({
         setup(props, ctx) {
+          const worker = new Worker('./worker.js')
+          worker.addEventListener(
+            'message',
+            (ev) => {
+              console.log(ev)
+            }
+          )
+        
           const handleDrop = ev => {
             // 应该立即打印出文件列表，这样才可以看到其中的文件
-            console.log(ev.dataTransfer.files)
-            // 如果是打印出整个事件，然后再进入事件中查看文件列表，那么将看不到任何文件
-            console.log(ev)
+            console.log()
+
+            if (ev.dataTransfer.files.length) {
+              worker.postMessage(
+                {
+                  command: 'file',
+                  data: ev.dataTransfer.files[0]
+                }
+              )
+            }
           }
+
           return {
             handleDrop
           }
