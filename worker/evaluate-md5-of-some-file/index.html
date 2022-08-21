@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>worker 多线程计算文件的MD5值</title>
+    <script src="/_lib/vue.global.js"></script>
+    <script src="/_lib/babel.js"></script>
+    <style>
+      .drop-zone {
+        background-color: #f0f;
+        width: 200px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div
+        class="drop-zone"
+        @drop.prevent="handleDrop"
+        @dragover.prevent="() => void 0"
+      ></div>
+    </div>
+    <script type="text/babel">
+      const {
+        ref,
+        shallowRef,
+        defineComponent,
+        onMounted,
+        createApp,
+        getCurrentInstance,
+        nextTick,
+        onUnmounted,
+      } = Vue
+
+      let app = createApp({
+        setup(props, ctx) {
+          const handleDrop = ev => {
+            // 应该立即打印出文件列表，这样才可以看到其中的文件
+            console.log(ev.dataTransfer.files)
+            // 如果是打印出整个事件，然后再进入事件中查看文件列表，那么将看不到任何文件
+            console.log(ev)
+          }
+          return {
+            handleDrop
+          }
+        },
+      });
+      app.mount("#app")
+    </script>
+  </body>
+</html>
