@@ -37,7 +37,7 @@
 
       let app = createApp({
         setup(props, ctx) {
-          const worker = new Worker('./worker.js')
+          const worker = new Worker('./worker.js', {type: 'module'})
           worker.addEventListener(
             'message',
             (ev) => {

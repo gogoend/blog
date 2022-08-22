@@ -1,10 +1,5 @@
-importScripts('./hash-wasm-md5.umd.min.js');
-
-async function normalizeInput (input) {
-  if (input instanceof Blob) {
-    return new Uint8Array(await input.arrayBuffer())
-  }
-}
+import { normalizeMd5SumInput, normalizeOKResult } from './utils.js'
+await import('./hash-wasm-md5.umd.min.js')
 
 const commandMap = {
   async computeMd5SumOfFile (input) {
@@ -14,7 +9,7 @@ const commandMap = {
     // )
 
     return await md5(
-      await normalizeInput(
+      await normalizeMd5SumInput(
         input
       )
     )
@@ -28,7 +23,11 @@ self.addEventListener(
 
     if (typeof commandMap[command] === 'function') {
       const result = await commandMap[command](data)
-      self.postMessage(result)
+      self.postMessage(
+        normalizeOKResult(
+          result
+        )
+      )
     }
   }
 )
