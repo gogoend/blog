@@ -52,7 +52,7 @@
             if (ev.dataTransfer.files.length) {
               worker.postMessage(
                 {
-                  command: 'file',
+                  command: 'computeMd5SumOfFile',
                   data: ev.dataTransfer.files[0]
                 }
               )
