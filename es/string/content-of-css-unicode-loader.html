@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    const UNICODE_MATCH_REG = /[^\x00-\xff]/g;
+    const CONTENT_MATCH_REG = /(?<!-)content\s*:\s*([^;\}]+)/g;
+    function CssUnicodeLoader(source) {
+      // 首先匹配content: 后的字符串
+      source = source.replace(CONTENT_MATCH_REG, function (m, p1) {
+        // 然后匹配非双字节字符
+        return m.replace(UNICODE_MATCH_REG, function (m) {
+          return "\\" + m.charCodeAt(0).toString(16)
+        })
+      })
+      return source
+    }
+
+    console.log(
+      CssUnicodeLoader(
+        `
+.scss::after {
+  content: "中国";
+}
+        `
+      )
+    )
+  </script>
+</body>
+</html>
