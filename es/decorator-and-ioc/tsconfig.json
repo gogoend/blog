@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "outDir": "./dist",
+    "target": "ES2016",
+    "lib": [
+      "ES2016",
+      "DOM"
+    ],
+  }
+}
