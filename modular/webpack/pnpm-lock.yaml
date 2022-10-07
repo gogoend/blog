@@ -1,20 +1,34 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
-specifiers:
-  clean-webpack-plugin: ^4.0.0
-  file-loader: ^6.2.0
-  html-webpack-plugin: ^5.5.0
-  raw-loader: ^4.0.2
-  webpack: ^5.69.1
-  webpack-cli: ^4.9.2
+importers:
 
-devDependencies:
-  clean-webpack-plugin: registry.npmjs.org/clean-webpack-plugin/4.0.0_webpack@5.74.0
-  file-loader: registry.npmjs.org/file-loader/6.2.0_webpack@5.74.0
-  html-webpack-plugin: registry.npmjs.org/html-webpack-plugin/5.5.0_webpack@5.74.0
-  raw-loader: registry.npmjs.org/raw-loader/4.0.2_webpack@5.74.0
-  webpack: registry.npmjs.org/webpack/5.74.0_webpack-cli@4.10.0
-  webpack-cli: registry.npmjs.org/webpack-cli/4.10.0_webpack@5.74.0
+  .:
+    specifiers:
+      clean-webpack-plugin: ^4.0.0
+      file-loader: ^6.2.0
+      html-webpack-plugin: ^5.5.0
+      raw-loader: ^4.0.2
+      webpack: ^5.69.1
+      webpack-cli: ^4.9.2
+    devDependencies:
+      clean-webpack-plugin: registry.npmjs.org/clean-webpack-plugin/4.0.0_webpack@5.74.0
+      file-loader: registry.npmjs.org/file-loader/6.2.0_webpack@5.74.0
+      html-webpack-plugin: registry.npmjs.org/html-webpack-plugin/5.5.0_webpack@5.74.0
+      raw-loader: registry.npmjs.org/raw-loader/4.0.2_webpack@5.74.0
+      webpack: registry.npmjs.org/webpack/5.74.0_webpack-cli@4.10.0
+      webpack-cli: registry.npmjs.org/webpack-cli/4.10.0_webpack@5.74.0
+
+  packages/bundle-for-copy-or-reference-in-commonjs-and-esm:
+    specifiers: {}
+
+  packages/example-project-1:
+    specifiers:
+      '@gogoend-demo/hello-world-plugin': 'workspace:'
+    devDependencies:
+      '@gogoend-demo/hello-world-plugin': link:../hello-world-plugin
+
+  packages/hello-world-plugin:
+    specifiers: {}
 
 packages:
 
@@ -267,7 +281,7 @@ packages:
       '@xtuc/long': registry.npmjs.org/@xtuc/long/4.2.2
     dev: true
 
-  registry.npmjs.org/@webpack-cli/configtest/1.2.0_ed7de2690da194b35567e1e94055cb2c:
+  registry.npmjs.org/@webpack-cli/configtest/1.2.0_5v66e2inugklgvlh4huuavolfq:
     resolution: {integrity: sha512-4FB8Tj6xyVkyqjj1OaTqCjXYULB9FMkqQ8yGrZjRDrYh0nOE+7Lhs45WioWQQMV+ceFlE368Ukhe6xdvJM9Egg==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@webpack-cli/configtest/-/configtest-1.2.0.tgz}
     id: registry.npmjs.org/@webpack-cli/configtest/1.2.0
     name: '@webpack-cli/configtest'
@@ -1540,7 +1554,7 @@ packages:
         optional: true
     dependencies:
       '@discoveryjs/json-ext': registry.npmjs.org/@discoveryjs/json-ext/0.5.7
-      '@webpack-cli/configtest': registry.npmjs.org/@webpack-cli/configtest/1.2.0_ed7de2690da194b35567e1e94055cb2c
+      '@webpack-cli/configtest': registry.npmjs.org/@webpack-cli/configtest/1.2.0_5v66e2inugklgvlh4huuavolfq
       '@webpack-cli/info': registry.npmjs.org/@webpack-cli/info/1.5.0_webpack-cli@4.10.0
       '@webpack-cli/serve': registry.npmjs.org/@webpack-cli/serve/1.7.0_webpack-cli@4.10.0
       colorette: registry.npmjs.org/colorette/2.0.19
