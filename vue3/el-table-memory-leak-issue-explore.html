@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- 无内存泄露 -->
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/element-plus@2.2.17/dist/index.css"/>
+    <script src="//cdn.jsdelivr.net/npm/vue@3.2.39/dist/vue.global.prod.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/element-plus@2.2.17"></script> -->
+    <!-- 有内存泄露 -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/element-plus@1.0.2-beta.70/lib/theme-chalk/index.css"/>
+    <script src="//cdn.jsdelivr.net/npm/vue@3.0.5/dist/vue.global.prod.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/element-plus@1.0.2-beta.70/lib/index.full.js"></script>
+  </head>
+  <body>
+    <p>
+      相关链接：
+      <a target="_blank" href="https://github.com/vuejs/core/issues/3100">https://github.com/vuejs/core/issues/3100</a><br />
+      <a target="_blank" href="https://github.com/vuejs/core/pull/3106">https://github.com/vuejs/core/pull/3106</a><br />
+      <a target="_blank" href="https://github.com/vuejs/core/blame/a6e5f82d8ea5fe55432d0277e88300045eca4237/packages/runtime-core/src/componentRenderUtils.ts#L231">https://github.com/vuejs/core/blame/a6e5f82d8ea5fe55432d0277e88300045eca4237/packages/runtime-core/src/componentRenderUtils.ts#L231</a>
+    </p>
+
+    <div id="app">
+      <label><input type="checkbox" v-model="mountRootViewFlag" />挂载页面</label>
+      <div v-if="mountRootViewFlag">
+        <label><input type="checkbox" v-model="mountSubViewFlag" />挂载页面</label>
+        <label><button @click="count++">{{ count }}</button></label>
+        <sub-view-component v-if="mountSubViewFlag">
+        </sub-view-component>
+      </div>
+    </div>
+
+    <script>
+      const TableComponent = Vue.defineComponent({
+        template: `
+        <button @click="doIt">do it</button>
+        <el-table :data="tableData" style="width: 100%">
+          <el-table-column prop="date" label="Date" width="180" />
+          <el-table-column prop="name" label="Name" width="180" />
+          <el-table-column label="Address">
+            <template #default="{row}">{{row.address}}</template>
+          </el-table-column>
+        </el-table>
+        `,
+        setup() {
+          const { ref, onBeforeUnmount } = Vue;
+          const tableData = ref([
+            {
+              date: "2016-05-03",
+              name: "Tom",
+              address: '1',
+            },{
+              date: '2022-09-23',
+              name: 'gogoend',
+              address: 'z'.repeat(5000000)
+            }
+          ]);
+          const doIt = () => {
+            // tableData.value.push()
+          }
+
+          return {
+            tableData,
+            doIt
+          };
+        },
+      });
+
+      const OtherComponent = Vue.defineComponent({
+        template: `
+          <div>{{ msg }}</div>
+        `,
+        setup() {
+          const { ref } = Vue;
+          const msg = ref('hello');
+
+          return {
+            msg
+          }
+        }
+      })
+
+      const SubViewComponent = Vue.defineComponent({
+        components: {
+          TableComponent,
+          OtherComponent
+        },
+        template: `
+        <div>
+          <label><input type="checkbox" v-model="mountTableFlag" />挂载表格</label>
+          <label><input type="checkbox" v-model="mountOtherFlag" />挂载其它</label>
+          <button @click="() => {void tableData}">{{ new Date }}</button>
+        </div>
+        <table-component v-if="mountTableFlag"></table-component>
+        <other-component v-if="mountOtherFlag"></other-component>
+      `,
+        setup() {
+          const { ref } = Vue;
+          const mountTableFlag = ref(false);
+          const mountOtherFlag = ref(false);
+          return {
+            mountTableFlag,
+            mountOtherFlag
+          }
+        }
+      })
+
+      const RootComponent = Vue.defineComponent({
+        components: {
+          SubViewComponent
+        },
+        setup() {
+          const { ref } = Vue;
+          const mountRootViewFlag = ref(false);
+          const mountSubViewFlag = ref(false);
+          const count = ref(0)
+          return {
+            mountRootViewFlag,
+            mountSubViewFlag,
+            count
+          }
+        }
+      })
+
+      const app = Vue.createApp(RootComponent);
+      app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+  </body>
+</html>
