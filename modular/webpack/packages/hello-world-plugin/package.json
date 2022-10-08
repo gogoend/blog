@@ -1,0 +1,12 @@
+{
+  "name": "@gogoend-demo/hello-world-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  },
+  "devDependencies": {
+  },
+  "author": "gogoend",
+  "license": "ISC"
+}

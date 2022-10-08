@@ -8,8 +8,9 @@ export const people = [{
     age: 28
 }]
 
+import * as m2 from './m2.mjs'
 import { limitAgeMultiply10 } from './m2.mjs'
-console.log(limitAgeMultiply10)
+console.log(m2, limitAgeMultiply10)
 
 export let limitAge = 29
 export const addLimitAge = () => { limitAge++ }
