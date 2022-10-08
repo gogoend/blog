@@ -1,11 +1,9 @@
 {
-  "name": "example-project-1",
+  "name": "@gogoend-demo/webpack",
+  "private": true,
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "webpack --config ./webpack.conf.js"
-  },
+  "scripts": {},
   "devDependencies": {
     "clean-webpack-plugin": "^4.0.0",
     "file-loader": "^6.2.0",

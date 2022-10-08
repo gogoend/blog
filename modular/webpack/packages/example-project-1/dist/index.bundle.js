@@ -1,7 +1,7 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 523:
+/***/ 728:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -25,7 +25,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const { logHello } = __webpack_require__(188)
 
-const snapshotImg = __webpack_require__(523)
+const snapshotImg = __webpack_require__(728)
 const examplePackageJson = __webpack_require__(497)
 
 const someNumber = 666

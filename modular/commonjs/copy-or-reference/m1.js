@@ -1,4 +1,3 @@
-// console.log(arguments);
 const people = [{
     name: 'Bob',
     phone: '10086',
@@ -9,13 +8,16 @@ const people = [{
     age: 28
 }]
 
-let limitAge = [29]
-const addLimitAge = () => {limitAge[0]++}
+let limitAgeMultiply10 = require('./m2.js').limitAgeMultiply10
+console.log(limitAgeMultiply10)
+
+let limitAge = 29
+const addLimitAge = () => { limitAge++ }
 
 module.exports = {
+    ...module.exports,
     people,
     limitAge,
     addLimitAge
 }
-const m2 = require('./m2.js')
-console.log(m2)
+
