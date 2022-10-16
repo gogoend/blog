@@ -66,7 +66,7 @@ class MyPromise {
                 this.result = result;
                 // resolveResult(result)
                 this.fulfillCbs.forEach((cb) => {
-                    cb(result);
+                    cb();
                 });
             }
         };
@@ -75,7 +75,7 @@ class MyPromise {
                 this.status = "REJECTED";
                 this.reason = reason;
                 this.rejectCbs.forEach((cb) => {
-                    cb(reason);
+                    cb();
                 });
             }
         };
