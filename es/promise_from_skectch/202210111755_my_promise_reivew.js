@@ -5,7 +5,7 @@ const resolvePromiseChain = (
     reject
 ) => {
     if (currentPromise === currentResult) {
-        reject(new Error());
+        reject(new TypeError());
     }
     if (
         (currentResult !== null && typeof currentResult === "object") ||
@@ -34,9 +34,17 @@ const resolvePromiseChain = (
                         }
                     );
                 } catch (error) {
+                    if (called) {
+                        return;
+                    }
+                    called = true;
                     reject(error);
                 }
             } else {
+                if (called) {
+                    return;
+                }
+                called = true;
                 resolve(currentResult);
             }
         } catch (error) {
@@ -82,7 +90,7 @@ class MyPromise {
     rejectCbs = [];
     then(onFulfilled, onRejected) {
         onFulfilled =
-          typeof onFulFilled === "function"
+          typeof onFulfilled === "function"
             ? onFulfilled
             : function (v) {
                 return v;
@@ -115,7 +123,7 @@ class MyPromise {
                         }
                     }, 0)
                 );
-            }
+            } else
             if (this.status === "FULFILLED") {
                 setTimeout(() => {
                     try {
@@ -125,7 +133,7 @@ class MyPromise {
                         reject(reason);
                     }
                 }, 0);
-            }
+            } else
 
             if (this.status === "REJECTED") {
                 setTimeout(() => {
