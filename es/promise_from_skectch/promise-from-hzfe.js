@@ -11,7 +11,7 @@ function Promise(executor) {
         self.state = "fulfilled";
         self.data = value;
         for (let i = 0; i < self.onFulfilledCallback.length; i++) {
-          self.onFulfilledCallback[i](value);
+          self.onFulfilledCallback[i]();
         }
       }
     });
@@ -23,7 +23,7 @@ function Promise(executor) {
         self.state = "rejected";
         self.data = reason;
         for (let i = 0; i < self.onRejectedCallback.length; i++) {
-          self.onRejectedCallback[i](reason);
+          self.onRejectedCallback[i]();
         }
       }
     });
@@ -71,7 +71,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
         }
       });
     } else if (self.state === "pending") {
-      self.onFulfilledCallback.push(function (promise1Value) {
+      self.onFulfilledCallback.push(function () {
         if (typeof onFulfilled === "function") {
           try {
             const x = onFulfilled(self.data);
@@ -81,11 +81,11 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
             reject(e);
           }
         } else {
-          resolve(promise1Value);
+          resolve(self.data);
         }
       });
 
-      self.onRejectedCallback.push(function (promise1Reason) {
+      self.onRejectedCallback.push(function () {
         if (typeof onRejected === "function") {
           try {
             const x = onRejected(self.data);
@@ -95,7 +95,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
             reject(e);
           }
         } else {
-          reject(promise1Reason);
+          reject(self.data);
         }
       });
     }
