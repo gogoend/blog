@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      /* 填写样式 */
+      .hide {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 填写标签 -->
+    <div id="jsCountdown">
+      <span>01天</span>
+      <span>02:</span>
+      <span>03:</span>
+      <span>04</span>
+    </div>
+    <script type="text/javascript">
+      // 填写JavaScript
+      function second(initialSecond) {
+        let second = initialSecond % 60
+        let min = Math.floor(initialSecond / 60) % 60
+        let hour = Math.floor(initialSecond / 60 / 60) % 24
+        let day = Math.floor(initialSecond / 60 / 60 / 24)
+
+        return {
+          day,
+          hour,
+          min,
+          second
+        }
+      }
+
+      function render(data) {
+        const jsCountdownEl = document.getElementById('jsCountdown')
+        let {
+          day,
+          hour,
+          min,
+          second
+        } = data
+
+        let stringToRender = ''
+        if (day !== 0) {
+          stringToRender += `<span>${ day }天</span>`
+        }
+
+        day = (''+ day).padStart(2, 0)
+        hour = (''+hour).padStart(2, 0)
+        min = ('' +min).padStart(2, 0)
+        second = ('' +second).padStart(2, 0)
+
+        stringToRender += `
+          <span>${ hour }:</span>
+          <span>${ min }:</span>
+          <span>${ second }</span>
+        `
+
+        jsCountdownEl.innerHTML = stringToRender
+      }
+
+      // 调用
+      let remainSecond = 500
+      const countdown = function() {
+        if (remainSecond > 0) {
+          remainSecond--
+          render(second(remainSecond))
+          setTimeout(countdown, 1)
+        }
+      }
+      countdown()
+
+    </script>
+  </body>
+</html>
