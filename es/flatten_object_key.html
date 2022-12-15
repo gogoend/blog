@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>将嵌套对象扁平化，key使用keyPath拼接</title>
+  </head>
+  <body>
+    <script>
+      const a = {
+        a: {
+          b: "hello ",
+          c: {
+            d: "world",
+          },
+        },
+        e: "hello world",
+      };
+
+      flattenKeyOfObject(a);
+
+      function flattenKeyOfObject(o) {
+        const newO = {};
+
+        function innerRecursion(o, keyPath) {
+          Object.entries(o).forEach(([k, v]) => {
+            if (v && typeof v === "object") {
+              innerRecursion(v);
+            } else {
+              newO[k] = v;
+            }
+          });
+        }
+
+        innerRecursion(o);
+
+        return newO;
+      }
+
+    </script>
+  </body>
+</html>
