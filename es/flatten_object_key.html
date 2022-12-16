@@ -18,7 +18,7 @@
         e: "hello world",
       };
 
-      flattenKeyOfObject(a);
+      console.log(a, flattenKeyOfObject(a));
 
       function flattenKeyOfObject(o) {
         const newO = {};
@@ -26,9 +26,9 @@
         function innerRecursion(o, keyPath) {
           Object.entries(o).forEach(([k, v]) => {
             if (v && typeof v === "object") {
-              innerRecursion(v);
+              innerRecursion(v, keyPath ? `${keyPath}.${k}`: k);
             } else {
-              newO[k] = v;
+              newO[keyPath ? `${keyPath}.${k}`: k] = v;
             }
           });
         }
