@@ -70,7 +70,21 @@ class IndexedDBGate {
             }
         )
     }
-    async replaceItem(key, value) {
+    async updateItem(key, mutatorFn) {
+        const target = await this.getItem(key)
+        let result = await mutatorFn(target)
+
+        if (result === undefined) {
+            if (
+                !target || !['function', 'object'].includes(typeof target)
+            ) {
+                console.warn(
+                    '正在修改的条目不是一个引用类型的数据，如需完成更改，请在mutator中返回最终值'
+                )
+            }
+            result = target
+        }
+
         return new Promise(
             (resolve, reject) => {
                 const request = this.db.transaction(
@@ -80,7 +94,7 @@ class IndexedDBGate {
                     .objectStore(
                         this.objectStoreName
                     )
-                    .put(value, key)
+                    .put(result, key)
 
                 request.onsuccess = () => resolve(request.result)
                 request.onerror = reject
