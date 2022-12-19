@@ -53,4 +53,38 @@ class IndexedDBGate {
             request.onerror = reject;
         });
     }
+    async getItemList() {
+        return new Promise(
+            (resolve, reject) => {
+                const request = this.db.transaction(
+                    this.objectStoreName,
+                    'readonly'
+                )
+                    .objectStore(
+                        this.objectStoreName
+                    )
+                    .getAll()
+
+                request.onsuccess = () => resolve(request.result)
+                request.onerror = reject
+            }
+        )
+    }
+    async replaceItem(key, value) {
+        return new Promise(
+            (resolve, reject) => {
+                const request = this.db.transaction(
+                    this.objectStoreName,
+                    'readwrite'
+                )
+                    .objectStore(
+                        this.objectStoreName
+                    )
+                    .put(value, key)
+
+                request.onsuccess = () => resolve(request.result)
+                request.onerror = reject
+            }
+        )
+    }
 }
