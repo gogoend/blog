@@ -38,8 +38,12 @@ class IndexedDBGate {
             mode === 'readwrite'
         ) {
             this._activeTransition.abort()
-            throw new Error(
-                '[indexed-db-gate] 事务权限有误 - 当前事务为只读权限，但请求的操作需要读写权限'
+            
+            await new Promise((resolve) => {
+                this._activeTransition.addEventListener('abort', resolve)
+            })
+            console.warn(
+                '[indexed-db-gate] 事务权限有误 - 当前事务为只读权限，但请求的操作需要读写权限；正在开启具有读写权限的新事务。'
             )
         }
         if (
