@@ -4,6 +4,7 @@ class IndexedDBGate {
         this.objectStoreName = objectStoreName;
         this.init();
     }
+
     async init() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName);
@@ -25,71 +26,85 @@ class IndexedDBGate {
             };
         });
     }
-    async setItem(key, value) {
-        return new Promise((resolve, reject) => {
-            const request = this.db.transaction(this.objectStoreName, 'readwrite').objectStore(this.objectStoreName).put(value, key);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = reject;
-        });
-    }
-    async getItem(key) {
-        return new Promise((resolve, reject) => {
-            const request = this.db.transaction(this.objectStoreName, 'readwrite').objectStore(this.objectStoreName).get(key);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = reject;
-        });
-    }
-    async removeItem(key) {
-        return new Promise((resolve, reject) => {
-            const request = this.db.transaction(this.objectStoreName, 'readwrite').objectStore(this.objectStoreName).delete(key);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = reject;
-        });
-    }
-    async clear() {
-        return new Promise((resolve, reject) => {
-            const request = this.db.transaction(this.objectStoreName, 'readwrite').objectStore(this.objectStoreName).clear();
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = reject;
-        });
-    }
-    async getItemList() {
-        return new Promise(
-            (resolve, reject) => {
-                const request = this.db.transaction(
-                    this.objectStoreName,
-                    'readonly'
-                )
-                    .objectStore(
-                        this.objectStoreName
-                    )
-                    .getAll()
 
-                request.onsuccess = () => resolve(request.result)
-                request.onerror = reject
+    async _transaction (
+        mode,
+        callback
+    ) {
+        const transaction = this.db.transaction(this.objectStoreName, mode)
+        const objectStore = transaction.objectStore(this.objectStoreName)
+        const request = await callback({
+            transaction,
+            objectStore
+        })
+
+        return new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = reject;
+        })
+    }
+
+    setItem(key, value) {
+        return this._transaction(
+            'readwrite',
+            ({ objectStore }) => {
+                return objectStore.put(value, key)
             }
         )
     }
-    async updateItem(key, mutatorFn) {
-        const target = await this.getItem(key)
-        const updatePayload = {
-            ref: target
-        }
-        await mutatorFn(updatePayload)
 
-        return new Promise(
-            (resolve, reject) => {
-                const request = this.db.transaction(
-                    this.objectStoreName,
-                    'readwrite'
-                )
-                    .objectStore(
-                        this.objectStoreName
-                    )
-                    .put(updatePayload.ref, key)
+    getItem(key) {
+        return this._transaction(
+            'readonly',
+            ({ objectStore }) => {
+                return objectStore.get(key)
+            }
+        )
+    }
 
-                request.onsuccess = () => resolve(request.result)
-                request.onerror = reject
+    removeItem(key) {
+        return this._transaction(
+            'readwrite',
+            ({ objectStore }) => {
+                return objectStore.delete(key)
+            }
+        )
+    }
+
+    clear() {
+        return this._transaction(
+            'readwrite',
+            ({ objectStore }) => {
+                return objectStore.clear()
+            }
+        )
+    }
+
+    getItemList() {
+        return this._transaction(
+            'readwrite',
+            ({ objectStore }) => {
+                return objectStore.getAll()
+            }
+        )
+    }
+
+    updateItem(key, mutatorFn) {
+        return this._transaction(
+            'readwrite',
+            ({ objectStore }) => {
+                // TODO: 使用嵌套事务重构
+                return new Promise((resolve, reject) => {
+                    const request = objectStore.get(key)
+                    request.onsuccess = () => {
+                        const updatePayload = {
+                            ref: request.result
+                        }
+                        mutatorFn(updatePayload)
+                        resolve(objectStore.put(updatePayload.ref, key))
+                    }
+                    request.onerror = reject
+                })
             }
         )
     }
