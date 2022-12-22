@@ -27,14 +27,40 @@ class IndexedDBGate {
         });
     }
 
+    _activeTransition = null
     async _transaction (
         mode,
         callback
     ) {
-        const transaction = this.db.transaction(this.objectStoreName, mode)
-        const objectStore = transaction.objectStore(this.objectStoreName)
+        if (
+            this._activeTransition && this._activeTransition.mode === 'readonly'
+            && 
+            mode === 'readwrite'
+        ) {
+            this._activeTransition.abort()
+            throw new Error(
+                '[indexed-db-gate] 事务权限有误 - 当前事务为只读权限，但请求的操作需要读写权限'
+            )
+        }
+        if (
+            !this._activeTransition
+        ) {
+            this._activeTransition = this.db.transaction(this.objectStoreName, mode)
+            ;[
+                'abort',
+                'error',
+                'complete'
+            ].forEach(key => {
+                this._activeTransition.addEventListener(
+                    key,
+                    () => {
+                        this._activeTransition = null
+                    }
+                )
+            })
+        }
+        const objectStore = this._activeTransition.objectStore(this.objectStoreName)
         const request = await callback({
-            transaction,
             objectStore
         })
 
@@ -93,17 +119,12 @@ class IndexedDBGate {
         return this._transaction(
             'readwrite',
             ({ objectStore }) => {
-                // TODO: 使用嵌套事务重构
-                return new Promise((resolve, reject) => {
-                    const request = objectStore.get(key)
-                    request.onsuccess = () => {
-                        const updatePayload = {
-                            ref: request.result
-                        }
-                        mutatorFn(updatePayload)
-                        resolve(objectStore.put(updatePayload.ref, key))
+                return this.getItem(key).then((result) => {
+                    const updatePayload = {
+                        ref: result
                     }
-                    request.onerror = reject
+                    mutatorFn(updatePayload)
+                    return objectStore.put(updatePayload.ref, key)
                 })
             }
         )
