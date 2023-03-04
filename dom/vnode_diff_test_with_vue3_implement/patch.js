@@ -1,4 +1,7 @@
-import vnode from "./vnode.js";
+import vnode from "../vnode_diff_test_with_snabbdom_implement/vnode.js";
+import {
+  getSequence
+} from './utils.js'
 
 function isVnode(vnode) {
   return vnode.type !== undefined;
@@ -80,145 +83,219 @@ function createKeyIdxMap (children) {
   return map
 }
 
-function updateChildren (
+function unmount () {
+  // TODO:
+}
+function move () {
+  // TODO:
+}
+
+function updateChildren(
   parentElm,
   oChildren,
   nChildren
-  ) {
-    let oStartIdx = 0, nStartIdx = 0
+) {
+  const c1 = oChildren
+  const c2 = nChildren
+  const l1 = c1.length
+  const l2 = c2.length
 
-    let oStartVnode = oChildren[0], nStartVnode = nChildren[0]
+  let i = 0 
+  let e1 = c1.length - 1 // prev ending index
+  let e2 = l2 - 1 // next ending index
 
-    let oEndIdx = oChildren.length - 1, nEndIdx = nChildren.length - 1
-    let oEndVnode = oChildren[oEndIdx], nEndVnode = nChildren[nEndIdx]
+  // 1. sync from start
+  // (a b) c
+  // (a b) d e
+  while (i <= e1 && i <= e2) {
+    const n1 = c1[i]
+    const n2 = c2[i]
+    // const n2 = (c2[i] = optimized
+    //   ? cloneIfMounted(c2[i] as VNode)
+    //   : normalizeVNode(c2[i]))
+    if (sameVnode(n1, n2)) {
+      patchVnode(
+        n1,
+        n2
+      )
+    } else {
+      break
+    }
+    i++
+  }
 
-    // 旧节点中key-idx对应map声明
-    // 这里不需要立即用到，可能之后也不会用到，因此仅在用到的时候再赋值
-    let oKeyIdxMap
+  // 2. sync from end
+  // a (b c)
+  // d e (b c)
+  while (i <= e1 && i <= e2) {
+    const n1 = c1[e1]
+    const n2 = c2[e2]
+    // const n2 = (c2[e2] = optimized
+    //   ? cloneIfMounted(c2[e2] as VNode)
+    //   : normalizeVNode(c2[e2]))
+    if (sameVnode(n1, n2)) {
+      patchVnode(
+        n1,
+        n2
+      )
+    } else {
+      break
+    }
+    e1--
+    e2--
+  }
 
-    while(oStartIdx <= oEndIdx && nStartIdx <= nEndIdx) {
-      //
-      if(oStartVnode == null) {
-        oStartVnode = oChildren[++oStartIdx]
-      }
-      //
-      else if (oEndVnode == null){
-        oEndVnode = oChildren[--oEndIdx]
-      }
-      //
-      else if (nStartVnode == null) {
-        nStartVnode = nChildren[++nStartIdx]
-      }
-      //
-      else if (nEndVnode == null) {
-        nEndVnode = nChildren[--nEndIdx]
-      }
-      // 比较、排序原有节点
-      // 新节点起点对比旧节点起点
-      else if (sameVnode(oStartVnode, nStartVnode)) {
-        patchVnode(oStartVnode, nStartVnode)
-        oStartVnode = oChildren[++oStartIdx]
-        nStartVnode = nChildren[++nStartIdx]
-      }
-      // 新节点终点对比旧节点终点
-      else if (sameVnode(oEndVnode, nEndVnode)) {
-        patchVnode(oEndVnode, nEndVnode)
-        oEndVnode = oChildren[--oEndIdx]
-        nEndVnode = nChildren[--nEndIdx]
-      }
-      // 新节点终点对比旧节点起点
-      else if (sameVnode(oStartVnode, nEndVnode)) {
-        patchVnode(oStartVnode, nEndVnode)
-        parentElm.insertBefore(
-          oStartVnode.elm,
-          oEndVnode.elm.nextSibling
+  // 3. common sequence + mount
+  // (a b)
+  // (a b) c
+  // i = 2, e1 = 1, e2 = 2
+  // (a b)
+  // c (a b)
+  // i = 0, e1 = -1, e2 = 0
+  if (i > e1) {
+    if (i <= e2) {
+      const nextPos = e2 + 1
+      while (i <= e2) {
+        patchVnode(
+          null,
+          c2[i],
+          // (c2[i] = optimized
+          //   ? cloneIfMounted(c2[i] as VNode)
+          //   : normalizeVNode(c2[i])),
         )
-        oStartVnode = oChildren[++oStartIdx]
-        nEndVnode = nChildren[--nEndIdx]
+        i++
       }
-      // 新节点起点对比旧节点终点
-      else if (sameVnode(oEndVnode, nStartVnode)) {
-        patchVnode(oEndVnode, nStartVnode)
-        parentElm.insertBefore(
-          oEndVnode.elm,
-          oStartVnode.elm
-        )
-        oEndVnode = oChildren[--oEndIdx]
-        nStartVnode = nChildren[++nStartIdx]
-      }
-      // 处理以上比较之外的其他情况
-      // 看起来是要创建新元素了，不过在创建之前还是先看一看原先的元素能否被复用，以节省创建新元素的资源
-      // 通过key来尝试复用
-      else {
-        if (!oKeyIdxMap) {
-          // oKeyIdxMap仅在上方进行了声明，用到的时候才进行创建
-          oKeyIdxMap = createKeyIdxMap(oChildren)
+    }
+  }
+
+  // 4. common sequence + unmount
+  // (a b) c
+  // (a b)
+  // i = 2, e1 = 2, e2 = 1
+  // a (b c)
+  // (b c)
+  // i = 0, e1 = 0, e2 = -1
+  else if (i > e2) {
+    while (i <= e1) {
+      unmount(c1[i], parentElm)
+      i++
+    }
+  }
+
+  // 5. unknown sequence
+  // [i ... e1 + 1]: a b [c d e] f g
+  // [i ... e2 + 1]: a b [e d c h] f g
+  // i = 2, e1 = 4, e2 = 5
+  else {
+    const s1 = i // prev starting index
+    const s2 = i // next starting index
+
+    // 5.1 build key:index map for newChildren
+    const keyToNewIndexMap = new Map()
+    for (i = s2; i <= e2; i++) {
+      // const nextChild = (c2[i] = optimized
+      //   ? cloneIfMounted(c2[i] as VNode)
+      //   : normalizeVNode(c2[i]))
+      const nextChild = c2[i]
+      if (nextChild.key != null) {
+        if (
+          // __DEV__ &&
+          keyToNewIndexMap.has(nextChild.key)
+        ) {
+          console.warn(
+            `Duplicate keys found during update:`,
+            JSON.stringify(nextChild.key),
+            `Make sure keys are unique.`
+          )
         }
-        const idxInOChildren = oKeyIdxMap[nStartVnode.key]
-        if (isUndef(idxInOChildren)) {
-          // 这里是确实找不到对应关系的情况
-          parentElm.insertBefore(
-            createElm(nStartVnode),
-            oStartVnode.elm
-          );
-        } else {
-          // 这里是新旧节点具有对应关系的情况
-          // 这里找到了对应节点
-          const nodeToMove = oChildren[idxInOChildren]
-          // 对于是不是真的可以复用，还是需要看一下两个节点的类型（type）是不是相同的
-          if (
-            nStartVnode.type === nodeToMove.type
-          ) {
-            // 类型相同，可复用旧节点的情况
-            // 进行patch
-            patchVnode(nodeToMove, nStartVnode)
-            oChildren[idxInOChildren] = undefined // 此处置为undefined，移出待对比队列
+        keyToNewIndexMap.set(nextChild.key, i)
+      }
+    }
 
-            parentElm.insertBefore(
-              nodeToMove.elm,
-              oStartVnode.elm
-            )
-          } else {
-            // 类型不同，不能复用，依然只能新建节点
-            parentElm.insertBefore(
-              createElm(nStartVnode),
-              oStartVnode.elm
-            );
+    // 5.2 loop through old children left to be patched and try to patch
+    // matching nodes & remove nodes that are no longer present
+    let j
+    let patched = 0
+    const toBePatched = e2 - s2 + 1
+    let moved = false
+    // used to track whether any node has moved
+    let maxNewIndexSoFar = 0
+    // works as Map<newIndex, oldIndex>
+    // Note that oldIndex is offset by +1
+    // and oldIndex = 0 is a special value indicating the new node has
+    // no corresponding old node.
+    // used for determining longest stable subsequence
+    const newIndexToOldIndexMap = new Array(toBePatched)
+    for (i = 0; i < toBePatched; i++) newIndexToOldIndexMap[i] = 0
+
+    for (i = s1; i <= e1; i++) {
+      const prevChild = c1[i]
+      if (patched >= toBePatched) {
+        // all new children have been patched so this can only be a removal
+        unmount(prevChild, parentElm)
+        continue
+      }
+      let newIndex
+      if (prevChild.key != null) {
+        newIndex = keyToNewIndexMap.get(prevChild.key)
+      } else {
+        // key-less node, try to locate a key-less node of the same type
+        for (j = s2; j <= e2; j++) {
+          if (
+            newIndexToOldIndexMap[j - s2] === 0 &&
+            sameVnode(prevChild, c2[j])
+          ) {
+            newIndex = j
+            break
           }
         }
-        nStartVnode = nChildren[++nStartIdx];
+      }
+      if (newIndex === undefined) {
+        unmount(prevChild, parentElm)
+      } else {
+        newIndexToOldIndexMap[newIndex - s2] = i + 1
+        if (newIndex >= maxNewIndexSoFar) {
+          maxNewIndexSoFar = newIndex
+        } else {
+          moved = true
+        }
+        patchVnode(
+          prevChild,
+          c2[newIndex]
+        )
+        patched++
       }
     }
-    // 以上循环结束后，需要进行其它操作
-    if (oStartIdx <= oEndIdx || nStartIdx <= nEndIdx){
-      if (oStartIdx > oEndIdx) {
-        // 此时表示旧vnode均已遍历结束，新vnode尚未遍历完
-        // 也就是说新vnode数量多于旧vnode，需要创建元素
-        // -----
-        // 根据索引，找到在哪里插入元素
-        let before = nChildren[nEndIdx + 1] == null ? null : nChildren[nEndIdx+1].elm // 此处before可以为null；如果为null则表示插入到父节点末端
-        addVnodes(
-          parentElm,
-          before,
-          nChildren,
-          nStartIdx,
-          nEndIdx
+
+    // 5.3 move and mount
+    // generate longest stable subsequence only when nodes have moved
+    const increasingNewIndexSequence = moved
+      ? getSequence(newIndexToOldIndexMap)
+      : EMPTY_ARR
+    j = increasingNewIndexSequence.length - 1
+    // looping backwards so that we can use last patched node as anchor
+    for (i = toBePatched - 1; i >= 0; i--) {
+      const nextIndex = s2 + i
+      const nextChild = c2[nextIndex]
+      if (newIndexToOldIndexMap[i] === 0) {
+        // mount new
+        patchVnode(
+          null,
+          nextChild
         )
-      }
-      else if (nStartIdx > nEndIdx)
-      {
-        // 此时表示新vnode均已遍历结束，旧vnode尚未遍历完
-        // 也就是说未遍历过的节点是多余的节点，需要删除元素
-        // -----
-        // 根据索引，找到要删除的元素的范围
-        removeVnodes(
-          parentElm,
-          oChildren,
-          oStartIdx,
-          oEndIdx
-        )
+      } else if (moved) {
+        // move if:
+        // There is no stable subsequence (e.g. a reverse)
+        // OR current node is not among the stable sequence
+        if (j < 0 || i !== increasingNewIndexSequence[j]) {
+          // move(nextChild, container, anchor, MoveType.REORDER)
+          move(nextChild, parentElm)
+        } else {
+          j--
+        }
       }
     }
+  }
 }
 
 function addVnodes (
@@ -240,6 +317,10 @@ function patchVnode (
   oVnode,
   nVnode
 ) {
+  if (oVnode === null) {
+    // TODO: 创建新节点
+    return
+  }
   const elm = nVnode.elm = oVnode.elm
 
   const oChildren = oVnode.children
