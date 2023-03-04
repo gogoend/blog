@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vdom测试</title>
+    <meta name="description" content="https://www.bilibili.com/video/BV1dV411a7mT" />
+</head>
+
+<body>
+    <div id="app">
+    </div>
+    <script type="module">
+        import h from './h.js'
+        import patch from './patch.js'
+        let theVNode = h('section', { class: 'list' },
+            [
+                h('h1', { class: "item", key: 0 }, 'a'),
+                h('input', { class: "item", key: -1 }),
+                h('h3', { class: "item" }, 'b'),
+                h('div', { class: "item", key: 3 }, 'c'),
+                h('h5', { class: "item" }, 'd'),
+                h('div', { class: "item", key: 1 }, 'e')
+            ]
+        )
+        let vnode1 = theVNode
+        console.log(vnode1)
+        let vnode2 = h('section', { class: 'list' },
+            [
+                h('div', { class: "item" }, '1'),
+                h('article', { class: "item" }, '2'),
+                h('div', { class: "item" }, '3'),
+                h('div', { class: "item", key: 1 }, '4'),
+                h('input', { class: "item", key: 2 }),
+                h('button', { class: "item" }, '5'),
+                h('h1', { class: "item", key: 0 }, '6'),
+                h('div', { class: "item", key: 3 }, '7'),
+            ]
+        )
+
+        const app = document.getElementById('app')
+        patch(app, vnode1)
+
+        // TODO: render
+        // let el = render(theVNode, app)
+
+        setTimeout(() => {
+            // 给元素打补丁，更新视图
+            patch(vnode1, vnode2)
+        }, 4000)
+
+    </script>
+</body>
+
+</html>
