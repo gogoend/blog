@@ -16,26 +16,28 @@
         import patch from './patch.js'
         let theVNode = h('section', { class: 'list' },
             [
-                h('h1', { class: "item", key: 0 }, 'a'),
-                h('input', { class: "item", key: -1 }),
-                h('h3', { class: "item" }, 'b'),
-                h('div', { class: "item", key: 3 }, 'c'),
-                h('h5', { class: "item" }, 'd'),
-                h('div', { class: "item", key: 1 }, 'e')
+                h('div', { class: "item", key: 0 }, 'a'),
+                h('div', { class: "item", key: 1 }, 'b'),
+                h('div', { class: "item", key: 2 }, 'c'),
+                h('div', { class: "item", key: 3 }, 'd'),
+                h('div', { class: "item", key: 4 }, 'e'),
+                h('div', { class: "item", key: 5 }, 'f'),
+                h('div', { class: "item", key: 6 }, 'g')
             ]
         )
         let vnode1 = theVNode
         console.log(vnode1)
         let vnode2 = h('section', { class: 'list' },
             [
-                h('div', { class: "item" }, '1'),
-                h('article', { class: "item" }, '2'),
-                h('div', { class: "item" }, '3'),
-                h('div', { class: "item", key: 1 }, '4'),
-                h('input', { class: "item", key: 2 }),
-                h('button', { class: "item" }, '5'),
-                h('h1', { class: "item", key: 0 }, '6'),
-                h('div', { class: "item", key: 3 }, '7'),
+                h('div', { class: "item", key: 0 }, 'a'),
+                h('div', { class: "item", key: 1 }, 'b'),
+                h('div', { class: "item", key: 4 }, 'e'),
+                h('div', { class: "item", key: 3 }, 'd'),
+                h('div', { class: "item", key: 7 }, 'h'),
+                h('div', { class: "item", key: 8 }, 'i'),
+                h('div', { class: "item", key: 2 }, 'c'),
+                h('div', { class: "item", key: 5 }, 'f'),
+                h('div', { class: "item", key: 6 }, 'g')
             ]
         )
 
