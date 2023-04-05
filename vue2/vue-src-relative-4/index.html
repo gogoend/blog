@@ -8,7 +8,7 @@
 </head>
 <body>
     <script type="module">
-        import { observe } from './index.js'
+        import { observe, watch } from './index.js'
         const someObject = {
             a: 1,
             b: 2,
@@ -20,6 +20,9 @@
     
         observe(someObject)
         console.log(someObject)
+        watch(() => someObject.a, () => {
+            debugger
+        })
     </script>
 </body>
 </html>
