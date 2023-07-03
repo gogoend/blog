@@ -30,9 +30,12 @@ function getChain(chainType='immediate', delayForSetTimeout=undefined) {
 function reverseChildrenOfDOM(containerEl) {
   let queue = [...containerEl.childNodes].map(el=>()=>{
       containerEl.prepend(el)
+      console.log(
+        el.offsetTop
+      )
   }
   )
-  const chain = getChain('requestAnimationFrame')
+  const chain = getChain('immediate')
   for (let f of queue) {
       chain(f)
   }
