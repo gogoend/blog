@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+      #myDiv {
+        box-shadow: 0 0 0 10000px rgba(0,0,0,0.25);
+      }
+    </style>
+  </head>
+<body>
+
+<div id="myDiv"></div>
+
+<script>
+var bodyEl = document.body
+var div = document.getElementById("myDiv");
+var isDrawing = false;
+var startX = 0;
+var startY = 0;
+
+bodyEl.addEventListener("mousedown", function(event) {
+  startX = event.clientX;
+  startY = event.clientY;
+
+  div.style.width = 0 + "px";
+  div.style.height = 0 + "px";
+
+  div.style.transform = `translate(${startX}px, ${startY}px)`
+
+  isDrawing = true;
+});
+
+document.addEventListener("mousemove", function(event) {
+  if (isDrawing) {
+    var width = event.clientX - startX;
+    var height = event.clientY - startY;
+
+    div.style.width = width + "px";
+    div.style.height = height + "px";
+  }
+});
+
+document.addEventListener("mouseup", function(event) {
+  var startX = 0;
+  var startY = 0;
+  isDrawing = false;
+});
+
+</script>
+
+</body>
+</html>
