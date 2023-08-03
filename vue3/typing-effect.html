@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 有内存泄露 -->
+    <script src="//cdn.jsdelivr.net/npm/vue@3"></script>
+  </head>
+  <body>
+    <div id="app">
+      {{ contentOnScreen }}
+    </div>
+
+    <script>
+      const { ref, readonly, onMounted } = Vue;
+      const RootComponent = Vue.defineComponent({
+        setup() {
+          const sentences = ref(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce feugiat tempor suscipit. Morbi eleifend euismod velit, ut bibendum leo consectetur ut. Curabitur consequat ullamcorper nisi, ac mattis sem volutpat non. Sed pulvinar, sem non rutrum tincidunt, sapien metus dictum nibh, a sagittis tellus diam sit amet justo. In odio velit, tristique non convallis eget, tempor vel nisi. Morbi fermentum, metus non bibendum viverra, ex lectus sagittis dui, at posuere ipsum ex eget ligula. Etiam efficitur dui in tincidunt aliquet. Nulla facilisi. Phasellus consectetur lectus id leo congue aliquet. Nullam id libero sed elit pulvinar aliquet nec eget magna. Vivamus eleifend ante nisl, nec volutpat nibh posuere vel. Duis lobortis orci congue, viverra mi ut, rutrum diam.
+
+Praesent vitae velit hendrerit, molestie est id, vestibulum nunc. Pellentesque semper metus vulputate, gravida nisi id, gravida velit. Sed convallis ipsum massa, at malesuada magna bibendum ac. Praesent non metus dui. Nulla in dignissim ante, sed egestas lacus. Maecenas facilisis molestie arcu at gravida. Mauris id tristique lacus. Sed ac libero at dui feugiat gravida. Sed quis nibh eu ipsum accumsan viverra ac sit amet nibh. In tempus risus turpis, tempor vestibulum odio semper id. Vestibulum et quam vestibulum, lacinia arcu et, tincidunt nisi. Interdum et malesuada fames ac ante ipsum primis in faucibus. In semper euismod tortor, id euismod ex ultrices sed. Morbi feugiat egestas nisi, quis tempor mi euismod sed. Aenean aliquet, felis ac finibus faucibus, ante velit gravida felis, at volutpat mi magna in nulla. Duis sollicitudin pretium dui.
+
+In iaculis fringilla vulputate. Nulla dolor turpis, tempor sed lacus ullamcorper, vehicula volutpat quam. Suspendisse ut ex quis sapien tincidunt gravida. Suspendisse potenti. In sit amet dapibus turpis. Mauris at mauris tortor. Aliquam vulputate id velit et laoreet. Quisque faucibus quis lectus eget sodales. Donec quis neque vulputate, vestibulum ligula interdum, semper erat. Etiam vehicula magna tortor, sit amet varius diam lacinia id. Aliquam efficitur ex nec fringilla ornare. In lacus purus, sollicitudin semper tincidunt quis, vehicula sollicitudin ex.
+
+Maecenas ullamcorper ultricies leo a porttitor. Integer ipsum mi, bibendum ut aliquam malesuada, tincidunt quis dui. Morbi malesuada ornare libero, id finibus urna placerat sit amet. Vestibulum at congue urna. Aenean posuere felis nec velit mollis, eu gravida ipsum euismod. Morbi sollicitudin eros mauris. Fusce vel augue ligula. Quisque lobortis, enim nec ullamcorper pharetra, nunc urna vulputate velit, ac consequat magna metus vel nisi. Proin venenatis arcu dui, et egestas odio tristique pulvinar. Aliquam faucibus nulla et erat euismod lobortis. Ut congue vulputate nulla sed lacinia. Nam dignissim pellentesque libero, at facilisis velit facilisis eu. Praesent vitae auctor odio. Nunc lacinia cursus ligula ac bibendum.
+
+Cras rutrum velit tempus, dictum turpis mollis, efficitur turpis. Ut rutrum quis tellus nec tristique. Nullam ullamcorper quam in arcu suscipit dictum. Nam sagittis malesuada eros vitae pellentesque. Integer dignissim mauris orci, eu suscipit metus molestie vel. Curabitur vel convallis neque. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus ac mattis ligula. In aliquet elit massa, et hendrerit urna ornare ut. Quisque nisi turpis, pharetra in vulputate quis, volutpat ut nisl. Cras sem enim, elementum vitae libero vitae, mollis facilisis turpis. Vestibulum tristique orci ut nunc maximus, ac tempor turpis ultricies. Vivamus dictum, ex non consectetur condimentum, tellus leo elementum nisi, sed facilisis nisi elit sit amet odio. Maecenas porta eros nec augue sollicitudin, et aliquam dolor consectetur. Sed fermentum velit ac dignissim accumsan. Mauris ut purus cursus, ornare libero id, aliquam tellus.
+
+`.split(/(?=[\,\.])/))
+
+          const bufferedQueue = ref([...sentences.value])
+
+          async function requestChar() {
+            if (consumingSentence.value === '') {
+              consumingSentence.value = null
+              requestSentence()
+              return
+            }
+
+            contentOnScreen.value += consumingSentence.value.substr(0, 1)
+            consumingSentence.value = consumingSentence.value.substr(1)
+
+            await new Promise(resolve => {
+              setTimeout(resolve)
+              // requestAnimationFrame(resolve)
+            })
+            requestChar()
+          }
+
+          const consumingSentence = ref(null)
+
+          function requestSentence() {
+            if (!bufferedQueue.value.length) {
+              return
+            }
+            if (consumingSentence.value !== null) {
+              return
+            }
+            consumingSentence.value = bufferedQueue.value.shift()
+            requestChar()
+          }
+
+          const contentOnScreen = ref('')
+
+          onMounted(() => {
+            setTimeout(
+              () => {
+                requestSentence()
+              },
+              2500
+            )
+          })
+
+          return {
+            contentOnScreen
+          }
+        }
+      })
+
+      const app = Vue.createApp(RootComponent);
+      app.mount("#app");
+    </script>
+  </body>
+</html>
