@@ -25,6 +25,8 @@
         打印测试！
       </h1>
       <article ref="contentElWillBePrinted" class="article">
+        <img src="/_res/test_image.png">
+
         <h1>Lorem Ipsum</h1>
         <h4>"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."</h4>
         <h5>"无人爱苦，亦无人寻之欲之，乃因其苦..."</h5>
@@ -53,12 +55,13 @@
             </p>
           </div>
         </div>
+        <img src="/_res/test_image.png">
       </article>
     </div>
     <iframe :key="iframeElKey" ref="iframeElForHoldPrintContent" src="about:blank"></iframe>
   </div>
   <script>
-    const { ref, createApp, defineComponent } = Vue
+    const { ref, createApp, defineComponent, nextTick } = Vue
     const app = createApp(
       defineComponent({
         setup() {
@@ -66,17 +69,38 @@
           const contentElWillBePrinted = ref()
 
           const iframeElKey = ref(0)
-          const handlePrintClicked = () => {
+          const handlePrintClicked = async () => {
+            iframeElKey.value++
             const clonedNode = document.importNode(
               contentElWillBePrinted.value,
               true
             )
+
+            await nextTick()
             const iframeDocument = iframeElForHoldPrintContent.value.contentDocument
             const iframeWindow = iframeElForHoldPrintContent.value.contentWindow
             iframeDocument.body.append(
               clonedNode
             )
+            
+            await new Promise((resolve) => {
+              setTimeout(resolve, 3000)
+            })
 
+            // await new Promise((resolve) => {
+            //   debugger
+            //   iframeDocument.addEventListener(
+            //     'readystatechange',
+            //     () => {
+            //       debugger
+            //       resolve()
+            //     },
+            //     {
+            //       once: true
+            //     }
+            //   )
+            // })
+            // debugger
             iframeWindow.print()
           }
           
