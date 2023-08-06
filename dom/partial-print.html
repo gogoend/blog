@@ -24,12 +24,12 @@
       <h1>
         打印测试！
       </h1>
-      <article id="contentToPrint" class="article">
+      <article ref="contentElWillBePrinted" class="article">
         <h1>Lorem Ipsum</h1>
         <h4>"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."</h4>
         <h5>"无人爱苦，亦无人寻之欲之，乃因其苦..."</h5>
-        <div class="essay-title-bottom__toolbox" v-if="componentHasMountedFlag">
-          <button v-print="getPrintConfig()">打印</button>
+        <div class="essay-title-bottom__toolbox">
+          <button @click="handlePrintClicked">打印</button>
           <button>其他按钮1</button>
           <button>其他按钮2</button>
         </div>
@@ -55,54 +55,36 @@
         </div>
       </article>
     </div>
+    <iframe :key="iframeElKey" ref="iframeElForHoldPrintContent" src="about:blank"></iframe>
   </div>
   <script>
-    const app = Vue.createApp(
-      Vue.defineComponent({
+    const { ref, createApp, defineComponent } = Vue
+    const app = createApp(
+      defineComponent({
         setup() {
-          const componentHasMountedFlag = Vue.ref(false)
-          Vue.onMounted(() => {
-            componentHasMountedFlag.value = true
-          })
+          const iframeElForHoldPrintContent = ref()
+          const contentElWillBePrinted = ref()
 
-          function getPrintConfig () {
-            const printConfig = {
-              id: "contentToPrint",
-              popTitle: 'good print',
-              extraCss: "",
-              extraHead: `
-                <meta http-equiv="Content-Language" content="zh-cn" />
-              `,
-              beforeOpenCallback (vm) {
-                console.log('打开之前')
-              },
-              openCallback (vm) {
-                console.log('执行了打印')
-              },
-              closeCallback (vm) {
-                console.log('关闭了打印工具')
-              }
-            }
+          const iframeElKey = ref(0)
+          const handlePrintClicked = () => {
+            const clonedNode = document.importNode(
+              contentElWillBePrinted.value,
+              true
+            )
+            const iframeDocument = iframeElForHoldPrintContent.value.contentDocument
+            const iframeWindow = iframeElForHoldPrintContent.value.contentWindow
+            iframeDocument.body.append(
+              clonedNode
+            )
 
-            const printContentEl = document.getElementById(printConfig.id)
-            const printStyle = `
-              @media print {
-                .essay-title-bottom__toolbox {
-                  display: none;
-                }
-              }
-              article.article {
-                width: ${printContentEl.offsetWidth}px;
-              }`
-
-            printConfig.extraHead += `<style>${printStyle}</style>`
-
-            return printConfig
+            iframeWindow.print()
           }
-
+          
           return {
-            componentHasMountedFlag,
-            getPrintConfig
+            iframeElKey,
+            contentElWillBePrinted,
+            iframeElForHoldPrintContent,
+            handlePrintClicked
           }
         }
       })
