@@ -79,28 +79,36 @@
             await nextTick()
             const iframeDocument = iframeElForHoldPrintContent.value.contentDocument
             const iframeWindow = iframeElForHoldPrintContent.value.contentWindow
+
+            iframeDocument.open()
+            iframeDocument.write(`
+              <!DOCTYPE html>
+              <html>
+                <head></head>
+                <${'body'}>
+                  <!-- 添加一个外部资源，使得iframe的onload事件都可以被触发 -->
+                  <img style="display: none" src="data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=" />
+                </${'body'}>
+              </html>
+            `)
+
             iframeDocument.body.append(
               clonedNode
             )
-            
+            iframeDocument.close()
+
             await new Promise((resolve) => {
-              setTimeout(resolve, 3000)
+              iframeElForHoldPrintContent.value.addEventListener(
+                'load',
+                () => {
+                  resolve()
+                },
+                {
+                  once: true
+                }
+              )
             })
 
-            // await new Promise((resolve) => {
-            //   debugger
-            //   iframeDocument.addEventListener(
-            //     'readystatechange',
-            //     () => {
-            //       debugger
-            //       resolve()
-            //     },
-            //     {
-            //       once: true
-            //     }
-            //   )
-            // })
-            // debugger
             iframeWindow.print()
           }
           
