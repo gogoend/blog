@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打印测试</title>
+    <script src="//cdn.jsdelivr.net/npm/vue@3"></script>
+    <script src="//cdn.jsdelivr.net/npm/vue3-print-nb@0.1.4/dist/vue3-print-nb.umd.js"></script>
+    <style>
+      /* .reading-page {
+
+      } */
+      .article {
+        width: 1280px;
+        margin: 0 auto;
+      }
+    </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="reading-page">
+      <h1>
+        打印测试！
+      </h1>
+      <article id="contentToPrint" class="article">
+        <h1>Lorem Ipsum</h1>
+        <h4>"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."</h4>
+        <h5>"无人爱苦，亦无人寻之欲之，乃因其苦..."</h5>
+        <div class="essay-title-bottom__toolbox" v-if="componentHasMountedFlag">
+          <button v-print="getPrintConfig()">打印</button>
+          <button>其他按钮1</button>
+          <button>其他按钮2</button>
+        </div>
+        <hr />
+        <div id="Content">
+          <div id="lipsum">
+            <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis tortor tincidunt, ultrices nunc vel, fermentum sem. Nam in justo maximus, rhoncus nisi eu, accumsan mauris. Duis tempus, lorem ac mollis ullamcorper, magna metus consequat neque, at dapibus odio felis sit amet ex. Quisque malesuada tincidunt quam ut congue. Donec leo justo, tincidunt eu sodales non, volutpat ac metus. Integer laoreet non tortor eget laoreet. Etiam purus nunc, finibus ut dui vel, convallis tincidunt lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+            </p>
+            <p>
+            In hac habitasse platea dictumst. Sed sagittis luctus condimentum. Ut suscipit elementum viverra. Nulla pharetra odio vel turpis luctus lacinia ut ac ante. Donec sit amet malesuada nisi. Praesent faucibus, ipsum non pellentesque condimentum, ipsum erat venenatis quam, ut iaculis lectus diam quis dolor. Nullam at libero blandit, dignissim enim non, dignissim justo. Etiam porta nibh sit amet augue aliquam sollicitudin. Praesent leo nisl, rutrum fringilla turpis sit amet, iaculis gravida felis. Phasellus mauris ipsum, condimentum eu tincidunt a, pulvinar vitae lacus. Nam nec mi feugiat, bibendum augue at, rutrum urna. Morbi pretium leo ut lectus dapibus sodales. Etiam quis maximus dui. Curabitur vel odio convallis, placerat massa sit amet, facilisis erat.
+            </p>
+            <p>
+            Morbi ornare eleifend dui id dignissim. Suspendisse convallis luctus lacus at rutrum. Duis sed interdum nisl, sit amet venenatis odio. Suspendisse sed odio id urna maximus consequat quis et urna. Praesent vitae nulla nisi. Praesent sollicitudin quam a blandit consectetur. Proin laoreet ante eget felis accumsan vehicula. In non pulvinar tortor, eu sodales enim. Maecenas bibendum, magna feugiat viverra tincidunt, diam dui ultricies justo, lobortis posuere ex lorem id odio.
+            </p>
+            <p>
+            Mauris laoreet ante enim, nec condimentum arcu ornare ac. Maecenas quis neque nibh. Quisque facilisis risus et enim pretium condimentum. Sed ante libero, sodales non arcu ut, ultrices bibendum nibh. Curabitur nisi magna, imperdiet gravida hendrerit ut, malesuada a nisi. Aenean iaculis molestie tortor, et aliquet libero suscipit eu. Vivamus id massa augue. Morbi rhoncus in augue feugiat commodo. Morbi nec justo tincidunt, auctor est sodales, tempor eros. Nullam egestas at dui a viverra. Donec lacus sapien, gravida ac tortor porta, ultricies dignissim dolor.
+            </p>
+            <p>
+            Duis sollicitudin varius mollis. Donec eu velit vitae sapien commodo imperdiet. Duis dignissim efficitur rutrum. Aenean aliquet rhoncus mollis. Curabitur semper varius nulla, sed consectetur erat elementum eget. Aenean eros lacus, porta ac orci quis, dignissim imperdiet tellus. Ut condimentum non ligula pretium posuere. Sed gravida tortor risus, eget scelerisque ex malesuada at. In a sapien volutpat, accumsan sem in, aliquam turpis. Ut quis tortor in nibh sollicitudin imperdiet at ac est. Nunc mattis magna non libero convallis tincidunt. Morbi semper velit nibh, nec sodales nisl ullamcorper non. Quisque quis malesuada eros, vitae ultricies neque. Phasellus ultrices nec erat sed lobortis. Maecenas eget lorem vulputate, elementum nulla ac, iaculis neque.
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+  <script>
+    const app = Vue.createApp(
+      Vue.defineComponent({
+        setup() {
+          const componentHasMountedFlag = Vue.ref(false)
+          Vue.onMounted(() => {
+            componentHasMountedFlag.value = true
+          })
+
+          function getPrintConfig () {
+            const printConfig = {
+              id: "contentToPrint",
+              popTitle: 'good print',
+              extraCss: "",
+              extraHead: `
+                <meta http-equiv="Content-Language" content="zh-cn" />
+              `,
+              beforeOpenCallback (vm) {
+                console.log('打开之前')
+              },
+              openCallback (vm) {
+                console.log('执行了打印')
+              },
+              closeCallback (vm) {
+                console.log('关闭了打印工具')
+              }
+            }
+
+            const printContentEl = document.getElementById(printConfig.id)
+            const printStyle = `
+              @media print {
+                .essay-title-bottom__toolbox {
+                  display: none;
+                }
+              }
+              article.article {
+                width: ${printContentEl.offsetWidth}px;
+              }`
+
+            printConfig.extraHead += `<style>${printStyle}</style>`
+
+            return printConfig
+          }
+
+          return {
+            componentHasMountedFlag,
+            getPrintConfig
+          }
+        }
+      })
+    )
+    app.use(window.Vue3PrintNb)
+    app.mount("#app");
+  </script>
+</body>
+
+</html>
