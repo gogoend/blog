@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 有内存泄露 -->
+    <script src="//cdn.jsdelivr.net/npm/vue@3"></script>
+  </head>
+  <body>
+    <div id="app">
+      <input type="checkbox" v-model="inputValue" />
+      <Suspense>
+        <component-a v-if="inputValue" />
+      </Suspense>
+    </div>
+
+    <script type="module">
+      const { ref, h, defineAsyncComponent } = Vue;
+      const ComponentA = defineAsyncComponent(() => import('./ComponentA.vue.js'))
+
+      const RootComponent = Vue.defineComponent({
+        components: {
+          ComponentA
+        },
+        setup() {
+          const inputValue = ref(false)
+          return {
+            inputValue
+          }
+        }
+      })
+
+      const app = Vue.createApp(RootComponent);
+      app.mount("#app");
+    </script>
+  </body>
+</html>
