@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Floating UI Tutorial</title>
+    <style>
+      #tooltip {
+        width: max-content;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #222;
+        color: white;
+        font-weight: bold;
+        padding: 5px;
+        border-radius: 4px;
+        font-size: 90%;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <button id="button" aria-describedby="tooltip">
+        My button
+      </button>
+      <div id="tooltip" role="tooltip">My tooltip</div>
+    </div>
+ 
+    <script type="module">
+      import {computePosition} from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.1/+esm';
+ 
+      const button = document.querySelector('#button');
+      const tooltip = document.querySelector('#tooltip');
+        
+      computePosition(button, tooltip, {
+        placement: 'right',
+      }).then(({x, y}) => {
+        Object.assign(tooltip.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        });
+      });
+    </script>
+  </body>
+</html>
