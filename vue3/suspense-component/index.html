@@ -11,14 +11,24 @@
   <body>
     <div id="app">
       <input type="checkbox" v-model="inputValue" />
-      <Suspense>
+      <Suspense :timeout="0">
         <component-a v-if="inputValue" />
+        <!-- 为什么不展示fallback插槽？ -->
+        <template
+          #fallback
+        >loading...</template>
       </Suspense>
     </div>
 
     <script type="module">
       const { ref, h, defineAsyncComponent } = Vue;
-      const ComponentA = defineAsyncComponent(() => import('./ComponentA.vue.js'))
+      const ComponentA = defineAsyncComponent(() => new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(
+            import('./ComponentA.vue.js')
+          )
+        }, 5000)
+      }))
 
       const RootComponent = Vue.defineComponent({
         components: {
