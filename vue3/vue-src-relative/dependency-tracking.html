@@ -1,0 +1,60 @@
+<!-- 依赖追踪 -->
+<script type="module">
+window.__MyVue__ = {}
+
+const reactiveMap = new WeakMap()
+window.__MyVue__.reactiveMap = reactiveMap
+
+const ReactiveFlags = {
+    IS_REACTIVE: Symbol('__v_isReactive')
+}
+function reactive (target) {
+    const mutableHandlers = { ...Reflect }
+    return createReactiveObject(
+        target,
+        reactiveMap,
+        mutableHandlers
+    )
+}
+window.__MyVue__.reactive = reactive
+
+function isReactive(value) {
+    return !!value[ReactiveFlags.IS_REACTIVE]
+}
+
+// 这里除了考虑reactive外还额外考虑shallowReactive，因此通过传参的方式处理，以便复用
+function createReactiveObject (target, proxyMap, proxyHandlers) {
+    if (!target || typeof target !== 'object') {
+        return target
+    }
+
+    const existedProxy = proxyMap.get(target)
+    if (existedProxy) {
+        return existedProxy
+    }
+
+    const proxy = new Proxy(
+        target,
+        proxyHandlers
+    )
+    reactiveMap.set(target, proxy)
+
+    return proxy
+}
+</script>
+
+<script type="module">
+// CASE
+const a = window.__MyVue__.reactive({
+    b: 1,
+    c: 2,
+    d: {
+        e: 3,
+        f: 4,
+        g: {
+            h: 5
+        }
+    }
+})
+
+</script>
