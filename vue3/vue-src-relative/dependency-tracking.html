@@ -2,14 +2,55 @@
 <script type="module">
 window.__MyVue__ = {}
 
+//#region
+function isObject () {
+    return val !== null && typeof val === 'object'
+}
+function hasOwn (o, key) {
+    return Object.prototype.hasOwnProperty.call(
+        o,
+        key
+    )
+}
+//#endregion
+
+//#region
+function track (target, type, key) {
+
+}
+function trigger (target, type, key) {
+
+}
+//#endregion
+
 const reactiveMap = new WeakMap()
 window.__MyVue__.reactiveMap = reactiveMap
 
 const ReactiveFlags = {
-    IS_REACTIVE: Symbol('__v_isReactive')
+    IS_REACTIVE: Symbol('__v_isReactive'),
+    RAW: Symbol('__v_raw')
+}
+
+const mutableHandlers = {
+    get (target, key, receiver) {
+        const isExistedMap = () => key === ReactiveFlags.RAW && receiver === reactiveMap.get(target)
+
+        if (key === ReactiveFlags.IS_REACTIVE) return true
+        else if (isExistedMap()) return target
+
+        const result = Reflect.get(target, key, receiver)
+        track(target, 'get', key)
+
+        return res
+    },
+    set (target, key, value, receiver) {
+        const result = Reflect.set(target, key, value, receiver)
+        trigger(target, 'set', key)
+
+        return result
+    }
 }
 function reactive (target) {
-    const mutableHandlers = { ...Reflect }
     return createReactiveObject(
         target,
         reactiveMap,
@@ -45,7 +86,7 @@ function createReactiveObject (target, proxyMap, proxyHandlers) {
 
 <script type="module">
 // CASE
-const a = window.__MyVue__.reactive({
+window.a = window.__MyVue__.reactive({
     b: 1,
     c: 2,
     d: {
