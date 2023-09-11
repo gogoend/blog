@@ -15,6 +15,12 @@
         border-radius: 4px;
         font-size: 90%;
       }
+      #arrow {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background-color: red;
+      }
     </style>
   </head>
   <body>
@@ -22,7 +28,7 @@
       <button id="button" aria-describedby="tooltip">
         My button
       </button>
-      <div id="tooltip" role="tooltip">My tooltip</div>
+      <div id="tooltip" role="tooltip">My tooltip  <div id="arrow"></div></div>
     </div>
  
     <script type="module">
@@ -31,19 +37,37 @@
         flip,
         shift,
         offset,
+        arrow
       } from 'https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.1/+esm';
       
       const button = document.querySelector('#button');
       const tooltip = document.querySelector('#tooltip');
+      const arrowEl = document.querySelector('#arrow');
       
       computePosition(button, tooltip, {
-        placement: 'top',
-        middleware: [offset(6), flip(), shift({padding: 5})],
-      }).then(({x, y}) => {
+        placement: 'bottom',
+        middleware: [
+          // offset(6),
+          // flip(),
+          // shift({padding: 5}),
+          arrow({
+            element: arrowEl,
+          })
+        ],
+      }).then(({x, y, middlewareData}) => {
         Object.assign(tooltip.style, {
           left: `${x}px`,
           top: `${y}px`,
         });
+
+        if (middlewareData.arrow) {
+          const {x, y} = middlewareData.arrow;
+      
+          Object.assign(arrowEl.style, {
+            left: x != null ? `${x}px` : '',
+            top: y != null ? `${y}px` : '',
+          });
+        }
       });
     </script>
   </body>
