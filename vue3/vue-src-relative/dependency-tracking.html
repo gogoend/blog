@@ -27,7 +27,7 @@ function effect(fn, options= {}) {
     const effectFn = () => {
         try {
             activeEffect = effectFn
-            return fn
+            return fn()
         } finally {
             activeEffect = null
         }
@@ -40,6 +40,7 @@ function effect(fn, options= {}) {
     effectFn.scheduler = options.scheduler
     return effectFn
 }
+window.__MyVue__.effect = effect
 function track (target, type, key) {
     let depsMap = targetMap.get(target)
     if (!depsMap) { // 首次获取该值
@@ -152,5 +153,14 @@ window.a = window.__MyVue__.reactive({
         }
     }
 })
+
+window.__MyVue__.effect(() => {
+    console.log(
+        `${window.a.b}`
+    )
+})
+setInterval(() => {
+    window.a.b += 1
+}, 2000)
 
 </script>
