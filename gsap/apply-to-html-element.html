@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>apply to html element - GSAP</title>
+  <style>
+    head, body {
+      height: 100vh;
+      margin: 0;
+    }
+    .item {
+      display: inline-flex;
+      width: 40px;
+      height: 40px;
+
+      align-items: center;
+      justify-content: center;
+    }
+    .item:nth-child(3n+2) {
+      background-color: rgb(255, 255, 0);
+    }
+    .item:nth-child(3n+1) {
+      background-color: rgb(0, 255, 255);
+    }
+    .item:nth-child(3n) {
+      background-color: rgb(0, 255, 0);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="item" v-for="i in 50" :key="i">{{ i }}</div>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.esm-browser.js",
+        "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/src/index.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { createApp, defineComponent, ref, onMounted  } from 'vue'
+    import { gsap } from 'gsap'
+
+    createApp(
+      defineComponent({
+        setup() {
+          const someNumber = ref()
+
+          onMounted(() => {
+            gsap.from(".item", {rotation: -360, x: -100, duration: 1});
+          })
+
+          return {
+            someNumber
+          }
+        }
+      })
+    ).mount(document.getElementById('app'))
+
+  </script>
+</body>
+</html>
