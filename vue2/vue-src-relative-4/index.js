@@ -1,35 +1,51 @@
 class Dep {
   subs = new Array()
   subSet = new Set()
-  addSub (fn) {
-    if (!this.subSet.has(fn)) {
-      this.subs.push(fn)
-      this.subSet.add(fn)
+  addSub (watcher) {
+    if (!this.subSet.has(watcher)) {
+      this.subs.push(watcher)
+      this.subSet.add(watcher)
     }
   }
-  removeSub (fn) {
-    const indexOfFn = this.subs.indexOf(fn)
+  removeSub (watcher) {
+    const indexOfFn = this.subs.indexOf(watcher)
     if (indexOfFn >= 0) {
       this.subs.splice(
         indexOfFn, 1
       )
     }
-    this.subSet.remove(fn)
+    this.subSet.remove(watcher)
   }
   notify () {
-    this.subs.forEach(fn => fn())
+    this.subs.forEach(watcher => watcher.run())
   }
 
-  /**
-   * @type {Function | null}
-   */
   static depTarget = null
 }
 
-export function watch(expressionToExecute, cb) {
-  Dep.depTarget = cb
-  expressionToExecute()
-  Dep.depTarget = null
+export class Watcher {
+  value
+  constructor (expressionToExecute, cb) {
+    this.expressionToExecute = expressionToExecute
+    this.cb = cb
+  }
+  run () {
+    debugger
+    Dep.depTarget = this
+
+    try {
+      const value = this.expressionToExecute()
+      if (value !== this.value) {
+        this.cb(
+          value,
+          this.value
+        )
+        this.value = value
+      }
+    } finally {
+      Dep.depTarget = null
+    }
+  }
 }
 
 function defineReactive (o, key) {

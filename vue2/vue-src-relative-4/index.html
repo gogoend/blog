@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
+    <div id="app"></div>
+    
     <script type="module">
-        import { observe, watch } from './index.js'
+        import { observe, Watcher } from './index.js'
+
+        import h from '/dom/vnode_diff_test_with_snabbdom_implement/h.js'
+        import patch from '/dom/vnode_diff_test_with_snabbdom_implement/patch.js'
+
+        const app = document.getElementById('app')
+
         const someObject = {
             a: 1,
             b: 2,
@@ -17,12 +27,28 @@
                 e: 4
             }
         }
-    
+
         observe(someObject)
         console.log(someObject)
-        watch(() => someObject.a, () => {
-            debugger
-        })
+
+        const vnode1 = () => h('section', { class: 'list' },
+            [
+                h('div', { class: "item" }, `${someObject.a}`),
+                h('div', { class: "item" }, `${someObject.b}`),
+                h('div', { class: "item" }, `${someObject.c.d}`)
+            ]
+        )
+
+        new Watcher(
+            () => {
+                debugger
+                patch(app, vnode1())
+            },
+            () => {
+                debugger
+            }
+        ).run()
     </script>
 </body>
+
 </html>
