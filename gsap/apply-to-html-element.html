@@ -52,7 +52,21 @@
           const someNumber = ref()
 
           onMounted(() => {
-            gsap.from(".item", {rotation: -360, x: -100, duration: 1});
+            let tween = gsap.from(".item", {
+              rotation: -360,
+              yPercent: -100,
+              scale: 0,
+              duration: 2,
+              stagger: 0.008,
+              ease: 'elastic.out(1, 0.3)'
+            });
+
+            document.documentElement.addEventListener(
+              'click',
+              () => {
+                tween.reversed(!tween.reversed())
+              }
+            )
           })
 
           return {
