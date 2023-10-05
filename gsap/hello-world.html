@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSAP</title>
+</head>
+<body>
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.esm-browser.js",
+        "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/src/index.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as vue from 'vue'
+    import * as gsap from 'gsap'
+    console.log(vue, gsap)
+  </script>
+</body>
+</html>
