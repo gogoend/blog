@@ -4,8 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GSAP</title>
+  <style>
+    head, body {
+      height: 100vh;
+      margin: 0;
+    }
+  </style>
 </head>
 <body>
+  <div id="app">{{ someNumber }}</div>
+
   <script type="importmap">
     {
       "imports": {
@@ -16,9 +24,38 @@
   </script>
 
   <script type="module">
-    import * as vue from 'vue'
-    import * as gsap from 'gsap'
-    console.log(vue, gsap)
+    import { createApp, defineComponent, ref  } from 'vue'
+    import { gsap } from 'gsap'
+
+    createApp(
+      defineComponent({
+        setup() {
+          const someNumber = ref()
+
+          document.documentElement.addEventListener('wheel', (event) => {
+            const direct = event.deltaY > 0
+            if (direct) {
+              gsap.to(someNumber, {
+                value: 0,
+                duration: 5,
+                ease: "steps(40)"
+              })
+            } else {
+              gsap.to(someNumber, {
+                value: 100,
+                duration: 5,
+                ease: "bounce.out"
+              })
+            }
+          })
+
+          return {
+            someNumber
+          }
+        }
+      })
+    ).mount(document.getElementById('app'))
+
   </script>
 </body>
 </html>
