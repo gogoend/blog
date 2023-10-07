@@ -66,7 +66,22 @@
                 repeatDelay: 0,
                 scrollTrigger: {
                   trigger: '.c',
-                  toggleActions: 'restart pause reverse none'
+                  start: 'top 80%',
+                  end: 'bottom 20%',
+                  markers: true,
+                  toggleActions: 'restart pause resume reset',
+                  onEnter() {
+                    console.log('onEnter')
+                  },
+                  onEnterBack() {
+                    console.log('onEnterBack')
+                  },
+                  onLeave() {
+                    console.log('onLeave')
+                  },
+                  onLeaveBack() {
+                    console.log('onLeaveBack')
+                  }
                 }
               }
             )
