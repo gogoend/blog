@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>scroll trigger - GSAP</title>
+  <style>
+    head, body {
+      height: 100vh;
+      margin: 0;
+    }
+    .div-el {
+      width: 100px;
+      height: 100px;
+    }
+    .a {
+      background-color: aqua;
+    }
+    .b {
+      background-color: rgb(255, 255, 0);
+    }
+    .c {
+      height: 80vh;
+      margin-top: 100vw;
+      background-color: rgb(0, 255, 128);
+    }
+    .c .c-child {
+      background-color: blueviolet;
+      width: 100px;
+      height: 100px;
+    }
+    .d {
+      margin-top: 100vw;
+      background-color: rgb(0, 128, 255);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="div-el a">a</div>
+    <div class="div-el b">b</div>
+    <div class="div-el c">
+      <section class="c-child"></section>
+    </div>
+    <div class="div-el d">d</div>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.esm-browser.js",
+        "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/src/index.js",
+        "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/src/ScrollTrigger.js"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { createApp, defineComponent, ref, onMounted  } from 'vue'
+    import { gsap } from 'gsap'
+    import ScrollTrigger from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger)
+
+    createApp(
+      defineComponent({
+        setup() {
+          const someNumber = ref()
+
+          onMounted(() => {
+            let tl = gsap.timeline(
+              {
+                // repeat: Infinity,
+                repeatDelay: 0,
+                scrollTrigger: {
+                  trigger: '.c',
+
+                  start: "top top",
+                  end: "+=1000",
+                  scrub: 1,
+                  pin: true,
+                  markers: true,
+
+                  // start: 'top 80%',
+                  // end: 'bottom 20%',
+                  // scrub: true,
+                  // markers: true,
+                  // toggleActions: 'resume pause resume pause',
+                  onEnter() {
+                    console.log('onEnter')
+                  },
+                  onEnterBack() {
+                    console.log('onEnterBack')
+                  },
+                  onLeave() {
+                    console.log('onLeave')
+                  },
+                  onLeaveBack() {
+                    console.log('onLeaveBack')
+                  }
+                }
+              }
+            )
+            tl
+              .to(".c .c-child", {
+                rotation: 720,
+                x: 400,
+                scale: 0.5,
+                duration: 50,
+                ease: 'none'
+              })
+              .to(".c .c-child", {
+                rotation: 0,
+                x: 0,
+                scale: 1,
+                duration: 50,
+                ease: 'none'
+              })
+          })
+
+          return {
+            someNumber
+          }
+        }
+      })
+    ).mount(document.getElementById('app'))
+
+  </script>
+</body>
+</html>
