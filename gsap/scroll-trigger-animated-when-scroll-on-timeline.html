@@ -68,12 +68,18 @@
           const someNumber = ref()
 
           onMounted(() => {
-            let tl = gsap.timeline(
-              {
-                // repeat: Infinity,
+            let tl = gsap.timeline()
+            tl
+              .to(".c .c-child", {
+                //repeat: 1,
                 repeatDelay: 0,
+                rotation: 720,
+                x: 400,
+                scale: 0.5,
+                duration: 50,
+                ease: 'none',
                 scrollTrigger: {
-                  trigger: '.c',
+                  trigger: '.c .c-child',
 
                   start: 'top 80%',
                   end: 'bottom 20%',
@@ -93,15 +99,6 @@
                     console.log('onLeaveBack')
                   }
                 }
-              }
-            )
-            tl
-              .to(".c .c-child", {
-                rotation: 720,
-                x: 400,
-                scale: 0.5,
-                duration: 50,
-                ease: 'none'
               })
               .to(".c .c-child", {
                 rotation: 0,
