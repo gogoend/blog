@@ -20,14 +20,22 @@
       background-color: rgb(255, 255, 0);
     }
     .c {
-      height: 80vh;
+      display: flow-root;
+      height: 100vh;
       margin-top: 100vw;
       background-color: rgb(0, 255, 128);
     }
-    .c .c-child {
+    .c .c-child-1 {
       background-color: blueviolet;
       width: 100px;
       height: 100px;
+      margin-top: 300px;
+    }
+    .c .c-child-2 {
+      background-color: rgb(226, 131, 43);
+      width: 400px;
+      height: 100px;
+      margin-top: 300px;
     }
     .d {
       margin-top: 100vw;
@@ -40,7 +48,8 @@
     <div class="div-el a">a</div>
     <div class="div-el b">b</div>
     <div class="div-el c">
-      <section class="c-child"></section>
+      <section class="c-child-1"></section>
+      <section class="c-child-2"></section>
     </div>
     <div class="div-el d">d</div>
   </div>
@@ -70,7 +79,7 @@
           onMounted(() => {
             let tl = gsap.timeline()
             tl
-              .to(".c .c-child", {
+              .to(".c .c-child-1", {
                 //repeat: 1,
                 repeatDelay: 0,
                 rotation: 720,
@@ -81,23 +90,28 @@
                 scrollTrigger: {
                   trigger: '.c',
 
-                  start: 'top 10%',
+                  start: 'top 30%',
+                  end: 'bottom 30%',
+                  scrub: 1,
+                  pin: true,
+                  markers: true
+                }
+              })
+              .to(".c .c-child-2", {
+                // repeat: 1,
+                repeatDelay: 0,
+                x: 400,
+                scale: 2,
+                duration: 6,
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: '.c',
+
+                  start: 'top 0%',
                   end: 'bottom 0%',
                   scrub: 1,
                   pin: true,
-                  markers: true,
-                  onEnter() {
-                    console.log('onEnter')
-                  },
-                  onEnterBack() {
-                    console.log('onEnterBack')
-                  },
-                  onLeave() {
-                    console.log('onLeave')
-                  },
-                  onLeaveBack() {
-                    console.log('onLeaveBack')
-                  }
+                  markers: true
                 }
               })
           })
