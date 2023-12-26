@@ -22,13 +22,14 @@
 <body>
   <div id="app">
     <div class="scroll-wrap" ref="scrollWrapEl">
+      <div ref="loadTriggerEl">上划以加载更多</div>
       <ol class="item-list">
         <li v-for="n in numArr" :key="n">{{ n }}</li>
       </ol>
     </div>
   </div>
   <script>
-    const { ref, createApp, defineComponent, nextTick, onMounted } = Vue
+    const { ref, createApp, defineComponent, nextTick, onMounted, onUnmounted } = Vue
     const app = createApp(
       defineComponent({
         setup() {
@@ -39,8 +40,26 @@
               top: scrollWrapEl.value.scrollHeight - scrollWrapEl.value.clientHeight
             })
           })
+
+          const loadTriggerEl = ref()
+          const scrollHandler = () => {
+            const scrollWrapElBox = scrollWrapEl.value.getBoundingClientRect()
+            const loadTriggerElBox = loadTriggerEl.value.getBoundingClientRect()
+            if (
+              loadTriggerElBox.y + loadTriggerElBox.height - scrollWrapElBox.y > 0
+            ) {
+              console.log('加载更多')
+            }
+          }
+          onMounted(() => {
+            scrollWrapEl.value.addEventListener('scroll', scrollHandler)
+          })
+          onUnmounted(() => {
+            scrollWrapEl.value.removeEventListener('scroll', scrollHandler)
+          })
           return {
             scrollWrapEl,
+            loadTriggerEl,
             numArr
           }
         }
