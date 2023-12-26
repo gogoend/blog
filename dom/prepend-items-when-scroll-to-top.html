@@ -21,6 +21,9 @@
 
 <body>
   <div id="app">
+    <div>
+      {{ scrollHeightAtPrevFrame }} | {{ scrollHeightAtCurrentFrame }}
+    </div>
     <div class="scroll-wrap" ref="scrollWrapEl">
       <div ref="loadTriggerEl">上划以加载更多</div>
       <ol class="item-list">
@@ -61,12 +64,19 @@
             loadingFlag.value = false
           }
 
-          const scrollHandler = () => {
+          let scrollHeightAtPrevFrame = ref(0)
+          let scrollHeightAtCurrentFrame = ref(0)
+
+          const scrollHandler = (ev) => {
+            scrollHeightAtPrevFrame.value = scrollHeightAtCurrentFrame.value
+            scrollHeightAtCurrentFrame.value = scrollWrapEl.value.scrollTop
+
             const scrollWrapElBox = scrollWrapEl.value.getBoundingClientRect()
             const loadTriggerElBox = loadTriggerEl.value.getBoundingClientRect()
             if (
               loadTriggerElBox.y + loadTriggerElBox.height - scrollWrapElBox.y > 0
             ) {
+              console.dir(ev)
               fetcher()
             }
           }
@@ -79,7 +89,10 @@
           return {
             scrollWrapEl,
             loadTriggerEl,
-            numArr
+            numArr,
+
+            scrollHeightAtPrevFrame,
+            scrollHeightAtCurrentFrame
           }
         }
       })
