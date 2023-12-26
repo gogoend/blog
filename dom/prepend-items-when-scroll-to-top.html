@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打印测试</title>
+    <script src="/_lib/vue.global.js"></script>
+    <style>
+      .scroll-wrap {
+        height: 400px;
+        overflow: auto;
+      }
+      .item-list {
+        display: flex;
+        flex-direction: column-reverse;
+        font-family: monospace;
+      }
+    </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="scroll-wrap" ref="scrollWrapEl">
+      <ol class="item-list">
+        <li v-for="n in numArr" :key="n">{{ n }}</li>
+      </ol>
+    </div>
+  </div>
+  <script>
+    const { ref, createApp, defineComponent, nextTick, onMounted } = Vue
+    const app = createApp(
+      defineComponent({
+        setup() {
+          const numArr = ref(Array.from({length: 100}, (_, n) => n + 1))
+          const scrollWrapEl = ref()
+          onMounted(() => {
+            scrollWrapEl.value.scrollTo({
+              top: scrollWrapEl.value.scrollHeight - scrollWrapEl.value.clientHeight
+            })
+          })
+          return {
+            scrollWrapEl,
+            numArr
+          }
+        }
+      })
+    )
+    app.mount("#app");
+  </script>
+</body>
+
+</html>
