@@ -25,7 +25,14 @@
       {{ scrollHeightAtPrevFrame }} | {{ scrollHeightAtCurrentFrame }}
     </div>
     <div class="scroll-wrap" ref="scrollWrapEl">
-      <div ref="loadTriggerEl">上划以加载更多</div>
+      <div ref="loadTriggerEl">
+        <span v-if="!loadingFlag">
+          上划以加载更多
+        </span>
+        <span v-else>
+          正在加载中
+        </span>
+      </div>
       <ol class="item-list">
         <li v-for="n in numArr" :key="n">{{ n }}</li>
       </ol>
@@ -75,6 +82,8 @@
             const loadTriggerElBox = loadTriggerEl.value.getBoundingClientRect()
             if (
               loadTriggerElBox.y + loadTriggerElBox.height - scrollWrapElBox.y > 0
+              &&
+              scrollHeightAtCurrentFrame.value - scrollHeightAtPrevFrame.value < 0
             ) {
               console.dir(ev)
               fetcher()
@@ -90,6 +99,7 @@
             scrollWrapEl,
             loadTriggerEl,
             numArr,
+            loadingFlag,
 
             scrollHeightAtPrevFrame,
             scrollHeightAtCurrentFrame
