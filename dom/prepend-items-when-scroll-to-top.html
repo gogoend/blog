@@ -42,13 +42,32 @@
           })
 
           const loadTriggerEl = ref()
+          const loadingFlag = ref(false)
+          const fetcher = async () => {
+            if (loadingFlag.value) {
+              return
+            }
+            loadingFlag.value = true
+            await new Promise(resolve => {
+              setTimeout(() => {
+                resolve()
+              }, 1000)
+            })
+            const res = Array.from({length: 100}, (_, n) => numArr.value[numArr.value.length - 1] + n + 1)
+            numArr.value = [
+              ...numArr.value,
+              ...res
+            ]
+            loadingFlag.value = false
+          }
+
           const scrollHandler = () => {
             const scrollWrapElBox = scrollWrapEl.value.getBoundingClientRect()
             const loadTriggerElBox = loadTriggerEl.value.getBoundingClientRect()
             if (
               loadTriggerElBox.y + loadTriggerElBox.height - scrollWrapElBox.y > 0
             ) {
-              console.log('加载更多')
+              fetcher()
             }
           }
           onMounted(() => {
