@@ -44,10 +44,11 @@ async function processPage(browser, url) {
 
 ;(async () => {
   const browser = await puppeteer.launch({
-    headless: false
+    headless: false,
+    args: [ '--ignore-certificate-errors' ]
   })
 
-  const CONCURRENCY = 30
+  const CONCURRENCY = 6
   const results = await asyncPoll(
     CONCURRENCY,
     urlList.map(url => [
