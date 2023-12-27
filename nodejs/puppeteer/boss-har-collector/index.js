@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer');
 const cookies = require('./cookies')
+const PuppeteerHar = require('puppeteer-har');
+
 if (!cookies?.length) {
   console.error('There is no cookies. you can save a copy with EditThisCookie extension.')
   process.exit(1)
@@ -22,6 +24,7 @@ async function processPage(browser, url) {
   pages.push(page)
 
   await new Promise(resolve => setTimeout(resolve, 2500))
+  return page
 }
 
 function sleep (t) {
@@ -45,10 +48,13 @@ function sleepWithRandomDelay (base) {
     devtools: true
   })
 
-  ;await processPage(browser, url)
+  const page = await processPage(browser, url)
 
   const recommendGeekLink = (await pages[0].$('a[ka=menu-geek-recommend]'))
   await recommendGeekLink.click()
+
+  const har = new PuppeteerHar(page);
+  await har.start({ path: 'results.har' });
   await sleepWithRandomDelay(3000)
 
   const recommendIframe = (await pages[0].$('iframe[name=recommendFrame]'))
@@ -75,7 +81,7 @@ function sleepWithRandomDelay (base) {
   await sleepWithRandomDelay(1000)
 
   await firstGeekCardItemClickArea.click()
-  for (let i = 1; i < 45; i++) {
+  for (let i = 1; i <= 45; i++) {
     await sleepWithRandomDelay(1000)
 
     const highlightItems = (await recommendIframeForControl.$$(`.resume-item.item-base .font-hightlight`)) ?? []
@@ -91,5 +97,7 @@ function sleepWithRandomDelay (base) {
     await sleepWithRandomDelay(2500)
     pages[0].keyboard.press('ArrowRight')
   }
+  await har.stop();
+
   // ;await browser.close()
 })()
