@@ -89,7 +89,9 @@ function sleepWithRandomDelay (base) {
       await sleepWithRandomDelay(1000)
   
       await firstGeekCardItemClickArea.click()
-      for (let i = 1; i <= 45; i++) {
+
+      const geekCardCount = (await recommendIframeForControl.$$(`.candidate-recommend .card-list-wrap .card-list .card-item`)).length
+      for (let i = 1; i <= geekCardCount; i++) {
         await sleepWithRandomDelay(1000)
   
         const highlightItems = (await recommendIframeForControl.$$(`.resume-item.item-base .font-hightlight`)) ?? []
