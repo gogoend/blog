@@ -75,7 +75,7 @@ const expectCompanySet = new Set([
     await recommendJobLink.click()
 
     while (true) {
-      await sleepWithRandomDelay(4000)
+      await sleepWithRandomDelay(3000)
   
       const expectJobList = (await pages[0].evaluate(`
         document.querySelector('.job-recommend-search')?.__vue__?.expectList
@@ -85,7 +85,8 @@ const expectCompanySet = new Set([
       const expectJobTabHandlers = await pages[0].$$('.job-recommend-main .recommend-search-expect .recommend-job-btn')
       expectJobTabHandlers.shift()
   
-      expectJobTabHandlers[0].click()
+      // 点击第一个期望职位
+      await expectJobTabHandlers[0].click()
       await page.waitForResponse(
         response => {
           if (
@@ -97,7 +98,78 @@ const expectCompanySet = new Set([
         }
       );
       await sleepWithRandomDelay(2000)
+
+      const { targetJobElProxy, targetJobIndex } = await new Promise(async (resolve) => {
+        // 职位列表
+        const recommendJobListElProxy = await pages[0].$('.job-list-container .rec-job-list')
+
+        let jobListData = await pages[0].evaluate(
+          `
+            document.querySelector('.job-recommend-main')?.__vue__?.jobList
+          `
+        )
+        let targetJobIndex = jobListData.findIndex(it => [...expectCompanySet].find(name => it.brandName.includes(name)))
+        while (targetJobIndex < 0) {
+          // 往下拉新数据
+          const recommendJobListElBBox = await recommendJobListElProxy.boundingBox()
+          const windowInnerHeight = await pages[0].evaluate('window.innerHeight')
+          await pages[0].mouse.move(
+            recommendJobListElBBox.x + recommendJobListElBBox.width / 2,
+            windowInnerHeight / 2
+          )
+          let scrolledHeight = 0
+          const targetHeight = 3000
+          const increase = 40 + Math.floor(30 * Math.random())
+          while (scrolledHeight < targetHeight) {
+            scrolledHeight += increase
+            await pages[0].mouse.wheel({deltaY: increase});
+            await sleep(1)
+          }
+
+          await sleep(3000)
+          jobListData = await pages[0].evaluate(
+            `
+              document.querySelector('.job-recommend-main')?.__vue__?.jobList
+            `
+          )
+          targetJobIndex = targetJobIndex = jobListData.findIndex(it => [...expectCompanySet].find(name => it.brandName.includes(name)))
+        }
+
+        const recommendJobItemList = await recommendJobListElProxy.$$('ul.rec-job-list > li')
+        resolve(
+          {
+            targetJobElProxy: recommendJobItemList[targetJobIndex],
+            targetJobIndex
+          }
+        )
+      })
+      if (targetJobIndex > 0) {
+        // 把元素滚动到视口内部
+        await pages[0].evaluate(`
+          const targetEl = document.querySelector("ul.rec-job-list").children[${targetJobIndex}]
+          targetEl.scrollIntoView({
+            behavior: 'smooth',
+            block: ${Math.random() > 0.5 ? '\'center\'' : '\'end\''}
+          })
+        `)
   
+        await sleepWithRandomDelay(200)
+  
+        // 点击那个元素
+        await targetJobElProxy.click()
+        await page.waitForResponse(
+          response => {
+            if (
+              response.url().startsWith('https://www.zhipin.com/wapi/zpgeek/job/detail.json')
+            ) {
+              return true
+            }
+            return false
+          }
+        );
+        await sleepWithRandomDelay(2000)
+      }
+
       const jobData = await pages[0].evaluate('document.querySelector(".job-detail-box").__vue__.data')
   
       const startChatButtonInnerHTML = await pages[0].evaluate('document.querySelector(".job-detail-box .op-btn.op-btn-chat")?.innerHTML.trim()')
@@ -115,18 +187,27 @@ const expectCompanySet = new Set([
             return false
           }
         );
+        try {
+          const res = await addFriendResponse.json()
+  
+          if (res.code !== 0) {
+            console.err(res)
+            break
+          } 
+        } catch(err) {
+          // console.warn(err)
+        } finally {
+          await sleepWithRandomDelay(2500)
+          if (pages[0].url().startsWith('https://www.zhipin.com/web/geek/chat')) {
+            await sleepWithRandomDelay(3000)
 
-        const res = await addFriendResponse.json()
-
-        if (res.code === 1) {
-          if (res) {
-
+            await Promise.all([
+              pages[0].waitForNavigation(),
+              pages[0].goBack(),
+            ])
+            await sleepWithRandomDelay(1000)
           }
-          console.log(res)
-          break
-        } 
-        await sleepWithRandomDelay(4000)
-        pages[0].goBack()
+        }
       } else {
       }
     }
