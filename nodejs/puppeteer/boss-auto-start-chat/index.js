@@ -22,7 +22,7 @@ function sleepWithRandomDelay (base) {
   return sleep(base + Math.random()*1000)
 }
 
-const expectCompanyList = [
+const expectCompanySet = new Set([
   //
   '抖音', '字节', '字跳', '有竹居', '脸萌', '头条',
   //
@@ -109,7 +109,7 @@ const expectCompanyList = [
   '用友', '畅捷通',
   //
   '猿辅导', '小猿', '猿力',
-]
+])
 
 ;(async () => {
   try {
