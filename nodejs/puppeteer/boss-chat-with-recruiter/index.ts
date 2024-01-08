@@ -55,46 +55,53 @@ function sleepWithRandomDelay(base) {
       `
     )
 
-    // const chatListScrollContainerProxy = await pages[0].$('.main-wrap .chat-user .chat-content')
+    await sleep(2000)
 
+    while (true) {
+      const isFinished = await pages[0].evaluate(
+        `
+        (document.querySelector('.main-wrap .chat-user .user-list-content div[role=tfoot] .finished')?.textContent ?? '').includes('没有')
+        `
+      )
+      if (isFinished) {
+        break;
+      }
+      await pages[0].evaluate(
+        `
+        targetEl = document.querySelector('.main-wrap .chat-user .user-list-content ul[role=group]').lastElementChild
+        targetEl.scrollIntoView({
+          behavior: 'smooth'
+        })
+        `
+      )
+      await page.waitForRequest(
+        request => {
+          if (
+            request.url().startsWith('https://www.zhipin.com/wapi/zpgeek/job/detail.json')
+          ) {
+            return true
+          }
+          return false
+        }, {
+          timeout: 2000
+        }
+      ).then(() => {
+        return page.waitForResponse(
+          response => {
+            if (
+              response.url().startsWith('https://www.zhipin.com/wapi/zpgeek/job/detail.json')
+            ) {
+              return true
+            }
+            return false
+          }
+        )
+      }, (err) => {
+        void err
+      })
 
-    // const possibleScrollRequestPromiseFactory = () => new Promise(resolve => {
-    //   const resolveTimer = setTimeout(() => resolve(null), 1500)
-    //   page.waitForResponse(
-    //     response => {
-    //       if (
-    //         response.url().startsWith('https://www.zhipin.com/wapi/zpgeek/job/detail.json')
-    //       ) {
-    //         return true
-    //       }
-    //       return false
-    //     }
-    //   ).then(response => {
-    //     clearTimeout(resolveTimer)
-    //     resolve(response)
-    //   })
-    // })
-
-    // while (true) {
-    //   const chatListScrollContainerProxy = await pages[0].$('.main-wrap .chat-user .chat-content')
-    //   // 往下拉新数据
-    //   const chatListScrollContainerProxyBBox = (await chatListScrollContainerProxy!.boundingBox())!
-    //   await pages[0].mouse.move(
-    //     chatListScrollContainerProxyBBox.x + chatListScrollContainerProxyBBox.width / 2,
-    //     chatListScrollContainerProxyBBox.y + chatListScrollContainerProxyBBox.height / 2,
-    //   )
-    //   let scrolledHeight = 0
-
-    //   const targetHeight = 3000
-    //   const increase = 40 + Math.floor(30 * Math.random())
-    //   while (scrolledHeight < targetHeight) {
-    //     scrolledHeight += increase
-    //     await pages[0].mouse.wheel({deltaY: increase});
-    //     await sleep(1)
-    //   }
-    // }
-
-    // const chatFunQueue = []
+      await sleepWithRandomDelay(2500)
+    }
 
     let retryPollTime = 0
     while (true) {
@@ -149,32 +156,6 @@ function sleepWithRandomDelay(base) {
       await sleepWithRandomDelay(1500)
       const lookForwardReplyEmojiProxy = await pages[0].$(`.chat-conversation .message-controls .emotion .emotion-box img[title=盼回复]`)
       await lookForwardReplyEmojiProxy!.click()
-
-
-      // const firstListItemIndexInVirtualList = await pages[0].evaluate(
-      //   `
-      //     document.querySelector('.main-wrap .chat-user .user-list-content .group').firstElementChild.__vue__.index
-      //   `
-      // ) as number
-      // const lastListItemIndexInVirtualList = await pages[0].evaluate(
-      //   `
-      //     document.querySelector('.main-wrap .chat-user .user-list-content .group').lastElementChild.__vue__.index
-      //   `
-      // ) as number
-
-      // let scrollDirection = 0
-      // if (readButNoResponseInHalfDayAtIndex < firstListItemIndexInVirtualList) {
-      //   scrollDirection = 1
-      // } else if (readButNoResponseInHalfDayAtIndex > lastListItemIndexInVirtualList) {
-      //   scrollDirection = 2
-      // } else {
-      //   scrollDirection = 0
-      // }
-      // await pages[0].evaluate(
-      //   `
-      //     document.querySelector('.main-wrap .chat-user .user-list-content')?.__vue__?.list
-      //   `
-      // )
 
       await sleepWithRandomDelay(2000)
       // ;await browser.close()
