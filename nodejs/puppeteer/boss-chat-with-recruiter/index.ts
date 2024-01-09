@@ -112,11 +112,11 @@ function sleepWithRandomDelay(base) {
       ) as Array<ChatListItem>
 
       let friendItemElProxyList = await pages[0].$$('.main-wrap .chat-user .user-list-content ul[role=group] li[role=listitem]')
-      let readButNoResponseInHalfDayAtIndex = friendListData.findIndex(it => it.lastIsSelf && it.lastMsgStatus === 2 && Number(new Date()) - Number(new Date(it.lastTS)) > 0.5 * 24 * 60 * 60)
+      let readButNoResponseInHalfDayAtIndex = friendListData.findIndex(it => it.lastIsSelf && it.lastMsgStatus === 2 && Number(new Date()) - Number(new Date(it.lastTS)) > 1 * 24 * 60 * 60 * 1000)
       if (readButNoResponseInHalfDayAtIndex < 0) {
-        console.warn(`没有职位了，等待第 ${retryPollTime++} 次轮询……`)
+        console.warn(`没有职位了，等待第 ${retryPollTime} 次轮询……`)
         await sleepWithRandomDelay(10000)
-        console.log(`开始没有职位后的第 ${retryPollTime} 次轮询……`)
+        console.log(`开始没有职位后的第 ${retryPollTime++} 次轮询……`)
 
         continue
       } else {
