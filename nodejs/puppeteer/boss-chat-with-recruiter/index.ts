@@ -1,27 +1,24 @@
-import * as puppeteer from 'puppeteer';
-import cookies from './cookies';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import cookies from './cookies.ts';
 import {
   type ChatListItem,
   LastMsgStatus
 } from './types'
+import {
+  sleep,
+  sleepWithRandomDelay
+} from '../_base/utils.mjs'
 if (!cookies?.length) {
   console.error('There is no cookies. you can save a copy with EditThisCookie extension.')
   process.exit(1)
 }
 
+puppeteer.use(StealthPlugin())
+
 const url = `https://www.zhipin.com/web/geek/chat`
 const pages = []
 globalThis.pages = pages
-
-function sleep(t) {
-  return new Promise(resolve => {
-    setTimeout(resolve, t)
-  })
-}
-
-function sleepWithRandomDelay(base) {
-  return sleep(base + Math.random() * 1000)
-}
 
 ; (async () => {
   try {
@@ -30,7 +27,7 @@ function sleepWithRandomDelay(base) {
       ignoreHTTPSErrors: true,
       defaultViewport: {
         width: 1440,
-        height: 900,
+        height: 800,
       },
       devtools: true
     })
@@ -112,7 +109,7 @@ function sleepWithRandomDelay(base) {
       ) as Array<ChatListItem>
 
       let friendItemElProxyList = await pages[0].$$('.main-wrap .chat-user .user-list-content ul[role=group] li[role=listitem]')
-      let readButNoResponseInHalfDayAtIndex = friendListData.findIndex(it => it.lastIsSelf && it.lastMsgStatus === 2 && Number(new Date()) - Number(new Date(it.lastTS)) > 1 * 24 * 60 * 60 * 1000)
+      let readButNoResponseInHalfDayAtIndex = friendListData.findIndex(it => it.lastIsSelf && it.lastMsgStatus === 2 && Number(new Date()) - Number(new Date(it.lastTS)) > 0.75 * 24 * 60 * 60 * 1000)
       if (readButNoResponseInHalfDayAtIndex < 0) {
         console.warn(`没有职位了，等待第 ${retryPollTime} 次轮询……`)
         await sleepWithRandomDelay(10000)
