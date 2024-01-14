@@ -35,3 +35,28 @@ export const writeLogLine = async (logName: string, content: string) => {
     }
   )
 }
+
+export const readLogFile = async (logName: string) => {
+  return fs.readFile(
+    path.join(
+      logDirPath, logName + '.log'
+    )
+  ).then(fileContent => fileContent.toString(), err => {
+    if (err.code === 'ENOENT') {
+      return ''
+    } else {
+      throw err
+    }
+  })
+}
+
+export const consumeLogLines = async (logName: string, callback: ((arg: Array<{date: Date, content: string}>) => any)) => {
+  const logContent = await readLogFile(logName)
+  const lines = logContent.split('\n').filter(Boolean).map(line => {
+    return {
+      date: new Date(Number(dayjs(line.substring(0, 25)))),
+      content: line.substring(26)
+    }
+  })
+  callback(lines)
+}
