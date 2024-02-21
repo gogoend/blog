@@ -1,0 +1,83 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flying Dots Animation</title>
+  <style>
+    body {
+      overflow: hidden;
+    }
+    @keyframes fly-in {
+      0% {
+        transform: translateZ(-2500px);
+        opacity: 0;
+      }
+      33% {
+        opacity: 1;
+      }
+      66% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateZ(0);
+        opacity: 0;
+      }
+    }
+    .container {
+      perspective: 1250px;
+      display: grid;
+      grid-template-columns: repeat(4, 200px);
+      grid-template-rows: repeat(4, 200px);
+      align-items: center;
+      justify-items: center;
+      justify-content: center;
+    }
+    .dot {
+      width: 20px;
+      height: 20px;
+      background-color: black;
+      animation: fly-in 1s linear infinite;
+      opacity: 0;
+      transform-origin: center;
+    }
+    .dot:nth-child(2n+1) {
+      animation-delay: 0.1s;
+    }
+    .dot:nth-child(3n+1) {
+      animation-delay: 0.2s;
+    }
+    .dot:nth-child(5n+1) {
+      animation-delay: 0.3s;
+    }
+    .dot:nth-child(7n+1) {
+      animation-delay: 0.4s;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <!-- Add more dots as needed -->
+  </div>
+
+
+</body>
+
+</html>
