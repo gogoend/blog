@@ -1,12 +1,11 @@
 import { Browser } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-import { bossChatUiUrl, chatGptUiUrl, cookieForBoss, cookieForChatGpt } from './config.ts';
+import { bossChatUiUrl, chatGptUiUrl, cookieForBoss } from './config.ts';
 import { pageMapByName } from './index.ts';
 
 if ([
   cookieForBoss,
-  cookieForChatGpt
 ].some(it => !it.length)) {
   console.error('请使用EditThisCookie扩展程序获取Cookie并写入config')
   process.exit(1)
