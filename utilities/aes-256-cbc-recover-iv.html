@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AES-CBC IV 计算器</title>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+    <script>
+      // 还原IV函数，支持Pkcs7填充
+      function recoverIV(plaintext, ciphertext, key) {
+        const keyWA = CryptoJS.enc.Utf8.parse(key);
+        const ptWA = CryptoJS.enc.Utf8.parse(plaintext);
+        const ctWA = CryptoJS.enc.Base64.parse(ciphertext);
+
+        const blockSize = 16;
+
+        // 获取明文和密文的第一块
+        // 明文需补齐到16字节块
+        let ptBlock;
+        if (ptWA.sigBytes < blockSize) {
+          ptBlock = ptWA.clone();
+          ptBlock.clamp();
+          // 补齐Pkcs7填充
+          const padLen = blockSize - ptWA.sigBytes;
+          for (let i = 0; i < padLen; i++) {
+            ptBlock.concat(CryptoJS.lib.WordArray.create([padLen << 24], 1));
+          }
+        } else {
+          ptBlock = CryptoJS.lib.WordArray.create(
+            ptWA.words.slice(0, blockSize / 4),
+            blockSize
+          );
+        }
+
+        const ctBlock = CryptoJS.lib.WordArray.create(
+          ctWA.words.slice(0, blockSize / 4),
+          blockSize
+        );
+
+        // 解密密文第一块，得到 (明文第一块 XOR IV)
+        const decryptedBlock = CryptoJS.AES.decrypt(
+          { ciphertext: ctBlock },
+          keyWA,
+          { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.NoPadding }
+        );
+
+        // IV = 明文第一块 XOR 解密后的块
+        const ivWords = [];
+        for (let i = 0; i < ptBlock.words.length; i++) {
+          ivWords[i] = ptBlock.words[i] ^ decryptedBlock.words[i];
+        }
+        const iv = CryptoJS.lib.WordArray.create(ivWords, blockSize);
+
+        return iv.toString(CryptoJS.enc.Hex);
+      }
+
+      // 用例
+      const key = "12345678901234567890123456789012"; // 32字节密钥
+      const iv = CryptoJS.lib.WordArray.random(16);
+      const plaintext = "hello world!!!~~~~~"; // 任意长度明文
+      const keyWA = CryptoJS.enc.Utf8.parse(key);
+      const ivWA = iv;
+      const ptWA = CryptoJS.enc.Utf8.parse(plaintext);
+
+      // 加密得到密文（Pkcs7填充）
+      const encrypted = CryptoJS.AES.encrypt(ptWA, keyWA, {
+        iv: ivWA,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      });
+      const ciphertext = encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+
+      // 还原IV
+      const recoveredIV = recoverIV(plaintext, ciphertext, key);
+
+      console.log("原始IV:", iv.toString(CryptoJS.enc.Hex));
+      console.log("还原IV:", recoveredIV);
+    </script>
+  </body>
+</html>
