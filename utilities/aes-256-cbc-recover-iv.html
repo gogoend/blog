@@ -12,7 +12,7 @@
       function recoverIV(plaintext, ciphertext, key) {
         const keyWA = CryptoJS.enc.Utf8.parse(key);
         const ptWA = CryptoJS.enc.Utf8.parse(plaintext);
-        const ctWA = CryptoJS.enc.Base64.parse(ciphertext);
+        const ctWA = CryptoJS.enc.Hex.parse(ciphertext);
 
         const blockSize = 16;
 
@@ -70,7 +70,8 @@
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7,
       });
-      const ciphertext = encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+      // HEX
+      const ciphertext = encrypted.ciphertext.toString(CryptoJS.enc.Hex);
 
       // 还原IV
       const recoveredIV = recoverIV(plaintext, ciphertext, key);

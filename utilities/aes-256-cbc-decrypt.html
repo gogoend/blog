@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>AES-256-CBC HEX解密演示</title>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+  <script>
+    // AES-256-CBC解密函数，参数均为HEX字符串
+    function aes256cbcDecrypt(cipherHex, keyHex, ivHex) {
+      const cipherWA = CryptoJS.enc.Hex.parse(cipherHex);
+      const keyWA = CryptoJS.enc.Hex.parse(keyHex);
+      const ivWA = CryptoJS.enc.Hex.parse(ivHex);
+
+      const decrypted = CryptoJS.AES.decrypt(
+        { ciphertext: cipherWA },
+        keyWA,
+        {
+          iv: ivWA,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7
+        }
+      );
+      // 返回UTF-8明文字符串
+      return decrypted.toString(CryptoJS.enc.Utf8);
+    }
+
+    // 用例：加密一段明文，然后用HEX参数解密
+    const key = CryptoJS.lib.WordArray.random(32); // 32字节密钥
+    const iv = CryptoJS.lib.WordArray.random(16);  // 16字节IV
+    const plaintext = "Hello, AES-256-CBC!";
+
+    // 加密
+    const encrypted = CryptoJS.AES.encrypt(
+      plaintext,
+      key,
+      {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+      }
+    );
+    const cipherHex = encrypted.ciphertext.toString(CryptoJS.enc.Hex);
+    const keyHex = key.toString(CryptoJS.enc.Hex);
+    const ivHex = iv.toString(CryptoJS.enc.Hex);
+
+    // 解密
+    const decryptedText = aes256cbcDecrypt(cipherHex, keyHex, ivHex);
+
+    console.log("原文:", plaintext);
+    console.log("密文HEX:", cipherHex);
+    console.log("密钥HEX:", keyHex);
+    console.log("IV HEX:", ivHex);
+    console.log("解密结果:", decryptedText);
+  </script>
+</body>
+</html>
