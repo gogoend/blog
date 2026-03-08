@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>DevTool detect</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+  <script>
+    function measureTime(bigTaskFn) {
+        const e = (new Date).getTime();
+        bigTaskFn()
+        return (new Date).getTime() - e
+    }
+
+    let count = 0
+
+    const largeObjectArray = function () {
+        const t = function () {
+            const t = {};
+            for (let e = 0; e < 250; e++)
+                t["" + e] = "" + e;
+            return t
+        }()
+        const e = [];
+        for (let n = 0; n < 250; n++)
+            e.push(t);
+        return e
+    }()
+    
+    let maxPrintTime = 0;
+    function detectDevTools() {
+      const consoleTableTime = measureTime(() => {
+        console.table(largeObjectArray);
+      });
+      const consoleLogTime = measureTime(() => {
+        console.log(largeObjectArray);
+      });
+      if (
+        maxPrintTime = Math.max(maxPrintTime, consoleLogTime),
+        console.clear(),
+        consoleTableTime === 0 || maxPrintTime === 0
+      ) {
+        return false
+      }
+      if (consoleTableTime > 10 * maxPrintTime) {
+        if (count >= 3) {
+          location.href = "http://example.com/";
+        }
+        else {
+          count++
+        }
+      }
+    }
+
+    function loop () {
+      detectDevTools();
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
