@@ -129,9 +129,13 @@
   }
 
   // 执行绘制
-  initColorMap();
-  drawToPickingBuffer();
-  drawToCanvas();
+  function redraw() {
+    initColorMap();
+    drawToPickingBuffer();
+    drawToCanvas();
+  }
+  
+  redraw();
 
   // 添加鼠标点击事件监听
   canvas.addEventListener('click', handleClick);
@@ -192,7 +196,14 @@
     ctx.font = `${fontSize}px sans-serif`;
     ctx.textBaseline = "top";
     ctx.textAlign = "left";
-    ctx.fillText(content, x, y);
+    
+    // 测量文本宽度
+    const metrics = ctx.measureText(content);
+    const textWidth = metrics.width;
+    const textHeight = fontSize * 1.2; // 估算文本高度
+    
+    // 绘制文本的外部包围盒
+    ctx.fillRect(x, y, textWidth, textHeight);
   }
 
   // 绘制颜色编码的星形
