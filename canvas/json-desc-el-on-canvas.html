@@ -1,5 +1,4 @@
 <canvas id="canvasEl" width="1280" height="720"></canvas>
-<canvas style="display: none;" id="offscreenCanvasEl" width="1280" height="720"></canvas>
 <canvas id="pickingCanvasEl" width="1280" height="720"></canvas>
 <script>
 
@@ -45,12 +44,6 @@
     },
   ];
 
-  // 创建离屏Canvas作为缓冲区
-  const offscreenCanvas = document.getElementById('offscreenCanvasEl');
-  offscreenCanvas.width = canvas.width;
-  offscreenCanvas.height = canvas.height;
-  const offscreenCtx = offscreenCanvas.getContext('2d');
-
   // 创建离屏Canvas用于颜色编码拾取
   const pickingCanvas = document.getElementById('pickingCanvasEl');
   pickingCanvas.width = canvas.width;
@@ -63,6 +56,7 @@
 
   // 生成唯一颜色的函数
   function generateUniqueColor(index) {
+    index += 1
     // 使用索引生成唯一的RGB颜色
     const r = (index * 137) % 256;
     const g = (index * 173) % 256;
@@ -81,25 +75,25 @@
     });
   }
 
-  // 绘制所有元素到离屏Canvas
-  function drawToBuffer() {
-    // 清空缓冲区
-    offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+  // 绘制所有元素到主Canvas
+  function drawToCanvas() {
+    // 清空主Canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 绘制所有元素
     elements.forEach((item) => {
       switch (item.type) {
         case "rect":
-          drawRect(item, offscreenCtx);
+          drawRect(item, ctx);
           break;
         case "circle":
-          drawCircle(item, offscreenCtx);
+          drawCircle(item, ctx);
           break;
         case "text":
-          drawText(item, offscreenCtx);
+          drawText(item, ctx);
           break;
         case "star":
-          drawStar(item, offscreenCtx);
+          drawStar(item, ctx);
           break;
         default:
           console.warn("未知类型:", item.type);
@@ -134,15 +128,8 @@
     });
   }
 
-  // 将缓冲区内容绘制到主Canvas
-  function drawToCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(offscreenCanvas, 0, 0);
-  }
-
-  // 执行双缓冲绘制
+  // 执行绘制
   initColorMap();
-  drawToBuffer();
   drawToPickingBuffer();
   drawToCanvas();
 
