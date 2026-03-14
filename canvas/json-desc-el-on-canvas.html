@@ -54,6 +54,9 @@
   // 为每个元素分配唯一的颜色
   const colorMap = new Map();
   const elementMap = new Map();
+  
+  // 选中的元素
+  let selectedElement = null;
 
   // 生成唯一颜色的函数
   function generateUniqueColor(index) {
@@ -100,6 +103,88 @@
           console.warn("未知类型:", item.type);
       }
     });
+
+    // 为选中的元素添加高亮效果
+    if (selectedElement) {
+      drawSelectedHighlight(selectedElement, ctx);
+    }
+  }
+
+  // 绘制选中元素的高亮效果
+  function drawSelectedHighlight(element, ctx) {
+    ctx.save();
+    ctx.strokeStyle = "#f00";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+
+    switch (element.type) {
+      case "rect":
+        drawRectOBB(element, ctx);
+        break;
+      case "circle":
+        drawCircleOBB(element, ctx);
+        break;
+      case "text":
+        drawTextOBB(element, ctx);
+        break;
+      case "star":
+        drawStarOBB(element, ctx);
+        break;
+      default:
+        break;
+    }
+
+    ctx.restore();
+  }
+
+  // 绘制矩形的OBB包围盒
+  function drawRectOBB(element, ctx) {
+    const [x, y] = element.position;
+    const [width, height] = element.size;
+    ctx.strokeRect(x - 2, y - 2, width + 4, height + 4);
+  }
+
+  // 绘制圆形的OBB包围盒（外接正方形）
+  function drawCircleOBB(element, ctx) {
+    const [x, y] = element.position;
+    const radius = element.radius;
+    const size = radius * 2;
+    ctx.strokeRect(x - radius - 2, y - radius - 2, size + 4, size + 4);
+  }
+
+  // 绘制文本的OBB包围盒
+  function drawTextOBB(element, ctx) {
+    const [x, y] = element.position;
+    const fontSize = element.fontSize;
+    const content = element.content;
+    const rotation = element.rotation || 0;
+    
+    // 平移到文本位置
+    ctx.translate(x, y);
+    
+    // 旋转文本
+    ctx.rotate(rotation * Math.PI / 180);
+    
+    // 测量文本宽度
+    ctx.font = `${fontSize}px sans-serif`;
+    const metrics = ctx.measureText(content);
+    const textWidth = metrics.width;
+    const textHeight = fontSize * 1.2;
+    
+    // 绘制OBB包围盒
+    ctx.strokeRect(-2, -2, textWidth + 4, textHeight + 4);
+    
+    // 恢复状态
+    ctx.restore();
+  }
+
+  // 绘制星形的OBB包围盒
+  function drawStarOBB(element, ctx) {
+    const [x, y] = element.position;
+    const outerRadius = element.outerRadius;
+    // 星形的OBB包围盒是其外接正方形
+    const size = outerRadius * 2;
+    ctx.strokeRect(x - outerRadius - 2, y - outerRadius - 2, size + 4, size + 4);
   }
 
   // 绘制颜色编码到拾取Canvas
@@ -150,6 +235,9 @@
 
     // 确保坐标在Canvas范围内
     if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
+      // 点击空白区域，取消选中
+      selectedElement = null;
+      redraw();
       console.log('未点击到任何元素');
       return;
     }
@@ -162,8 +250,14 @@
     // 查找对应的元素
     const element = elementMap.get(color);
     if (element) {
+      // 选中元素
+      selectedElement = element;
+      redraw();
       console.log('点击了元素:', element);
     } else {
+      // 点击空白区域，取消选中
+      selectedElement = null;
+      redraw();
       console.log('未点击到任何元素');
     }
   }
