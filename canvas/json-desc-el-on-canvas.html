@@ -1,5 +1,6 @@
 <canvas id="canvasEl" width="1280" height="720"></canvas>
-<canvas id="offscreenCanvasEl" width="1280" height="720"></canvas>
+<canvas style="display: none;" id="offscreenCanvasEl" width="1280" height="720"></canvas>
+<canvas id="pickingCanvasEl" width="1280" height="720"></canvas>
 <script>
 
   // 获取 canvas 和 2D 上下文
@@ -50,6 +51,36 @@
   offscreenCanvas.height = canvas.height;
   const offscreenCtx = offscreenCanvas.getContext('2d');
 
+  // 创建离屏Canvas用于颜色编码拾取
+  const pickingCanvas = document.getElementById('pickingCanvasEl');
+  pickingCanvas.width = canvas.width;
+  pickingCanvas.height = canvas.height;
+  const pickingCtx = pickingCanvas.getContext('2d');
+
+  // 为每个元素分配唯一的颜色
+  const colorMap = new Map();
+  const elementMap = new Map();
+
+  // 生成唯一颜色的函数
+  function generateUniqueColor(index) {
+    // 使用索引生成唯一的RGB颜色
+    const r = (index * 137) % 256;
+    const g = (index * 173) % 256;
+    const b = (index * 191) % 256;
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  // 初始化颜色映射
+  function initColorMap() {
+    colorMap.clear();
+    elementMap.clear();
+    elements.forEach((element, index) => {
+      const color = generateUniqueColor(index);
+      colorMap.set(element, color);
+      elementMap.set(color, element);
+    });
+  }
+
   // 绘制所有元素到离屏Canvas
   function drawToBuffer() {
     // 清空缓冲区
@@ -76,6 +107,33 @@
     });
   }
 
+  // 绘制颜色编码到拾取Canvas
+  function drawToPickingBuffer() {
+    // 清空拾取缓冲区
+    pickingCtx.clearRect(0, 0, pickingCanvas.width, pickingCanvas.height);
+
+    // 绘制所有元素到拾取Canvas，使用唯一颜色
+    elements.forEach((item) => {
+      const color = colorMap.get(item);
+      switch (item.type) {
+        case "rect":
+          drawPickingRect(item, pickingCtx, color);
+          break;
+        case "circle":
+          drawPickingCircle(item, pickingCtx, color);
+          break;
+        case "text":
+          drawPickingText(item, pickingCtx, color);
+          break;
+        case "star":
+          drawPickingStar(item, pickingCtx, color);
+          break;
+        default:
+          console.warn("未知类型:", item.type);
+      }
+    });
+  }
+
   // 将缓冲区内容绘制到主Canvas
   function drawToCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -83,7 +141,9 @@
   }
 
   // 执行双缓冲绘制
+  initColorMap();
   drawToBuffer();
+  drawToPickingBuffer();
   drawToCanvas();
 
   // 添加鼠标点击事件监听
@@ -92,91 +152,79 @@
   function handleClick(e) {
     // 获取点击位置相对于Canvas的坐标
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = Math.floor(e.clientX - rect.left);
+    const y = Math.floor(e.clientY - rect.top);
 
-    // 从后往前检查元素（后绘制的元素在上面）
-    for (let i = elements.length - 1; i >= 0; i--) {
-      const element = elements[i];
-      if (isPointInElement(x, y, element)) {
-        console.log('点击了元素:', element);
-        return; // 找到第一个命中的元素后返回
-      }
+    // 确保坐标在Canvas范围内
+    if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
+      console.log('未点击到任何元素');
+      return;
     }
-    console.log('未点击到任何元素');
-  }
 
-  // 检查点是否在元素内
-  function isPointInElement(x, y, element) {
-    switch (element.type) {
-      case "rect":
-        return isPointInRect(x, y, element);
-      case "circle":
-        return isPointInCircle(x, y, element);
-      case "text":
-        return isPointInText(x, y, element);
-      case "star":
-        return isPointInStar(x, y, element);
-      default:
-        return false;
+    // 从拾取Canvas获取颜色
+    const imageData = pickingCtx.getImageData(x, y, 1, 1);
+    const [r, g, b] = imageData.data;
+    const color = `rgb(${r}, ${g}, ${b})`;
+
+    // 查找对应的元素
+    const element = elementMap.get(color);
+    if (element) {
+      console.log('点击了元素:', element);
+    } else {
+      console.log('未点击到任何元素');
     }
   }
 
-  // 检查点是否在矩形内
-  function isPointInRect(x, y, element) {
-    const [rx, ry] = element.position;
+  // 绘制颜色编码的矩形
+  function drawPickingRect(element, ctx, color) {
+    const [x, y] = element.position;
     const [width, height] = element.size;
-    return x >= rx && x <= rx + width && y >= ry && y <= ry + height;
+    
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, width, height);
   }
 
-  // 检查点是否在圆形内
-  function isPointInCircle(x, y, element) {
-    const [cx, cy] = element.position;
+  // 绘制颜色编码的圆形
+  function drawPickingCircle(element, ctx, color) {
+    const [x, y] = element.position;
     const radius = element.radius;
-    const dx = x - cx;
-    const dy = y - cy;
-    return dx * dx + dy * dy <= radius * radius;
+    
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    ctx.fill();
   }
 
-  // 检查点是否在文本内
-  function isPointInText(x, y, element) {
-    const [tx, ty] = element.position;
+  // 绘制颜色编码的文本
+  function drawPickingText(element, ctx, color) {
+    const [x, y] = element.position;
     const fontSize = element.fontSize;
     const content = element.content;
-
-    ctx.save();
+    
+    ctx.fillStyle = color;
     ctx.font = `${fontSize}px sans-serif`;
     ctx.textBaseline = "top";
     ctx.textAlign = "left";
-
-    // 测量文本宽度
-    const metrics = ctx.measureText(content);
-    const textWidth = metrics.width;
-    const textHeight = fontSize * 1.2; // 估算文本高度
-
-    ctx.restore();
-
-    return x >= tx && x <= tx + textWidth && y >= ty && y <= ty + textHeight;
+    ctx.fillText(content, x, y);
   }
 
-  // 检查点是否在星形内
-  function isPointInStar(x, y, element) {
+  // 绘制颜色编码的星形
+  function drawPickingStar(element, ctx, color) {
     const [cx, cy] = element.position;
     const n = element.angleQuantity;
     const innerRadius = element.innerRadius;
     const outerRadius = element.outerRadius;
     const step = Math.PI / n;
     let rot = (Math.PI / 2) * 3;
-
-    // 创建星形路径
-    ctx.save();
+    
+    ctx.fillStyle = color;
     ctx.beginPath();
     for (let i = 0; i < 2 * n; i++) {
       const r = i % 2 === 0 ? outerRadius : innerRadius;
       const angle = rot + i * step;
       const px = cx + r * Math.cos(angle);
       const py = cy + r * Math.sin(angle);
-
+      
       if (i === 0) {
         ctx.moveTo(px, py);
       } else {
@@ -184,12 +232,7 @@
       }
     }
     ctx.closePath();
-
-    // 检查点是否在路径内
-    const isInside = ctx.isPointInPath(x, y);
-    ctx.restore();
-
-    return isInside;
+    ctx.fill();
   }
 
   // ---------- 绘制函数 ----------
