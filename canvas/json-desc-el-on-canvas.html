@@ -1,0 +1,170 @@
+<canvas id="canvasEl" width="1280" height="720"></canvas>
+<script>
+
+  // 获取 canvas 和 2D 上下文
+  const canvas = document.getElementById('canvasEl');
+  const ctx = canvas.getContext('2d');
+
+  const elements = [
+    {
+      type: "rect",
+      position: [100, 200],
+      size: [100, 100],
+      fillColor: "#0f0",
+      strokeColor: "#f0f",
+      strokeSize: 4,
+    },
+    {
+      type: "circle",
+      position: [200, 100],
+      radius: 40,
+      fillColor: "#00f",
+      strokeColor: "#048",
+      strokeSize: 8,
+    },
+    {
+      type: "text",
+      position: [300, 10],
+      fontSize: 48,
+      content: "Hello World",
+      fillColor: "#ddd",
+      strokeColor: "#666",
+      strokeSize: 1,
+    },
+    {
+      type: "star",
+      position: [600, 320],
+      angleQuantity: 6,
+      innerRadius: 30,
+      outerRadius: 50,
+      fillColor: "#ddd",
+      strokeColor: "#808",
+      strokeSize: 1,
+    },
+  ];
+
+  // 绘制所有元素
+  elements.forEach((item) => {
+    switch (item.type) {
+      case "rect":
+        drawRect(item);
+        break;
+      case "circle":
+        drawCircle(item);
+        break;
+      case "text":
+        drawText(item);
+        break;
+      case "star":
+        drawStar(item);
+        break;
+      default:
+        console.warn("未知类型:", item.type);
+    }
+  });
+
+  // ---------- 绘制函数 ----------
+  function drawRect({ position, size, fillColor, strokeColor, strokeSize }) {
+    const [x, y] = position;
+    const [width, height] = size;
+
+    ctx.save(); // 保存当前状态
+    ctx.fillStyle = fillColor;
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeSize;
+
+    // 先填充，再描边，避免描边被填充覆盖一半
+    ctx.fillRect(x, y, width, height);
+    ctx.strokeRect(x, y, width, height);
+    ctx.restore();
+  }
+
+  function drawCircle({
+    position,
+    radius,
+    fillColor,
+    strokeColor,
+    strokeSize,
+  }) {
+    const [x, y] = position;
+
+    ctx.save();
+    ctx.fillStyle = fillColor;
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeSize;
+
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawText({
+    position,
+    fontSize,
+    content,
+    fillColor,
+    strokeColor,
+    strokeSize,
+  }) {
+    const [x, y] = position;
+
+    ctx.save();
+    ctx.font = `${fontSize}px sans-serif`;
+    ctx.fillStyle = fillColor;
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeSize;
+
+    // 设定文本基线为 top，让 position 表示文本左上角（更符合直觉）
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+
+    // 先填充后描边
+    ctx.fillText(content, x, y);
+    ctx.strokeText(content, x, y);
+    ctx.restore();
+  }
+
+  function drawStar({
+    position,
+    angleQuantity,
+    innerRadius,
+    outerRadius,
+    fillColor,
+    strokeColor,
+    strokeSize,
+  }) {
+    const [cx, cy] = position;
+    const n = angleQuantity; // 角数
+    const step = Math.PI / n; // 每个点之间的角度步长（内外交替）
+    let rot = (Math.PI / 2) * 3; // 起始角度设为 -90°（让第一个顶点朝上），也可调整
+
+    ctx.save();
+    ctx.fillStyle = fillColor;
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = strokeSize;
+
+    ctx.beginPath();
+    for (let i = 0; i < 2 * n; i++) {
+      // 根据 i 的奇偶决定半径：偶数 i 为外顶点，奇数 i 为内顶点
+      const r = i % 2 === 0 ? outerRadius : innerRadius;
+      // 当前点的角度
+      const angle = rot + i * step;
+      // 计算坐标
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.closePath(); // 闭合路径
+
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+</script>
