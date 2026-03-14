@@ -55,14 +55,14 @@
   const colorMap = new Map();
   const elementMap = new Map();
   
-  // 选中的元素
-  let selectedElement = null;
+  // 选中的元素集合
+  let selectedElements = new Set();
   
   // 多选相关变量
   let isSelecting = false;
   let selectionStart = { x: 0, y: 0 };
   let selectionEnd = { x: 0, y: 0 };
-  let selectedElements = new Set();
+  let justFinishedSelection = false;
 
   // 生成唯一颜色的函数
   function generateUniqueColor(index) {
@@ -89,7 +89,7 @@
   function drawToCanvas() {
     // 清空主Canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    
     // 绘制所有元素
     elements.forEach((item) => {
       switch (item.type) {
@@ -109,19 +109,16 @@
           console.warn("未知类型:", item.type);
       }
     });
-
+    
     // 绘制选择矩形
     if (isSelecting) {
       drawSelectionRect();
     }
-
-    // 为选中的元素添加高亮效果
-    if (selectedElement) {
-      drawSelectedHighlight(selectedElement, ctx);
-    }
     
-    // 为多选元素添加高亮效果
+    // 为选中的元素添加高亮效果
+    console.log('开始绘制高亮效果，选中元素数量:', selectedElements.size);
     selectedElements.forEach(element => {
+      console.log('绘制元素高亮:', element.type);
       drawSelectedHighlight(element, ctx);
     });
   }
@@ -190,6 +187,9 @@
     const fontSize = element.fontSize;
     const content = element.content;
     const rotation = element.rotation || 0;
+    
+    // 保存当前状态
+    ctx.save();
     
     // 平移到文本位置
     ctx.translate(x, y);
@@ -263,6 +263,12 @@
   canvas.addEventListener('mouseup', handleMouseUp);
 
   function handleClick(e) {
+    // 如果正在选择矩形或刚刚完成选择，不处理点击事件
+    if (isSelecting || justFinishedSelection) {
+      console.log('正在选择矩形或刚刚完成选择，忽略点击事件');
+      return;
+    }
+
     // 获取点击位置相对于Canvas的坐标
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor(e.clientX - rect.left);
@@ -271,7 +277,7 @@
     // 确保坐标在Canvas范围内
     if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
       // 点击空白区域，取消选中
-      selectedElement = null;
+      selectedElements.clear();
       redraw();
       console.log('未点击到任何元素');
       return;
@@ -285,13 +291,22 @@
     // 查找对应的元素
     const element = elementMap.get(color);
     if (element) {
-      // 选中元素
-      selectedElement = element;
+      // 如果Ctrl键被按下，则添加到选择集，否则清空选择集
+      if (e.ctrlKey || e.metaKey) {
+        if (selectedElements.has(element)) {
+          selectedElements.delete(element);
+        } else {
+          selectedElements.add(element);
+        }
+      } else {
+        selectedElements.clear();
+        selectedElements.add(element);
+      }
       redraw();
       console.log('点击了元素:', element);
     } else {
       // 点击空白区域，取消选中
-      selectedElement = null;
+      selectedElements.clear();
       redraw();
       console.log('未点击到任何元素');
     }
@@ -329,6 +344,7 @@
     if (isSelecting) {
       // 结束选择
       isSelecting = false;
+      justFinishedSelection = true;
 
       // 计算选择矩形
       const selectionRect = {
@@ -338,11 +354,22 @@
         height: Math.abs(selectionEnd.y - selectionStart.y)
       };
 
+      console.log('选择矩形:', selectionRect);
+
       // 选择与矩形相交的元素
       selectElementsInRect(selectionRect);
 
       // 重新绘制
       redraw();
+
+      // 阻止点击事件的触发
+      e.stopPropagation();
+      e.preventDefault();
+
+      // 重置标志
+      setTimeout(() => {
+        justFinishedSelection = false;
+      }, 100);
     }
   }
 
@@ -350,11 +377,14 @@
   function selectElementsInRect(rect) {
     // 清空之前的选择
     selectedElements.clear();
-    selectedElement = null;
 
     // 检查每个元素是否与选择矩形相交
     elements.forEach(element => {
-      if (isElementIntersectsRect(element, rect)) {
+      // 使用正确的相交检测函数
+      const intersects = isElementIntersectsRect(element, rect);
+
+      console.log('元素', element.type, '是否与选择矩形相交:', intersects);
+      if (intersects) {
         selectedElements.add(element);
       }
     });
