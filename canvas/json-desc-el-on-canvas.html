@@ -31,6 +31,7 @@
       fillColor: "#ddd",
       strokeColor: "#666",
       strokeSize: 1,
+      rotation: 30,
     },
     {
       type: "star",
@@ -135,6 +136,7 @@
     drawToCanvas();
   }
   
+  // 初始绘制
   redraw();
 
   // 添加鼠标点击事件监听
@@ -191,19 +193,27 @@
     const [x, y] = element.position;
     const fontSize = element.fontSize;
     const content = element.content;
+    const rotation = element.rotation || 0;
     
-    ctx.fillStyle = color;
-    ctx.font = `${fontSize}px sans-serif`;
-    ctx.textBaseline = "top";
-    ctx.textAlign = "left";
+    ctx.save();
+    
+    // 平移到文本位置
+    ctx.translate(x, y);
+    
+    // 旋转文本
+    ctx.rotate(rotation * Math.PI / 180);
     
     // 测量文本宽度
+    ctx.font = `${fontSize}px sans-serif`;
     const metrics = ctx.measureText(content);
     const textWidth = metrics.width;
     const textHeight = fontSize * 1.2; // 估算文本高度
     
     // 绘制文本的外部包围盒
-    ctx.fillRect(x, y, textWidth, textHeight);
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, textWidth, textHeight);
+    
+    ctx.restore();
   }
 
   // 绘制颜色编码的星形
@@ -277,10 +287,19 @@
     fillColor,
     strokeColor,
     strokeSize,
+    rotation = 0,
   }, ctx) {
     const [x, y] = position;
 
     ctx.save();
+    
+    // 平移到文本位置
+    ctx.translate(x, y);
+    
+    // 旋转文本
+    ctx.rotate(rotation * Math.PI / 180);
+    
+    // 绘制文本
     ctx.font = `${fontSize}px sans-serif`;
     ctx.fillStyle = fillColor;
     ctx.strokeStyle = strokeColor;
@@ -291,8 +310,9 @@
     ctx.textAlign = "left";
 
     // 先填充后描边
-    ctx.fillText(content, x, y);
-    ctx.strokeText(content, x, y);
+    ctx.fillText(content, 0, 0);
+    ctx.strokeText(content, 0, 0);
+    
     ctx.restore();
   }
 
