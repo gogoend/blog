@@ -1,4 +1,5 @@
 <canvas id="canvasEl" width="1280" height="720"></canvas>
+<canvas id="offscreenCanvasEl" width="1280" height="720"></canvas>
 <script>
 
   // 获取 canvas 和 2D 上下文
@@ -43,25 +44,47 @@
     },
   ];
 
-  // 绘制所有元素
-  elements.forEach((item) => {
-    switch (item.type) {
-      case "rect":
-        drawRect(item);
-        break;
-      case "circle":
-        drawCircle(item);
-        break;
-      case "text":
-        drawText(item);
-        break;
-      case "star":
-        drawStar(item);
-        break;
-      default:
-        console.warn("未知类型:", item.type);
-    }
-  });
+  // 创建离屏Canvas作为缓冲区
+  const offscreenCanvas = document.getElementById('offscreenCanvasEl');
+  offscreenCanvas.width = canvas.width;
+  offscreenCanvas.height = canvas.height;
+  const offscreenCtx = offscreenCanvas.getContext('2d');
+
+  // 绘制所有元素到离屏Canvas
+  function drawToBuffer() {
+    // 清空缓冲区
+    offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
+
+    // 绘制所有元素
+    elements.forEach((item) => {
+      switch (item.type) {
+        case "rect":
+          drawRect(item, offscreenCtx);
+          break;
+        case "circle":
+          drawCircle(item, offscreenCtx);
+          break;
+        case "text":
+          drawText(item, offscreenCtx);
+          break;
+        case "star":
+          drawStar(item, offscreenCtx);
+          break;
+        default:
+          console.warn("未知类型:", item.type);
+      }
+    });
+  }
+
+  // 将缓冲区内容绘制到主Canvas
+  function drawToCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(offscreenCanvas, 0, 0);
+  }
+
+  // 执行双缓冲绘制
+  drawToBuffer();
+  drawToCanvas();
 
   // 添加鼠标点击事件监听
   canvas.addEventListener('click', handleClick);
@@ -170,7 +193,7 @@
   }
 
   // ---------- 绘制函数 ----------
-  function drawRect({ position, size, fillColor, strokeColor, strokeSize }) {
+  function drawRect({ position, size, fillColor, strokeColor, strokeSize }, ctx) {
     const [x, y] = position;
     const [width, height] = size;
 
@@ -191,7 +214,7 @@
     fillColor,
     strokeColor,
     strokeSize,
-  }) {
+  }, ctx) {
     const [x, y] = position;
 
     ctx.save();
@@ -213,7 +236,7 @@
     fillColor,
     strokeColor,
     strokeSize,
-  }) {
+  }, ctx) {
     const [x, y] = position;
 
     ctx.save();
@@ -240,7 +263,7 @@
     fillColor,
     strokeColor,
     strokeSize,
-  }) {
+  }, ctx) {
     const [cx, cy] = position;
     const n = angleQuantity; // 角数
     const step = Math.PI / n; // 每个点之间的角度步长（内外交替）
