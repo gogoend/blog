@@ -62,7 +62,6 @@
   let isSelecting = false;
   let selectionStart = { x: 0, y: 0 };
   let selectionEnd = { x: 0, y: 0 };
-  let justFinishedSelection = false;
 
   // 生成唯一颜色的函数
   function generateUniqueColor(index) {
@@ -116,9 +115,7 @@
     }
     
     // 为选中的元素添加高亮效果
-    console.log('开始绘制高亮效果，选中元素数量:', selectedElements.size);
     selectedElements.forEach(element => {
-      console.log('绘制元素高亮:', element.type);
       drawSelectedHighlight(element, ctx);
     });
   }
@@ -257,19 +254,11 @@
   redraw();
 
   // 添加鼠标事件监听
-  // 不直接用 click 事件，避免与拖拽选框冲突
-  // canvas.addEventListener('click', handleClick);
   canvas.addEventListener('mousedown', handleMouseDown);
   canvas.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mouseup', handleMouseUp);
 
   function handleClick(e) {
-    // 如果正在选择矩形或刚刚完成选择，不处理点击事件
-    if (isSelecting || justFinishedSelection) {
-      console.log('正在选择矩形或刚刚完成选择，忽略点击事件');
-      return;
-    }
-
     // 获取点击位置相对于Canvas的坐标
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor(e.clientX - rect.left);
@@ -280,7 +269,6 @@
       // 点击空白区域，取消选中
       selectedElements.clear();
       redraw();
-      console.log('未点击到任何元素');
       return;
     }
 
@@ -304,12 +292,10 @@
         selectedElements.add(element);
       }
       redraw();
-      console.log('点击了元素:', element);
     } else {
       // 点击空白区域，取消选中
       selectedElements.clear();
       redraw();
-      console.log('未点击到任何元素');
     }
   }
 
@@ -369,9 +355,6 @@
         // 单击按颜色拾取处理
         handleClick(e);
       } else {
-        justFinishedSelection = true;
-        console.log('选择矩形:', selectionRect);
-
         // 选择与矩形相交的元素
         selectElementsInRect(selectionRect);
 
@@ -381,11 +364,6 @@
         // 阻止点击事件的触发
         e.stopPropagation();
         e.preventDefault();
-
-        // 重置标志
-        setTimeout(() => {
-          justFinishedSelection = false;
-        }, 100);
       }
     }
   }
@@ -400,13 +378,10 @@
       // 使用正确的相交检测函数
       const intersects = isElementIntersectsRect(element, rect);
 
-      console.log('元素', element.type, '是否与选择矩形相交:', intersects);
       if (intersects) {
         selectedElements.add(element);
       }
     });
-
-    console.log('选中的元素:', Array.from(selectedElements));
   }
 
   // 检查元素的OBB包围盒是否与矩形相交
