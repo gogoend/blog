@@ -168,9 +168,15 @@
   }
 
   function startHighlightAnimation() {
+    const intervalMs = 100;
+    let lastTime = 0;
     const step = () => {
-      highlightDashOffset = (highlightDashOffset + 1) % 10;
-      drawToCanvas();
+      const now = performance.now();
+      if (now - lastTime >= intervalMs) {
+        lastTime = now;
+        highlightDashOffset = (highlightDashOffset + 1) % 10;
+        drawToCanvas();
+      }
       requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
