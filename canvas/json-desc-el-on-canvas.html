@@ -9,7 +9,7 @@
   const elements = [
     {
       type: "circle",
-      position: [150, 250],
+      position: [140, 200],
       radius: 40,
       fillColor: "#00f",
       strokeColor: "#048",
@@ -257,7 +257,8 @@
   redraw();
 
   // 添加鼠标事件监听
-  canvas.addEventListener('click', handleClick);
+  // 不直接用 click 事件，避免与拖拽选框冲突
+  // canvas.addEventListener('click', handleClick);
   canvas.addEventListener('mousedown', handleMouseDown);
   canvas.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mouseup', handleMouseUp);
@@ -342,9 +343,14 @@
   // 处理鼠标释放事件
   function handleMouseUp(e) {
     if (isSelecting) {
+      // 更新鼠标抬起位置
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      selectionEnd = { x, y };
+
       // 结束选择
       isSelecting = false;
-      justFinishedSelection = true;
 
       // 计算选择矩形
       const selectionRect = {
@@ -354,22 +360,33 @@
         height: Math.abs(selectionEnd.y - selectionStart.y)
       };
 
-      console.log('选择矩形:', selectionRect);
+      const dragThreshold = 2; // 小于该阈值视为单击
+      const isClick =
+        selectionRect.width <= dragThreshold &&
+        selectionRect.height <= dragThreshold;
 
-      // 选择与矩形相交的元素
-      selectElementsInRect(selectionRect);
+      if (isClick) {
+        // 单击按颜色拾取处理
+        handleClick(e);
+      } else {
+        justFinishedSelection = true;
+        console.log('选择矩形:', selectionRect);
 
-      // 重新绘制
-      redraw();
+        // 选择与矩形相交的元素
+        selectElementsInRect(selectionRect);
 
-      // 阻止点击事件的触发
-      e.stopPropagation();
-      e.preventDefault();
+        // 重新绘制
+        redraw();
 
-      // 重置标志
-      setTimeout(() => {
-        justFinishedSelection = false;
-      }, 100);
+        // 阻止点击事件的触发
+        e.stopPropagation();
+        e.preventDefault();
+
+        // 重置标志
+        setTimeout(() => {
+          justFinishedSelection = false;
+        }, 100);
+      }
     }
   }
 
@@ -394,157 +411,95 @@
 
   // 检查元素的OBB包围盒是否与矩形相交
   function isElementIntersectsRect(element, rect) {
-    switch (element.type) {
-      case "rect":
-        return isOBBIntersectsRect(element, rect);
-      case "circle":
-        return isCircleIntersectsRect(element, rect);
-      case "text":
-        return isTextOBBIntersectsRect(element, rect);
-      case "star":
-        return isStarIntersectsRect(element, rect);
-      default:
-        return false;
-    }
+    const obbPoints = getElementOBBPoints(element);
+    if (!obbPoints) return false;
+    return doPolygonsIntersect(obbPoints, rectToPolygon(rect));
   }
 
-  // 检查矩形OBB与选择矩形的相交
-  function isOBBIntersectsRect(element, rect) {
-    const [x, y] = element.position;
-    const [width, height] = element.size;
-    const rotation = element.rotation || 0;
-    
-    if (rotation === 0) {
-      // 未旋转，使用AABB检测
-      return (
-        x < rect.x + rect.width &&
-        x + width > rect.x &&
-        y < rect.y + rect.height &&
-        y + height > rect.y
-      );
-    } else {
-      // 已旋转，使用OBB检测
-      const angle = rotation * Math.PI / 180;
-      
-      // 计算矩形的四个角点
-      const points = [
-        { x, y },
-        { x: x + width, y },
-        { x: x + width, y: y + height },
-        { x, y: y + height }
-      ];
-      
-      // 旋转每个点
-      const rotatedPoints = points.map(point => {
-        const rotatedX = (point.x - x) * Math.cos(angle) - (point.y - y) * Math.sin(angle) + x;
-        const rotatedY = (point.x - x) * Math.sin(angle) + (point.y - y) * Math.cos(angle) + y;
-        return { x: rotatedX, y: rotatedY };
-      });
-      
-      // 检查选择矩形是否与旋转后的矩形相交
-      return doPolygonsIntersect(rotatedPoints, [
-        { x: rect.x, y: rect.y },
-        { x: rect.x + rect.width, y: rect.y },
-        { x: rect.x + rect.width, y: rect.y + rect.height },
-        { x: rect.x, y: rect.y + rect.height }
-      ]);
-    }
-  }
-
-  // 检查圆形与选择矩形的相交
-  function isCircleIntersectsRect(element, rect) {
-    const [cx, cy] = element.position;
-    const radius = element.radius;
-    
-    // 找到矩形上离圆心最近的点
-    const closestX = Math.max(rect.x, Math.min(cx, rect.x + rect.width));
-    const closestY = Math.max(rect.y, Math.min(cy, rect.y + rect.height));
-    
-    // 计算圆心到最近点的距离
-    const dx = cx - closestX;
-    const dy = cy - closestY;
-    const distanceSquared = dx * dx + dy * dy;
-    
-    // 检查距离是否小于等于半径的平方
-    return distanceSquared <= radius * radius;
-  }
-
-  // 检查文本OBB与选择矩形的相交
-  function isTextOBBIntersectsRect(element, rect) {
-    const [tx, ty] = element.position;
-    const fontSize = element.fontSize;
-    const content = element.content;
-    const rotation = element.rotation || 0;
-    
-    // 测量文本宽度
-    ctx.font = `${fontSize}px sans-serif`;
-    const metrics = ctx.measureText(content);
-    const textWidth = metrics.width;
-    const textHeight = fontSize * 1.2;
-    
-    if (rotation === 0) {
-      // 文本未旋转，使用AABB检测
-      return (
-        tx < rect.x + rect.width &&
-        tx + textWidth > rect.x &&
-        ty < rect.y + rect.height &&
-        ty + textHeight > rect.y
-      );
-    } else {
-      // 文本已旋转，使用OBB检测
-      const angle = rotation * Math.PI / 180;
-      
-      // 计算文本的四个角点
-      const points = [
-        { x: tx, y: ty },
-        { x: tx + textWidth, y: ty },
-        { x: tx + textWidth, y: ty + textHeight },
-        { x: tx, y: ty + textHeight }
-      ];
-      
-      // 旋转每个点
-      const rotatedPoints = points.map(point => {
-        const rotatedX = (point.x - tx) * Math.cos(angle) - (point.y - ty) * Math.sin(angle) + tx;
-        const rotatedY = (point.x - tx) * Math.sin(angle) + (point.y - ty) * Math.cos(angle) + ty;
-        return { x: rotatedX, y: rotatedY };
-      });
-      
-      // 检查选择矩形是否与旋转后的文本边界相交
-      return doPolygonsIntersect(rotatedPoints, [
-        { x: rect.x, y: rect.y },
-        { x: rect.x + rect.width, y: rect.y },
-        { x: rect.x + rect.width, y: rect.y + rect.height },
-        { x: rect.x, y: rect.y + rect.height }
-      ]);
-    }
-  }
-
-  // 检查星形与选择矩形的相交
-  function isStarIntersectsRect(element, rect) {
-    const [sx, sy] = element.position;
-    const n = element.angleQuantity;
-    const innerRadius = element.innerRadius;
-    const outerRadius = element.outerRadius;
-    const step = Math.PI / n;
-    let rot = (Math.PI / 2) * 3;
-    
-    // 计算星形的所有顶点
-    const points = [];
-    for (let i = 0; i < 2 * n; i++) {
-      const r = i % 2 === 0 ? outerRadius : innerRadius;
-      const angle = rot + i * step;
-      const x = sx + r * Math.cos(angle);
-      const y = sy + r * Math.sin(angle);
-      points.push({ x, y });
-    }
-    
-    // 检查选择矩形是否与星形相交
-    return doPolygonsIntersect(points, [
+  function rectToPolygon(rect) {
+    return [
       { x: rect.x, y: rect.y },
       { x: rect.x + rect.width, y: rect.y },
       { x: rect.x + rect.width, y: rect.y + rect.height },
       { x: rect.x, y: rect.y + rect.height }
-    ]);
+    ];
+  }
+
+  function rotatePoints(points, origin, angleRad) {
+    const cos = Math.cos(angleRad);
+    const sin = Math.sin(angleRad);
+    return points.map(point => {
+      const dx = point.x - origin.x;
+      const dy = point.y - origin.y;
+      return {
+        x: dx * cos - dy * sin + origin.x,
+        y: dx * sin + dy * cos + origin.y
+      };
+    });
+  }
+
+  // 获取元素的OBB四个角点
+  function getElementOBBPoints(element) {
+    switch (element.type) {
+      case "rect": {
+        const [x, y] = element.position;
+        const [width, height] = element.size;
+        const rotation = element.rotation || 0;
+        const points = [
+          { x, y },
+          { x: x + width, y },
+          { x: x + width, y: y + height },
+          { x, y: y + height }
+        ];
+        if (!rotation) return points;
+        return rotatePoints(points, { x, y }, rotation * Math.PI / 180);
+      }
+      case "circle": {
+        const [cx, cy] = element.position;
+        const radius = element.radius;
+        const size = radius * 2;
+        return [
+          { x: cx - radius, y: cy - radius },
+          { x: cx - radius + size, y: cy - radius },
+          { x: cx - radius + size, y: cy - radius + size },
+          { x: cx - radius, y: cy - radius + size }
+        ];
+      }
+      case "text": {
+        const [tx, ty] = element.position;
+        const fontSize = element.fontSize;
+        const content = element.content;
+        const rotation = element.rotation || 0;
+        ctx.font = `${fontSize}px sans-serif`;
+        const metrics = ctx.measureText(content);
+        const textWidth = metrics.width;
+        const textHeight = fontSize * 1.2;
+        const points = [
+          { x: tx, y: ty },
+          { x: tx + textWidth, y: ty },
+          { x: tx + textWidth, y: ty + textHeight },
+          { x: tx, y: ty + textHeight }
+        ];
+        if (!rotation) return points;
+        return rotatePoints(points, { x: tx, y: ty }, rotation * Math.PI / 180);
+      }
+      case "star": {
+        const [cx, cy] = element.position;
+        const outerRadius = element.outerRadius;
+        const rotation = element.rotation || 0;
+        const size = outerRadius * 2;
+        const points = [
+          { x: cx - outerRadius, y: cy - outerRadius },
+          { x: cx - outerRadius + size, y: cy - outerRadius },
+          { x: cx - outerRadius + size, y: cy - outerRadius + size },
+          { x: cx - outerRadius, y: cy - outerRadius + size }
+        ];
+        if (!rotation) return points;
+        return rotatePoints(points, { x: cx, y: cy }, rotation * Math.PI / 180);
+      }
+      default:
+        return null;
+    }
   }
 
   // 检查两个多边形是否相交
