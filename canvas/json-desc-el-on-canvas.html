@@ -36,9 +36,9 @@
     {
       type: "star",
       position: [600, 320],
-      angleQuantity: 6,
-      innerRadius: 30,
-      outerRadius: 50,
+      angleQuantity: 30,
+      innerRadius: 40,
+      outerRadius: 30,
       fillColor: "#ddd",
       strokeColor: "#808",
       strokeSize: 1,
@@ -230,9 +230,11 @@
   function drawStarOBB(element, ctx) {
     const [x, y] = element.position;
     const outerRadius = element.outerRadius;
+    const innerRadius = element.innerRadius;
+    const radius = Math.max(outerRadius, innerRadius);
     // 星形的OBB包围盒是其外接正方形
-    const size = outerRadius * 2;
-    ctx.strokeRect(x - outerRadius - 2, y - outerRadius - 2, size + 4, size + 4);
+    const size = radius * 2;
+    ctx.strokeRect(x - radius - 2, y - radius - 2, size + 4, size + 4);
   }
 
   // 绘制颜色编码到拾取Canvas
@@ -508,13 +510,15 @@
       case "star": {
         const [cx, cy] = element.position;
         const outerRadius = element.outerRadius;
+        const innerRadius = element.innerRadius;
         const rotation = element.rotation || 0;
-        const size = outerRadius * 2;
+        const radius = Math.max(outerRadius, innerRadius);
+        const size = radius * 2;
         const points = [
-          { x: cx - outerRadius, y: cy - outerRadius },
-          { x: cx - outerRadius + size, y: cy - outerRadius },
-          { x: cx - outerRadius + size, y: cy - outerRadius + size },
-          { x: cx - outerRadius, y: cy - outerRadius + size }
+          { x: cx - radius, y: cy - radius },
+          { x: cx - radius + size, y: cy - radius },
+          { x: cx - radius + size, y: cy - radius + size },
+          { x: cx - radius, y: cy - radius + size }
         ];
         if (!rotation) return points;
         return rotatePoints(points, { x: cx, y: cy }, rotation * Math.PI / 180);
