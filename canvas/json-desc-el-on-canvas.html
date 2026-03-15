@@ -63,8 +63,13 @@
   
   // 多选相关变量
   let isSelecting = false;
+  let dragMode = "none"; // none | select | move
+  let isDragging = false;
+  let moveStarted = false;
   let selectionStart = { x: 0, y: 0 };
   let selectionEnd = { x: 0, y: 0 };
+  let dragLast = { x: 0, y: 0 };
+  const dragThreshold = 2; // 小于该阈值视为单击
 
   // 生成唯一颜色的函数
   function generateUniqueColor(index) {
@@ -355,20 +360,54 @@
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // 开始选择
-    isSelecting = true;
+    const isInSelected = isPointInSelectedElements({ x, y });
+    const isMultiSelect = e.ctrlKey || e.metaKey;
+
+    // 选区外按下且非多选，清空现有选中项
+    if (!isInSelected && !isMultiSelect) {
+      selectedElements.clear();
+      redraw();
+    }
+
+    dragMode = isInSelected ? "move" : "select";
+    isSelecting = dragMode === "select";
+    isDragging = true;
+    moveStarted = false;
     selectionStart = { x, y };
     selectionEnd = { x, y };
+    dragLast = { x, y };
   }
 
   // 处理鼠标移动事件
   function handleMouseMove(e) {
-    if (isSelecting) {
-      // 获取鼠标位置相对于Canvas的坐标
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+    if (!isDragging) return;
 
+    // 获取鼠标位置相对于Canvas的坐标
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (dragMode === "move") {
+      const totalDx = x - selectionStart.x;
+      const totalDy = y - selectionStart.y;
+      if (!moveStarted) {
+        if (Math.abs(totalDx) > dragThreshold || Math.abs(totalDy) > dragThreshold) {
+          moveStarted = true;
+        } else {
+          return;
+        }
+      }
+      const dx = x - dragLast.x;
+      const dy = y - dragLast.y;
+      if (dx !== 0 || dy !== 0) {
+        moveSelectedElements(dx, dy);
+        redraw();
+      }
+      dragLast = { x, y };
+      return;
+    }
+
+    if (isSelecting) {
       // 更新选择矩形
       selectionEnd = { x, y };
       redraw();
@@ -377,50 +416,65 @@
 
   // 处理鼠标释放事件
   function handleMouseUp(e) {
-    if (isSelecting) {
-      // 更新鼠标抬起位置
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      selectionEnd = { x, y };
+    if (!isDragging) return;
 
-      // 结束选择
-      isSelecting = false;
+    // 更新鼠标抬起位置
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    selectionEnd = { x, y };
 
-      // 计算选择矩形
-      const selectionRect = {
-        x: Math.min(selectionStart.x, selectionEnd.x),
-        y: Math.min(selectionStart.y, selectionEnd.y),
-        width: Math.abs(selectionEnd.x - selectionStart.x),
-        height: Math.abs(selectionEnd.y - selectionStart.y)
-      };
+    // 结束选择/拖拽
+    isSelecting = false;
+    isDragging = false;
 
-      const dragThreshold = 2; // 小于该阈值视为单击
-      const isClick =
-        selectionRect.width <= dragThreshold &&
-        selectionRect.height <= dragThreshold;
+    // 计算选择矩形
+    const selectionRect = {
+      x: Math.min(selectionStart.x, selectionEnd.x),
+      y: Math.min(selectionStart.y, selectionEnd.y),
+      width: Math.abs(selectionEnd.x - selectionStart.x),
+      height: Math.abs(selectionEnd.y - selectionStart.y)
+    };
 
+    const isClick =
+      selectionRect.width <= dragThreshold &&
+      selectionRect.height <= dragThreshold;
+
+    if (dragMode === "move") {
+      // 在选区内按下
       if (isClick) {
-        // 单击按颜色拾取处理
+        // 单击：只选中被点击的元素（其它取消）
         handleClick(e);
-      } else {
-        // 选择与矩形相交的元素
-        selectElementsInRect(selectionRect);
-
-        // 重新绘制
-        redraw();
-
-        // 阻止点击事件的触发
-        e.stopPropagation();
-        e.preventDefault();
       }
+      dragMode = "none";
+      return;
     }
+
+    // 在选区外按下：点击/框选
+    if (isClick) {
+      // 单击按颜色拾取处理
+      handleClick(e);
+    } else {
+      // 选择与矩形相交的元素（按住 meta 可追加）
+      selectElementsInRect(selectionRect, e.ctrlKey || e.metaKey);
+
+      // 重新绘制
+      redraw();
+
+      // 阻止点击事件的触发
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    dragMode = "none";
   }
 
   // 选择与矩形相交的元素
-  function selectElementsInRect(rect) {
+  function selectElementsInRect(rect, addToSelection = false) {
     // 清空之前的选择
-    selectedElements.clear();
+    if (!addToSelection) {
+      selectedElements.clear();
+    }
 
     // 检查每个元素是否与选择矩形相交
     elements.forEach(element => {
@@ -430,6 +484,28 @@
       if (intersects) {
         selectedElements.add(element);
       }
+    });
+  }
+
+  function isPointInSelectedElements(point) {
+    for (const element of selectedElements) {
+      if (isPointInElementOBB(element, point)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function isPointInElementOBB(element, point) {
+    const obbPoints = getElementOBBPoints(element);
+    if (!obbPoints) return false;
+    return isPointInPolygon(point, obbPoints);
+  }
+
+  function moveSelectedElements(dx, dy) {
+    selectedElements.forEach(element => {
+      const [x, y] = element.position;
+      element.position = [x + dx, y + dy];
     });
   }
 
