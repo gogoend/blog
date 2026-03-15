@@ -57,6 +57,9 @@
   
   // 选中的元素集合
   let selectedElements = new Set();
+
+  // 蚂蚁线动画偏移
+  let highlightDashOffset = 0;
   
   // 多选相关变量
   let isSelecting = false;
@@ -142,6 +145,7 @@
     ctx.strokeStyle = "#f00";
     ctx.lineWidth = 2;
     ctx.setLineDash([5, 5]);
+    ctx.lineDashOffset = -highlightDashOffset;
 
     switch (element.type) {
       case "rect":
@@ -161,6 +165,15 @@
     }
 
     ctx.restore();
+  }
+
+  function startHighlightAnimation() {
+    const step = () => {
+      highlightDashOffset = (highlightDashOffset + 1) % 10;
+      drawToCanvas();
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }
 
   // 绘制矩形的OBB包围盒
@@ -252,6 +265,7 @@
   
   // 初始绘制
   redraw();
+  startHighlightAnimation();
 
   // 添加鼠标事件监听
   canvas.addEventListener('mousedown', handleMouseDown);
