@@ -257,6 +257,7 @@
   canvas.addEventListener('mousedown', handleMouseDown);
   canvas.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mouseup', handleMouseUp);
+  canvas.addEventListener('dblclick', handleDoubleClick);
 
   function handleClick(e) {
     // 获取点击位置相对于Canvas的坐标
@@ -297,6 +298,32 @@
       selectedElements.clear();
       redraw();
     }
+  }
+
+  function handleDoubleClick(e) {
+    // 获取双击位置相对于Canvas的坐标
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor(e.clientX - rect.left);
+    const y = Math.floor(e.clientY - rect.top);
+
+    // 确保坐标在Canvas范围内
+    if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
+      return;
+    }
+
+    // 从拾取Canvas获取颜色
+    const imageData = pickingCtx.getImageData(x, y, 1, 1);
+    const [r, g, b] = imageData.data;
+    const color = `rgb(${r}, ${g}, ${b})`;
+
+    // 只处理文本元素
+    const element = elementMap.get(color);
+    if (!element || element.type !== "text") return;
+
+    const next = window.prompt("编辑文本", element.content);
+    if (next === null) return;
+    element.content = String(next);
+    redraw();
   }
 
   // 处理鼠标按下事件
