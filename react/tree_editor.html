@@ -77,7 +77,7 @@
     <script src="https://cdn.jsdelivr.net/npm/antd@5.15.3/dist/antd.js"></script>
 
     <script type="text/babel">
-      const { useRef, useState } = React;
+      const { useEffect, useRef, useState } = React;
       const { Button, Card, Form, Input, Space, Typography } = antd;
 
       const initialTree = [
@@ -106,7 +106,6 @@
 
       function TreeEditor() {
         const [tree, setTree] = useState(initialTree);
-        const [editing, setEditing] = useState(null);
         const [form] = Form.useForm();
         const idRef = useRef(7);
 
@@ -146,78 +145,67 @@
               return { ...node, children: deleteNode(node.children, targetId) };
             });
 
+        const buildFormValues = (nodes, acc = {}) => {
+          nodes.forEach((node) => {
+            acc[`node_${node.id}`] = node.text;
+            if (node.children && node.children.length > 0) {
+              buildFormValues(node.children, acc);
+            }
+          });
+          return acc;
+        };
+
+        useEffect(() => {
+          form.setFieldsValue(buildFormValues(tree));
+        }, [tree]);
+
         const handleAddRoot = () => {
-          setEditing({ mode: "add-root" });
-          form.resetFields();
+          const newNode = { id: nextId(), text: "", children: [] };
+          setTree((prev) => [...prev, newNode]);
+          form.setFieldsValue({ [`node_${newNode.id}`]: "" });
         };
 
         const handleAddChild = (parentId) => {
-          setEditing({ mode: "add-child", parentId });
-          form.resetFields();
-        };
-
-        const handleEdit = (node) => {
-          setEditing({ mode: "edit", targetId: node.id });
-          form.setFieldsValue({ text: node.text });
+          const newNode = { id: nextId(), text: "", children: [] };
+          setTree((prev) => addChild(prev, parentId, newNode));
+          form.setFieldsValue({ [`node_${newNode.id}`]: "" });
         };
 
         const handleDelete = (targetId) => {
           setTree((prev) => deleteNode(prev, targetId));
-          if (editing && (editing.targetId === targetId || editing.parentId === targetId)) {
-            setEditing(null);
-            form.resetFields();
-          }
-        };
-
-        const handleCancel = () => {
-          setEditing(null);
-          form.resetFields();
+          const current = form.getFieldsValue();
+          delete current[`node_${targetId}`];
+          form.setFieldsValue(current);
         };
 
         const handleSubmit = async () => {
           try {
             const values = await form.validateFields();
-            if (editing.mode === "edit") {
-              setTree((prev) =>
-                updateNode(prev, editing.targetId, (node) => ({
-                  ...node,
-                  text: values.text,
-                }))
-              );
-            }
-            if (editing.mode === "add-child") {
-              const child = { id: nextId(), text: values.text, children: [] };
-              setTree((prev) => addChild(prev, editing.parentId, child));
-            }
-            if (editing.mode === "add-root") {
-              const child = { id: nextId(), text: values.text, children: [] };
-              setTree((prev) => [...prev, child]);
-            }
-            setEditing(null);
-            form.resetFields();
+            const applyValues = (nodes) =>
+              nodes.map((node) => ({
+                ...node,
+                text: values[`node_${node.id}`] || "",
+                children: node.children ? applyValues(node.children) : [],
+              }));
+            setTree((prev) => applyValues(prev));
           } catch (err) {
             // antd 表单校验失败会进入这里
           }
         };
 
-        const isEditingFor = (mode, id) =>
-          editing &&
-          editing.mode === mode &&
-          ((mode === "edit" && editing.targetId === id) ||
-            (mode === "add-child" && editing.parentId === id));
-
         const renderNode = (node) => {
-          const showEditForm = isEditingFor("edit", node.id);
-          const showAddForm = isEditingFor("add-child", node.id);
-
           return (
             <div key={node.id} className="node">
               <div className="node-title">
-                <Typography.Text strong>{node.text}</Typography.Text>
+                <Form.Item
+                  label="节点名称"
+                  name={`node_${node.id}`}
+                  rules={rules}
+                  style={{ marginBottom: 0, flex: 1 }}
+                >
+                  <Input placeholder="请输入节点名称" maxLength={30} />
+                </Form.Item>
                 <div className="node-actions">
-                  <Button size="small" onClick={() => handleEdit(node)}>
-                    编辑
-                  </Button>
                   <Button size="small" onClick={() => handleAddChild(node.id)}>
                     添加子节点
                   </Button>
@@ -226,38 +214,6 @@
                   </Button>
                 </div>
               </div>
-
-              {showEditForm && (
-                <div className="form-inline">
-                  <Form form={form} layout="vertical" requiredMark="optional">
-                    <Form.Item label="节点名称" name="text" rules={rules}>
-                      <Input placeholder="请输入节点名称" maxLength={30} />
-                    </Form.Item>
-                    <Space>
-                      <Button type="primary" onClick={handleSubmit}>
-                        保存
-                      </Button>
-                      <Button onClick={handleCancel}>取消</Button>
-                    </Space>
-                  </Form>
-                </div>
-              )}
-
-              {showAddForm && (
-                <div className="form-inline">
-                  <Form form={form} layout="vertical" requiredMark="optional">
-                    <Form.Item label="节点名称" name="text" rules={rules}>
-                      <Input placeholder="请输入节点名称" maxLength={30} />
-                    </Form.Item>
-                    <Space>
-                      <Button type="primary" onClick={handleSubmit}>
-                        保存
-                      </Button>
-                      <Button onClick={handleCancel}>取消</Button>
-                    </Space>
-                  </Form>
-                </div>
-              )}
 
               {node.children && node.children.length > 0 && (
                 <div className="node-children">
@@ -268,45 +224,31 @@
           );
         };
 
-        const showAddRootForm = editing && editing.mode === "add-root";
-
         return (
           <div className="app">
             <Card
               title="树状结构数据编辑器"
               extra={
-                <Button type="primary" onClick={handleAddRoot}>
-                  添加根节点
-                </Button>
+                <Space>
+                  <Button onClick={handleAddRoot}>添加根节点</Button>
+                  <Button type="primary" onClick={handleSubmit}>
+                    全局保存
+                  </Button>
+                </Space>
               }
             >
               <Typography.Paragraph type="secondary">
                 支持添加/删除节点、编辑节点文本，并通过 Ant Design Form 规则进行校验。
               </Typography.Paragraph>
-
-              {showAddRootForm && (
-                <div className="form-inline">
-                  <Form form={form} layout="vertical" requiredMark="optional">
-                    <Form.Item label="节点名称" name="text" rules={rules}>
-                      <Input placeholder="请输入节点名称" maxLength={30} />
-                    </Form.Item>
-                    <Space>
-                      <Button type="primary" onClick={handleSubmit}>
-                        保存
-                      </Button>
-                      <Button onClick={handleCancel}>取消</Button>
-                    </Space>
-                  </Form>
-                </div>
-              )}
-
-              {tree.length === 0 ? (
-                <Typography.Text type="secondary">
-                  当前没有节点，点击“添加根节点”开始创建。
-                </Typography.Text>
-              ) : (
-                tree.map((node) => renderNode(node))
-              )}
+              <Form form={form} layout="vertical" requiredMark="optional">
+                {tree.length === 0 ? (
+                  <Typography.Text type="secondary">
+                    当前没有节点，点击“添加根节点”开始创建。
+                  </Typography.Text>
+                ) : (
+                  tree.map((node) => renderNode(node))
+                )}
+              </Form>
             </Card>
           </div>
         );
