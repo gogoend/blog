@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React 树状结构数据编辑器</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/antd@5.15.3/dist/reset.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+        background: #f5f7fb;
+        color: #1f2328;
+      }
+      .app {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+      .node {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      }
+      .node-children {
+        margin-left: 18px;
+        padding-left: 12px;
+        border-left: 2px dashed #d6d9de;
+      }
+      .node-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .node-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .form-inline {
+        margin-top: 10px;
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/weekday.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/localeData.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/weekOfYear.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/weekYear.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/advancedFormat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/customParseFormat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/localeData.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isSameOrAfter.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isSameOrBefore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/quarterOfYear.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/updateLocale.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/antd@5.15.3/dist/antd.js"></script>
+
+    <script type="text/babel">
+      const { useRef, useState } = React;
+      const { Button, Card, Form, Input, Space, Typography } = antd;
+
+      const initialTree = [
+        {
+          id: 1,
+          text: "产品规划",
+          children: [
+            { id: 2, text: "需求调研", children: [] },
+            { id: 3, text: "原型设计", children: [] },
+          ],
+        },
+        {
+          id: 4,
+          text: "研发落地",
+          children: [
+            { id: 5, text: "前端实现", children: [] },
+            { id: 6, text: "后端服务", children: [] },
+          ],
+        },
+      ];
+
+      const rules = [
+        { required: true, whitespace: true, message: "请输入节点名称" },
+        { max: 30, message: "最多 30 个字符" },
+      ];
+
+      function TreeEditor() {
+        const [tree, setTree] = useState(initialTree);
+        const [editing, setEditing] = useState(null);
+        const [form] = Form.useForm();
+        const idRef = useRef(7);
+
+        const nextId = () => {
+          const next = idRef.current;
+          idRef.current += 1;
+          return next;
+        };
+
+        const updateNode = (nodes, targetId, updater) =>
+          nodes.map((node) => {
+            if (node.id === targetId) {
+              return updater(node);
+            }
+            if (!node.children || node.children.length === 0) {
+              return node;
+            }
+            return {
+              ...node,
+              children: updateNode(node.children, targetId, updater),
+            };
+          });
+
+        const addChild = (nodes, parentId, child) =>
+          updateNode(nodes, parentId, (node) => ({
+            ...node,
+            children: [...(node.children || []), child],
+          }));
+
+        const deleteNode = (nodes, targetId) =>
+          nodes
+            .filter((node) => node.id !== targetId)
+            .map((node) => {
+              if (!node.children || node.children.length === 0) {
+                return node;
+              }
+              return { ...node, children: deleteNode(node.children, targetId) };
+            });
+
+        const handleAddRoot = () => {
+          setEditing({ mode: "add-root" });
+          form.resetFields();
+        };
+
+        const handleAddChild = (parentId) => {
+          setEditing({ mode: "add-child", parentId });
+          form.resetFields();
+        };
+
+        const handleEdit = (node) => {
+          setEditing({ mode: "edit", targetId: node.id });
+          form.setFieldsValue({ text: node.text });
+        };
+
+        const handleDelete = (targetId) => {
+          setTree((prev) => deleteNode(prev, targetId));
+          if (editing && (editing.targetId === targetId || editing.parentId === targetId)) {
+            setEditing(null);
+            form.resetFields();
+          }
+        };
+
+        const handleCancel = () => {
+          setEditing(null);
+          form.resetFields();
+        };
+
+        const handleSubmit = async () => {
+          try {
+            const values = await form.validateFields();
+            if (editing.mode === "edit") {
+              setTree((prev) =>
+                updateNode(prev, editing.targetId, (node) => ({
+                  ...node,
+                  text: values.text,
+                }))
+              );
+            }
+            if (editing.mode === "add-child") {
+              const child = { id: nextId(), text: values.text, children: [] };
+              setTree((prev) => addChild(prev, editing.parentId, child));
+            }
+            if (editing.mode === "add-root") {
+              const child = { id: nextId(), text: values.text, children: [] };
+              setTree((prev) => [...prev, child]);
+            }
+            setEditing(null);
+            form.resetFields();
+          } catch (err) {
+            // antd 表单校验失败会进入这里
+          }
+        };
+
+        const isEditingFor = (mode, id) =>
+          editing &&
+          editing.mode === mode &&
+          ((mode === "edit" && editing.targetId === id) ||
+            (mode === "add-child" && editing.parentId === id));
+
+        const renderNode = (node) => {
+          const showEditForm = isEditingFor("edit", node.id);
+          const showAddForm = isEditingFor("add-child", node.id);
+
+          return (
+            <div key={node.id} className="node">
+              <div className="node-title">
+                <Typography.Text strong>{node.text}</Typography.Text>
+                <div className="node-actions">
+                  <Button size="small" onClick={() => handleEdit(node)}>
+                    编辑
+                  </Button>
+                  <Button size="small" onClick={() => handleAddChild(node.id)}>
+                    添加子节点
+                  </Button>
+                  <Button danger size="small" onClick={() => handleDelete(node.id)}>
+                    删除
+                  </Button>
+                </div>
+              </div>
+
+              {showEditForm && (
+                <div className="form-inline">
+                  <Form form={form} layout="vertical" requiredMark="optional">
+                    <Form.Item label="节点名称" name="text" rules={rules}>
+                      <Input placeholder="请输入节点名称" maxLength={30} />
+                    </Form.Item>
+                    <Space>
+                      <Button type="primary" onClick={handleSubmit}>
+                        保存
+                      </Button>
+                      <Button onClick={handleCancel}>取消</Button>
+                    </Space>
+                  </Form>
+                </div>
+              )}
+
+              {showAddForm && (
+                <div className="form-inline">
+                  <Form form={form} layout="vertical" requiredMark="optional">
+                    <Form.Item label="节点名称" name="text" rules={rules}>
+                      <Input placeholder="请输入节点名称" maxLength={30} />
+                    </Form.Item>
+                    <Space>
+                      <Button type="primary" onClick={handleSubmit}>
+                        保存
+                      </Button>
+                      <Button onClick={handleCancel}>取消</Button>
+                    </Space>
+                  </Form>
+                </div>
+              )}
+
+              {node.children && node.children.length > 0 && (
+                <div className="node-children">
+                  {node.children.map((child) => renderNode(child))}
+                </div>
+              )}
+            </div>
+          );
+        };
+
+        const showAddRootForm = editing && editing.mode === "add-root";
+
+        return (
+          <div className="app">
+            <Card
+              title="树状结构数据编辑器"
+              extra={
+                <Button type="primary" onClick={handleAddRoot}>
+                  添加根节点
+                </Button>
+              }
+            >
+              <Typography.Paragraph type="secondary">
+                支持添加/删除节点、编辑节点文本，并通过 Ant Design Form 规则进行校验。
+              </Typography.Paragraph>
+
+              {showAddRootForm && (
+                <div className="form-inline">
+                  <Form form={form} layout="vertical" requiredMark="optional">
+                    <Form.Item label="节点名称" name="text" rules={rules}>
+                      <Input placeholder="请输入节点名称" maxLength={30} />
+                    </Form.Item>
+                    <Space>
+                      <Button type="primary" onClick={handleSubmit}>
+                        保存
+                      </Button>
+                      <Button onClick={handleCancel}>取消</Button>
+                    </Space>
+                  </Form>
+                </div>
+              )}
+
+              {tree.length === 0 ? (
+                <Typography.Text type="secondary">
+                  当前没有节点，点击“添加根节点”开始创建。
+                </Typography.Text>
+              ) : (
+                tree.map((node) => renderNode(node))
+              )}
+            </Card>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<TreeEditor />);
+    </script>
+  </body>
+</html>
