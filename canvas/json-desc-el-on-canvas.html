@@ -363,13 +363,27 @@
     const isInSelected = isPointInSelectedElements({ x, y });
     const isMultiSelect = e.ctrlKey || e.metaKey;
 
-    // 选区外按下且非多选，清空现有选中项
-    if (!isInSelected && !isMultiSelect) {
-      selectedElements.clear();
-      redraw();
+    if (!isInSelected) {
+      const hit = getElementAtPoint({ x, y });
+      if (hit) {
+        // 选区外点击到元素：非多选时取消原有选中，仅选中该元素
+        if (!isMultiSelect) {
+          selectedElements.clear();
+        }
+        selectedElements.add(hit);
+        redraw();
+        dragMode = "move";
+      } else {
+        // 选区外空白处：非多选则清空
+        if (!isMultiSelect) {
+          selectedElements.clear();
+          redraw();
+        }
+        dragMode = "select";
+      }
+    } else {
+      dragMode = "move";
     }
-
-    dragMode = isInSelected ? "move" : "select";
     isSelecting = dragMode === "select";
     isDragging = true;
     moveStarted = false;
@@ -494,6 +508,21 @@
       }
     }
     return false;
+  }
+
+  function getElementAtPoint(point) {
+    if (
+      point.x < 0 ||
+      point.x >= canvas.width ||
+      point.y < 0 ||
+      point.y >= canvas.height
+    ) {
+      return null;
+    }
+    const imageData = pickingCtx.getImageData(point.x, point.y, 1, 1);
+    const [r, g, b] = imageData.data;
+    const color = `rgb(${r}, ${g}, ${b})`;
+    return elementMap.get(color) || null;
   }
 
   function isPointInElementOBB(element, point) {
